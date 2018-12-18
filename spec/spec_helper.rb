@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "licence/acceptance"
+require "license/acceptance"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

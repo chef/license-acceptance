@@ -1,6 +1,6 @@
-RSpec.describe Licence::Acceptance do
+RSpec.describe LicenseAcceptance do
   it "has a version number" do
-    expect(Licence::Acceptance::VERSION).not_to be nil
+    expect(LicenseAcceptance::VERSION).not_to be nil
   end
 
   it "does something useful" do
