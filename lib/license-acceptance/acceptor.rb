@@ -24,8 +24,16 @@ module LicenseAcceptance
         FileAcceptance.persist(product_set, missing_licenses)
         return true
       else
-        raise LicenseNotAcceptedError.new(product_set)
+        raise LicenseNotAcceptedError.new(missing_licenses)
       end
     end
   end
+
+  class LicenseNotAcceptedError < RuntimeError
+    def initialize(missing_licenses)
+      msg = "Missing licenses for the following:\n* " + missing_licenses.join("\n* ")
+      super(msg)
+    end
+  end
+
 end

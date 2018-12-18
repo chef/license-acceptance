@@ -1,6 +1,10 @@
 module LicenseAcceptance
   class ProductSet
 
+    PRODUCT_SET = {
+      'chef' => ['inspec']
+    }.freeze
+
     attr_reader :parent, :children
 
     def initialize(parent, children)
@@ -8,16 +12,12 @@ module LicenseAcceptance
       @children = children
     end
 
-    PRODUCT_SET = {
-      'chef' => ['inspec']
-    }.freeze
-
     def self.lookup(parent_product)
       children = PRODUCT_SET[parent_product]
-      if children.nil?
+      if children.nil? || children.empty?
         raise UnknownProduct.new(parent_product)
       end
-      self.klass.new(parent_product, children)
+      self.new(parent_product, children)
     end
   end
 

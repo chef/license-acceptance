@@ -1,5 +1,7 @@
 require 'date'
 require 'yaml'
+require 'fileutils'
+require 'etc'
 
 module LicenseAcceptance
   class FileAcceptance
@@ -9,7 +11,7 @@ module LicenseAcceptance
       File.join(ENV['HOME'], '.chef', 'accepted_licenses'),
       "/etc/chef/accepted_licenses",
     ].freeze
-    INVOCATION_TIME = DateTime.new.freeze
+    INVOCATION_TIME = DateTime.now.freeze
 
     # For all the given products in the product set, search all possible locations for the
     # license acceptance files.
@@ -21,9 +23,9 @@ module LicenseAcceptance
         found = false
         POSSIBLE_LOCATIONS.each do |loc|
           f = File.join(loc, license)
-          if File.exist?(f) do
+          if File.exist?(f)
             found = true
-            missing_licenses -= license
+            missing_licenses.delete(license)
             break
           end
         end
@@ -49,8 +51,8 @@ module LicenseAcceptance
     private
 
     def self.persist_license(folder_path, name, parent)
-      if !Dir.exist(folder_path) do
-        Dir.mkdir_p(folder_path)
+      if !Dir.exist?(folder_path)
+        FileUtils.mkdir_p(folder_path)
       end
       path = File.join(folder_path, name)
 
@@ -60,10 +62,13 @@ module LicenseAcceptance
           date_accepted: INVOCATION_TIME.iso8601,
           accepting_product: parent,
           accepting_product_version: "TODO",
-          user: ENV['user'],
-          file_format:
+          user: Etc.getlogin,
+          file_format: 1,
         }
+        contents = Hash[contents.map { |k, v| [k.to_s, v] }]
         license_file << YAML.dump(contents)
       end
     end
+
+  end
 end

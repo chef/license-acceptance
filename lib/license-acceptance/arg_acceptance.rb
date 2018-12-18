@@ -9,4 +9,6 @@ module LicenseAcceptance
       return false if response.nil?
       response.downcase == "yes"
     end
+
+  end
 end
