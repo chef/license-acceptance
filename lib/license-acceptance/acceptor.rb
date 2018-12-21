@@ -7,8 +7,8 @@ module LicenseAcceptance
   class Acceptor
     # TODO let them pass in whether running this as a library tool or a workstation tool - maybe
     # an environment variable?
-    def self.check_and_persist(product_name)
-      product_set = ProductSet.lookup(product_name)
+    def self.check_and_persist(product_name, install_type)
+      product_set = ProductSet.lookup(product_name, install_type)
       missing_licenses = FileAcceptance.check(product_set)
       if missing_licenses.empty?
         # They have already accepted all licenses and stored their acceptance in the persistent files

@@ -37,20 +37,21 @@ module LicenseAcceptance
     # TODO how do we know when to set it in /etc and when in ENV['HOME'] ?
     def self.persist(product_set, missing_licenses)
       parent = product_set.parent
+      parent_version = product_set.parent_version
       to_persist = [parent] + product_set.children
       if missing_licenses.include?(parent)
-        persist_license(POSSIBLE_LOCATIONS[0], parent, parent)
+        persist_license(POSSIBLE_LOCATIONS[0], parent, parent, parent_version)
       end
       product_set.children.each do |child|
         if missing_licenses.include?(child)
-          persist_license(POSSIBLE_LOCATIONS[0], child, parent)
+          persist_license(POSSIBLE_LOCATIONS[0], child, parent, parent_version)
         end
       end
     end
 
     private
 
-    def self.persist_license(folder_path, name, parent)
+    def self.persist_license(folder_path, name, parent, parent_version)
       if !Dir.exist?(folder_path)
         FileUtils.mkdir_p(folder_path)
       end
@@ -59,9 +60,10 @@ module LicenseAcceptance
       # TODO do we care if there is an existing file?
       File.open(path, "w") do |license_file|
         contents = {
+          name: name,
           date_accepted: INVOCATION_TIME.iso8601,
           accepting_product: parent,
-          accepting_product_version: "TODO",
+          accepting_product_version: parent_version,
           user: Etc.getlogin,
           file_format: 1,
         }

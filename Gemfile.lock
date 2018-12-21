@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     license-acceptance (0.1.0)
+      pastel (~> 0.7)
       tty-prompt (~> 0.18)
 
 GEM
@@ -71,4 +72,4 @@ DEPENDENCIES
   rspec (~> 3.0)
 
 BUNDLED WITH
-   1.17.1
+   1.17.2
