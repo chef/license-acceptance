@@ -2,7 +2,8 @@ module LicenseAcceptance
   class ProductSet
 
     PRODUCT_SET = {
-      'chef' => ['inspec']
+      'chef' => ['inspec'],
+      'inspec' => [],
     }.freeze
 
     attr_reader :parent, :children, :parent_version
@@ -15,7 +16,7 @@ module LicenseAcceptance
 
     def self.lookup(parent_product, parent_version)
       children = PRODUCT_SET[parent_product]
-      if children.nil? || children.empty?
+      if children.nil?
         raise UnknownProduct.new(parent_product)
       end
       if !parent_version.is_a? String
