@@ -41,4 +41,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.12"
   spec.add_development_dependency "pry-byebug", "~> 3.6"
   spec.add_development_dependency "pry-stack_explorer", "~> 0.4"
+  spec.add_development_dependency "mixlib-cli", "~> 1.7"
 end
