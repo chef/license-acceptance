@@ -1,6 +1,6 @@
 require "spec_helper"
-require "license-acceptance/file_acceptance"
-require "license-acceptance/product_set"
+require "license_acceptance/file_acceptance"
+require "license_acceptance/product_set"
 
 RSpec.describe LicenseAcceptance::FileAcceptance do
   let(:klass) { LicenseAcceptance::FileAcceptance }

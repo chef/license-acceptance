@@ -1,5 +1,5 @@
 require "spec_helper"
-require "license-acceptance/product_set"
+require "license_acceptance/product_set"
 
 RSpec.describe LicenseAcceptance::ProductSet do
   let(:klass) { LicenseAcceptance::ProductSet }

@@ -1,5 +1,5 @@
 require "spec_helper"
-require "license-acceptance/acceptor"
+require "license_acceptance/acceptor"
 
 RSpec.describe LicenseAcceptance::Acceptor do
   it "has a version number" do

@@ -1,7 +1,7 @@
-require "license-acceptance/product_set"
-require "license-acceptance/file_acceptance"
-require "license-acceptance/arg_acceptance"
-require "license-acceptance/prompt_acceptance"
+require "license_acceptance/product_set"
+require "license_acceptance/file_acceptance"
+require "license_acceptance/arg_acceptance"
+require "license_acceptance/prompt_acceptance"
 
 module LicenseAcceptance
   class Acceptor
