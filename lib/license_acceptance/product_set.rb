@@ -1,41 +1,28 @@
+require "license_acceptance/product"
+
 module LicenseAcceptance
   class ProductSet
 
+    # The set of unique products, keyed by the product name for quick lookup
     PRODUCT_SET = {
-      'chef' => ['inspec']
+      "chef" => Product.new("chef", "Chef"),
+      "inspec" => Product.new("inspec", "InSpec")
     }.freeze
 
-    attr_reader :parent, :children, :parent_version
-
-    def initialize(parent, children, parent_version)
-      @parent = parent
-      @children = children
-      @parent_version = parent_version
-    end
-
-    def self.lookup(parent_product, parent_version)
-      children = PRODUCT_SET[parent_product]
-      if children.nil? || children.empty?
-        raise UnknownProduct.new(parent_product)
+    def self.[](name)
+      PRODUCT_SET.fetch(name) do
+        raise UnknownProduct.new(name)
       end
-      if !parent_version.is_a? String
-        raise ProductVersionTypeError.new(parent_version)
+    end
+
+    # This is the database of known products. If it is not in here, we need to
+    # add it
+    class UnknownProduct < RuntimeError
+      def initialize(product)
+        msg = "Unknown product '#{product}' - this represents a developer error"
+        super(msg)
       end
-      self.new(parent_product, children, parent_version)
     end
-  end
 
-  class UnknownProduct < RuntimeError
-    def initialize(product)
-      msg = "No license information known for product '#{product}'"
-      super(msg)
-    end
-  end
-
-  class ProductVersionTypeError < RuntimeError
-    def initialize(product_version)
-      msg = "Product versions must be specified as a string, provided type is '#{product_version.class}'"
-      super(msg)
-    end
   end
 end

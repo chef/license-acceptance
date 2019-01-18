@@ -15,17 +15,17 @@ module LicenseAcceptance
 
     # For all the given products in the product set, search all possible locations for the
     # license acceptance files.
-    def self.check(product_set)
-      searching = [product_set.parent] + product_set.children
+    def self.check(product_relationship)
+      searching = [product_relationship.parent] + product_relationship.children
       missing_licenses = searching.clone
 
-      searching.each do |license|
+      searching.each do |product|
         found = false
         POSSIBLE_LOCATIONS.each do |loc|
-          f = File.join(loc, license)
+          f = File.join(loc, product.name)
           if File.exist?(f)
             found = true
-            missing_licenses.delete(license)
+            missing_licenses.delete(product)
             break
           end
         end
@@ -35,16 +35,16 @@ module LicenseAcceptance
     end
 
     # TODO how do we know when to set it in /etc and when in ENV['HOME'] ?
-    def self.persist(product_set, missing_licenses)
-      parent = product_set.parent
-      parent_version = product_set.parent_version
-      to_persist = [parent] + product_set.children
+    def self.persist(product_relationship, missing_licenses)
+      parent = product_relationship.parent
+      parent_version = product_relationship.parent_version
+      to_persist = [parent] + product_relationship.children
       if missing_licenses.include?(parent)
-        persist_license(POSSIBLE_LOCATIONS[0], parent, parent, parent_version)
+        persist_license(POSSIBLE_LOCATIONS[0], parent.name, parent, parent_version)
       end
-      product_set.children.each do |child|
+      product_relationship.children.each do |child|
         if missing_licenses.include?(child)
-          persist_license(POSSIBLE_LOCATIONS[0], child, parent, parent_version)
+          persist_license(POSSIBLE_LOCATIONS[0], child.name, parent, parent_version)
         end
       end
     end
@@ -62,7 +62,7 @@ module LicenseAcceptance
         contents = {
           name: name,
           date_accepted: INVOCATION_TIME.iso8601,
-          accepting_product: parent,
+          accepting_product: parent.name,
           accepting_product_version: parent_version,
           user: Etc.getlogin,
           file_format: 1,
