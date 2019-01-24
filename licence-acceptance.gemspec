@@ -32,14 +32,15 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'tty-prompt', "~> 0.18"
-  spec.add_dependency 'pastel', "~> 0.7"
+  spec.add_dependency 'tty-prompt', ">= 0.18"
+  spec.add_dependency 'tty-box', ">= 0.3"
+  spec.add_dependency 'pastel', ">= 0.7"
 
-  spec.add_development_dependency "bundler", "~> 1.17"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "pry", "~> 0.12"
-  spec.add_development_dependency "pry-byebug", "~> 3.6"
-  spec.add_development_dependency "pry-stack_explorer", "~> 0.4"
-  spec.add_development_dependency "mixlib-cli", "~> 1.7"
+  spec.add_development_dependency "bundler", ">= 1.17"
+  spec.add_development_dependency "rake", ">= 10.0"
+  spec.add_development_dependency "rspec", ">= 3.0"
+  spec.add_development_dependency "pry", ">= 0.12"
+  spec.add_development_dependency "pry-byebug", ">= 3.6"
+  spec.add_development_dependency "pry-stack_explorer", ">= 0.4"
+  spec.add_development_dependency "mixlib-cli", ">= 1.7"
 end
