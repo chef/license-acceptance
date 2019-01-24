@@ -6,7 +6,8 @@ module LicenseAcceptance
     CHEF = ProductSet["chef"]
     INSPEC = ProductSet["inspec"]
     KNOWN_RELATIONSHIPS = {
-      CHEF => [INSPEC]
+      CHEF => [INSPEC],
+      INSPEC => []
     }.freeze
 
     attr_reader :parent, :children, :parent_version
@@ -20,7 +21,7 @@ module LicenseAcceptance
     def self.lookup(parent_name, parent_version)
       parent_product = ProductSet[parent_name]
       children = KNOWN_RELATIONSHIPS[parent_product]
-      if children.nil?
+      if children.empty? || children.nil?
         raise NoLicense.new(parent_product)
       end
       if !parent_version.is_a? String
