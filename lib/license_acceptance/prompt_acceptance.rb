@@ -19,7 +19,7 @@ module LicenseAcceptance
 
       Before you can continue, #{c} product license#{s}
       must be accepted. View the license at
-      https://docs.chef.io/chef_license.html
+      https://www.chef.io/distribution-agreement
 
       License#{s} that need accepting:
         * #{missing_licenses.map(&:pretty_name).join("\n  * ")}

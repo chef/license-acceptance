@@ -1,0 +1,25 @@
+@startuml "server"
+(*) --> "omnibus-ctl reconfigure command ran"
+
+if "All license files exist?" then
+  -->[true] (*)
+else
+  ->[false] "Check for command line flag"
+  if "Flag passed?" then
+    -->[true] "Persist acceptance"
+  else
+    ->[false] "Check in user configuration file"
+    if "Config flag toggled?" then
+      -->[true] "Persist acceptance"
+    else
+      ->[false] "Prompt user for license acceptance"
+      if "Prompt accepted?" then
+        -->[true] "Persist acceptance"
+      else
+        --> "Fail reconfigure"
+      endif
+    endif
+  endif
+endif
+"Persist acceptance" --> (*)
+@enduml
