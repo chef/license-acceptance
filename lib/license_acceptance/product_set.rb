@@ -7,7 +7,7 @@ module LicenseAcceptance
     PRODUCT_SET = {
       "chef" => Product.new("chef", "Chef"),
       "inspec" => Product.new("inspec", "InSpec")
-    }.freeze
+    }
 
     def self.[](name)
       PRODUCT_SET.fetch(name) do
