@@ -8,7 +8,7 @@ else
   if "Flag passed?" then
     -->[true] "Persist acceptance"
   else
-    ->[false] "Check in user configuration file"
+    ->[false] "Check in server configuration file"
     if "Config flag toggled?" then
       -->[true] "Persist acceptance"
     else

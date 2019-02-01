@@ -1,5 +1,7 @@
 # Chef License Acceptance Flow
 
+> TODO: Table of contents and introduction
+
 # Specification
 
 1. Users of Chef products must have a positive confirmation of the Chef license before using each Chef product.
@@ -13,11 +15,16 @@
    of existing license acceptances should be transfered to the remote system. If the remote system needs to accept
    new product licenses it should prompt for that acceptance on the originating system.
     * For example, users install the ChefDK and accept the license for ChefDK, Test Kitchen, Inspec, etc. If the user
-      runs Test Kitchen and creates a remote system that installs Chef then the licenses from the originating machine
-      should be copied to the new machine. This prevents having to accept those licenses on the new machine.
-    * If Test Kitchen installs a new product on the remote machine (EG, Habitat) then Test Kitchen should prompt the user
-      to accept the habitat license on the originating machine. It should persist this acceptance and then copy it over
-      to the remote machine as well as any subsequent machines.
+      runs `knife bootstrap` against a remote system then the licenses from the originating machine
+      should be copied to the bootstrapped machine. This prevents having to accept those licenses on the new machine.
+    * > Would we copy across all local licenses or only ones for products we are installing on the remote machine?
+    * If a local tool installs a new product on the remote machine that does not have a local license persisted it
+      should prompt the user to accept the new license on the local machine. For example, imagine a user has accepted
+      the license for Test Kitchen locally but no other licenses. The user creates a remote machine with Test Kitchen
+      and installs Chef Client on the remote machine. Before trying to run Chef Client on the remote machine Test
+      Kitchen should take the user through a license acceptance flow locally, persist the accepted Chef Client license
+      and transfer it to the remote machine. This license should be persisted and used for all future Chef Client
+      runs, locally or remotely. Non acceptance should fail out the
 1. The products will persist the license acceptance so users are not required to accept the license on every use.
     * Note: The products will *attempt* to persist this information but some product usage (EG, on ephemeral machines)
       cannot be persisted.
@@ -37,7 +44,7 @@ https://www.tablesgenerator.com/markdown_tables#
 | Chef Workstation | Chef Backend          | Knife                          |
 | ChefDK           | Chef Server           | Chef Provisioning (DEPRECATED) |
 | Habitat binary   | Habitat Build Service |                                |
-| Inspec           | Habitat Supervisor    |                                |
+| InSpec           | Habitat Supervisor    |                                |
 | Push Jobs Client | Push Jobs Server      |                                |
 |                  | Supermarket           |                                |
 
@@ -51,7 +58,7 @@ In addition the following tools/products embed other products:
 These top level tools will need to present the license for both the top level tool and all embedded tools for user
 acceptance.
 
-> Do I need to accept the Inspec license to use it in kitchen-inspec?
+> Do I need to accept the InSpec license to use it in kitchen-inspec?
 
 ## Client Tools
 
@@ -61,7 +68,20 @@ Ruby based client-side tools can all be updated to match this specification by i
 library will be loaded by command line executables (EG, `chef-client`, `knife`, `inspec`, etc.) and used to enforce a
 a common UX for license acceptance.
 
+![](docs/client.png)
+
+The above diagram illustrates the UX flow of client side Ruby tools.
+
 For developers to consume this library, add the following lines to your executable's startup:
+
+```ruby
+require 'license_acceptance/acceptor'
+LicenseAcceptance::Acceptor.check_and_persist!('inspec', Inspec::VERSION)
+```
+
+This method performs the license acceptance flow documented below. If the user declines or cannot accept the license
+for some reason it prints a simple message to stdout and exits with code 210. If a developer wishes to customize
+this behavior they can instead add the following:
 
 ```ruby
 require 'license_acceptance/acceptor'
@@ -84,19 +104,30 @@ require "license_acceptance/cli_flags/mixlib_cli"
 include LicenseAcceptance::CLIFlags::MixlibCLI
 ```
 
-![](docs/client.png)
+The standard exit code of 210 is there to allow automated systems to detect a license acceptance failure and deal with
+it appropriately. Developers who consume this library can handle the exit logic differently but we recommend exiting 210
+to keep a consistent experience among all Chef Software products.
 
-The above diagram illustrates the UX flow of client side Ruby tools.
+#### License File Persistence
 
 If the user accepts the license a marker file is deposited at `#{ENV[HOME]}/.chef/accepted_licenses/`. These marker
 files prevents the user from getting prompted for license acceptance on subsequent runs. Currently we write some
 metadata to that file. However, when checking to see if the user has already accepted the license only the presence of
 the file matters. It can be completely empty. We hypothesize that the metadata may become useful in the future.
 
-> Do we want to have a unique exit code if they don't or cannot accept the license? This could potentially help CI,
-> but seems like something thats going to need user involvement anyways. Seems like we want a non-interactive custom
-> exit code so that tools like Test Kitchen can introspect the lack of acceptance from chef client and give users a
-> nice error message.
+If the user running is the `root` user then we write the marker file to `/etc/chef/accepted_licenses/`. On attempting
+to read and see if a license has been accepted:
+
+1. If the user is root
+    1. Check in `/etc/chef/accepted_licenses/` for an accepted license
+1. If the user is non-root
+    1. Check in `#{ENV[HOME]}/.chef/accepted_licenses/` for an accepted license
+    2. If none is found, check in `/etc/chef/accepted_licenses/`
+
+> Question for legal: This means that users could accept product licenses as the `root` user on a system (development
+> or production) and have accepted the license for all users on the system. Is this the desired behavior? Potentially
+> helps companies automate license acceptance because they can pre-seed all the license acceptance for shared developer
+> environments by accepting it initially as the root user. But does that violate our requirements?
 
 ### Habitat client tools
 
@@ -121,14 +152,14 @@ there are less opportunities to inject a license acceptance flow. License failur
 by seeing the service fail to start, which is not an ideal UX. We therefore try to have the user accept the license
 when they try to *manage* the service.
 
+> Legal question:
 > Do we want to have a service lock that causes the service start to fail if the management tool has not been ran?
 > Without a lock, we avoid failure conditions users may not be expecting. But is this okay if they somehow avoid
-> running the management tool? This should not be possible for any of our known products but someone could somehow
-> avoid running `chef-server-ctl reconfigure` if they manually configure the server themselves.
-
+> running the management tool?
 > Users upgrading are required to run `chef-server-ctl reconfigure` to trigger data migrations, but there is nothing
-> today that *requires* them to do this. Maybe a requirement of running a `reconfigure` command on upgrade would be
-> enough to meet our requirements?
+> technical today that *requires* them to do this. Their service simply won't work correctly. My understanding is that
+> customers do run this command on an upgrade because we tell them to do that. Is going through this 'standard flow'
+> enough enforcement?
 
 There are two broad types of server side tools we manage - omnibus packaged tools and hab managed tools.
 
@@ -139,14 +170,14 @@ the license acceptance flow into these commands. All the products require some k
 before the product will start. That should prevent users from running the application in a meaningful way without
 encountering the license acceptance flow.
 
-The one difference from the client products is that the server products also contain a user managed configuration file
-where the license can be accepted. The flow therefore is updated to:
+The one difference from the client products is that the server products also contain a user managed service
+configuration file where the license can be accepted. The flow therefore is updated to:
 
 ![](docs/server.png)
 
-Another difference from the client products is the server products typically run as some kind of service user. Because
-of this we should persist the license acceptance files to `/etc/chef/license_acceptance/` instead of `#{ENV[HOME]}/.chef/accepted_licenses/`. The omnibus-ctl commands require customers to run this command as root today so we should
-have write permissions to this directory, but may need to change this directory to be configurable in the future.
+See the [License File Persistence](#license-file-persistence) section for information on how the license is persisted.
+The omnibus-ctl commands require customers to run as the `root` user so licenses are persisted to the
+`/etc/chef/accepted_licenses` directory.
 
 Omnibus managed products can leverage the shared library in the `license-acceptance` gem to facilitate the license
 acceptance flow.
@@ -181,7 +212,8 @@ could be set by applying that config to each service group in habitat.
 > `hab license accept chef/a2 chef/chef-client`
 
 > We should store product list in a centralized location that all products (ruby based or hab based) can read license
-> information from. Better to only have to manage this 1 place.
+> information from. Better to only have to manage this 1 place. That could probably be this repo and we could distribute
+> that list in all the forms consumers need it (EG, rubygem, cargo crate, hab package, etc.)
 
 Habitat can run services in an ephimeral environment. In this case it is not possible to persist the license acceptance
 information anywhere. Rather than try to solve this problem by having customers mount a persistent drive to store
@@ -192,10 +224,22 @@ every time the service is started.
 
 > TODO
 
+> One issue we have is that someone using Habitat or Test Kitchen locally may end up needed to accept quite a lot of
+> licenses to manage remote machines. We should consider some tool like `hab license accept` to accept licenses for
+> an array of products in bulk. Probably something like `chef accept license --all` since Chef Workstation is
+> our tool to manage all Chef Software products on user workstations.
+
 ## Upgrade Guidance for Customers
 
 > TODO
 
+> See note in [Remote Management Tools](#remote-management-tools) about accepting bulk licenses locally. Also need a
+> way to accept licenses for fleets of pre-installed products. Breaking customers on upgrade without warning them and
+> giving them tools to prevent the breakage is a non-starter.
+
+> We REALLY need to get this information to users and customers ahead of time to make sure all these flows will work
+> for them.
+
 ## Windows
 
-> TODO: any special notes about Windows tools
+> TODO: any special notes about Windows tools. Probably something about where we persist licenses acceptance information.
