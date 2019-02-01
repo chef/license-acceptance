@@ -3,24 +3,24 @@
 # Specification
 
 1. Users of Chef products must have a positive confirmation of the Chef license before using each Chef product.
-  * > What about organization acceptance vs user acceptance?
-  * Positive confirmation flow - the idea that, to use any Chef Product, the user must have an interaction with that
-    product and make some effort to accept the license. That could take the form of an interactive prompt on the
-    command line, a web page in a browser that requires a user to click an 'accept' button, writing a confirmation
-    flag into a config file, passing a confirmation flag on the command line or something else.
+    * > What about organization acceptance vs user acceptance?
+    * Positive confirmation flow - the idea that, to use any Chef Product, the user must have an interaction with that
+      product and make some effort to accept the license. That could take the form of an interactive prompt on the
+      command line, a web page in a browser that requires a user to click an 'accept' button, writing a confirmation
+      flag into a config file, passing a confirmation flag on the command line or something else.
 1. Multiple products can be accepted in a single license acceptance flow.
 1. If a tool is ran on a system that has accepted licenses and it installs a product onto a remote system, the set
    of existing license acceptances should be transfered to the remote system. If the remote system needs to accept
    new product licenses it should prompt for that acceptance on the originating system.
-   * For example, users install the ChefDK and accept the license for ChefDK, Test Kitchen, Inspec, etc. If the user
-     runs Test Kitchen and creates a remote system that installs Chef then the licenses from the originating machine
-     should be copied to the new machine. This prevents having to accept those licenses on the new machine.
-   * If Test Kitchen installs a new product on the remote machine (EG, Habitat) then Test Kitchen should prompt the user
-     to accept the habitat license on the originating machine. It should persist this acceptance and then copy it over
-     to the remote machine as well as any subsequent machines.
+    * For example, users install the ChefDK and accept the license for ChefDK, Test Kitchen, Inspec, etc. If the user
+      runs Test Kitchen and creates a remote system that installs Chef then the licenses from the originating machine
+      should be copied to the new machine. This prevents having to accept those licenses on the new machine.
+    * If Test Kitchen installs a new product on the remote machine (EG, Habitat) then Test Kitchen should prompt the user
+      to accept the habitat license on the originating machine. It should persist this acceptance and then copy it over
+      to the remote machine as well as any subsequent machines.
 1. The products will persist the license acceptance so users are not required to accept the license on every use.
-  * Note: The products will *attempt* to persist this information but some product usage (EG, on ephemeral machines)
-    cannot be persisted.
+    * Note: The products will *attempt* to persist this information but some product usage (EG, on ephemeral machines)
+      cannot be persisted.
 1. This is a new license that will be released sometime in 2019. Existing Chef users will need to accept this license
    to upgrade to any product released after that time frame. Existing product releases will be bound by existing
    licenses (EG, users can continue to use Chef 14 without accepting the new license).
@@ -41,12 +41,17 @@ https://www.tablesgenerator.com/markdown_tables#
 | Push Jobs Client | Push Jobs Server      |                                |
 |                  | Supermarket           |                                |
 
+In addition the following tools/products embed other products:
 
-> Software that uses software as a library:
-> * kitchen-inspec -> inspec
-> * chef-client -> audit-cookbook -> inspec
-> * A2 -> chef-client -> audit-cookbook -> inspec
-> * ...
+* kitchen-inspec -> inspec
+* chef-client -> audit-cookbook -> inspec
+* A2 -> chef-client -> audit-cookbook -> inspec
+* > ...
+
+These top level tools will need to present the license for both the top level tool and all embedded tools for user
+acceptance.
+
+> Do I need to accept the Inspec license to use it in kitchen-inspec?
 
 ## Client Tools
 
@@ -98,12 +103,16 @@ the file matters. It can be completely empty. We hypothesize that the metadata m
 The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in
 Rust it cannot leverage a shared library but has the same functionality and UI.
 
-> What about client packages (EG, Inspec) installed by Habitat? Do we just capture those tools the same way or do we
-> enable hab to pass through a license acceptance? Do we limit these packages with some kind of thing like the MLSA?
+Client products with executables designed to be ran by users (Chef Client, Inspec, etc.) that have a license
+acceptance flow will _not_ try and expose that flow via `hab pkg install`. For these tools Habitat operates much like
+a package manager. The license acceptance flow will be triggered when the user tries to use the product. This is
+different from server tools which will be covered below.
 
-## Remote Management Tools
+> Right now `hab` stores its license acceptance in `/hab` for root users and `$HOME/.hab` for non root users. Do we want
+to have this license stored to `/etc/chef` and `$home/.chef` instead?
 
-> TODO
+> `hab license accept` flow is different from ruby flow. How closely do we want to match UX? Kind of mirrors last
+> question. How similar do we want `hab` and the rest of the Chef Software Inc. tools to look?
 
 ## Server Tools
 
@@ -144,66 +153,49 @@ acceptance flow.
 
 ### Hab managed products
 
-> Need to talk with someone from the Habitat team to determine how this flow will work. Ideally we can enforce the
-> license acceptance flow at `hab service start` time, and accepting it via the hab utility will transfer the license
-> storage files to the managed service so any service locks are avoided.
+Hab managed products will use a pattern pioneered by A2 called the [MLSA](https://github.com/chef/mlsa) (Master License
+Services Agreement). This is a package that, when included as a dependency, will prevent a service from running unless
+the user has set a configuration flag saying they accept the license agreement. This pattern requires no changes
+to habitat unless we want an interactive flow. Usage would look like the following:
 
-> How does persistence for an ephimeral service work? Do we just require users to pass the equivalent of
-> `--accept-license` every time they start a service?
+```
+$ hab svc load chef/chef-server --bind=database:mysql.default
+$ echo 'mlsa.accept = true' | hab config apply chef-server.default 1
+```
 
-> https://github.com/chef/mlsa contains prior art we should leverage. May possible update this library or clone it
-> into the current repo and leverage it for all habitat managed products?
+Setting `mlsa.accept = true` on the service accepts the license and allows the service to start. Multiple products
+could be set by applying that config to each service group in habitat.
 
-> Whatever we decide needs to, ideally, work for both client tools and server tools managed via habitat.
+> This pattern would exclude the option of an 'interactive' prompt based flow where a user who has not accepted the
+> license gets prompted to accept it. It instead would just prevent the services from starting. Is this something
+> we care about with server products? If so, I have heard that A2 has some kind of 'interactive' flow for starting
+> the service. We should investigate how that works and see if we could imbed it into the `chef/mlsa` package. Another
+> option would be to enhance Habitat with some kind of pre-start hook or license acceptance hook that would allow
+> user interaction in an interactive way. If we did that, the `chef/mlsa` package would become the implementation detail
+> of that more generic hook. Need to talk to the Habitat team about whether this kind of enhancement makes sense.
+> Already confirmed it is technically possible.
+
+> This is currently a very different UX from the existing license acceptance flow, and also is not very user friendly.
+> I propose we modify the `hab license accept` tool to manage license acceptance for products. This tool could attempt
+> to persist the license file as well as setting the hab config so the mlsa is accepted. EG:
+> `hab license accept chef/a2 chef/chef-client`
+
+> We should store product list in a centralized location that all products (ruby based or hab based) can read license
+> information from. Better to only have to manage this 1 place.
+
+Habitat can run services in an ephimeral environment. In this case it is not possible to persist the license acceptance
+information anywhere. Rather than try to solve this problem by having customers mount a persistent drive to store
+license acceptance information we recommend whatever tools they use to manage deployment simple accept the license
+every time the service is started.
+
+## Remote Management Tools
+
+> TODO
+
+## Upgrade Guidance for Customers
+
+> TODO
 
 ## Windows
 
 > TODO: any special notes about Windows tools
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'license-acceptance'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install license-acceptance
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/license-acceptance.
