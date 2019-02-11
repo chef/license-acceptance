@@ -14,18 +14,18 @@ module LicenseAcceptance
       if missing_licenses.empty?
         return true
       # They passed the --accept-license flag on the command line
-      elsif answer = ArgAcceptance.check(ARGV) do
+      elsif ArgAcceptance.check(ARGV) do
           FileAcceptance.persist(product_relationship, missing_licenses)
         end
-        return answer
+        return true
       # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask
       # for the new children
-      # They typed 'yes' to accept the license(s) on the command line
-      # TODO change this to take some kind of passed in output class
-      elsif answer = PromptAcceptance.request(missing_licenses, STDOUT) do
+      # TODO change this to take some kind of passed in output class instead of STDOUT
+      # TODO what if they are not running in a TTY?
+      elsif PromptAcceptance.request(missing_licenses, STDOUT) do
           FileAcceptance.persist(product_relationship, missing_licenses)
         end
-        return answer
+        return true
       else
         raise LicenseNotAcceptedError.new(missing_licenses)
       end

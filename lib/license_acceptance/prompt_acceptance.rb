@@ -51,8 +51,7 @@ module LicenseAcceptance
     private
 
     def self.ask(output, c, s, check, accepted_callback)
-      # TODO https://github.com/piotrmurach/tty-prompt#34-interrupt
-      prompt = TTY::Prompt.new(track_history: false, active_color: :bold)
+      prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
 
       answer = prompt.ask("$") do |q|
         q.modify :down, :trim

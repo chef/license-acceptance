@@ -21,7 +21,7 @@ module LicenseAcceptance
     def self.lookup(parent_name, parent_version)
       parent_product = ProductSet[parent_name]
       children = KNOWN_RELATIONSHIPS[parent_product]
-      if children.empty? || children.nil?
+      if children.nil?
         raise NoLicense.new(parent_product)
       end
       if !parent_version.is_a? String
@@ -33,7 +33,7 @@ module LicenseAcceptance
 
   class NoLicense < RuntimeError
     def initialize(product)
-      msg = "No license information known for product '#{product}'"
+      msg = "No license information known for product '#{product.name}'"
       super(msg)
     end
   end
