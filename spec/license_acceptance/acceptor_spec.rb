@@ -13,6 +13,23 @@ RSpec.describe LicenseAcceptance::Acceptor do
   let(:p1) { instance_double(LicenseAcceptance::Product) }
   let(:missing) { [p1] }
 
+  describe "#check_and_persist!" do
+    let(:err) { LicenseAcceptance::LicenseNotAcceptedError.new([product]) }
+    it "outputs an error message to stdout and exits when license acceptance is declined" do
+      expect(klass).to receive(:check_and_persist).and_raise(err)
+      expect { klass.check_and_persist!(product, version) }.to output(/#{product}/).to_stdout.and raise_error(SystemExit)
+    end
+
+    describe "when output is not stdout" do
+      let(:out) { StringIO.new }
+      it "outputs an error message and exits when license acceptance is declined" do
+        expect(klass).to receive(:check_and_persist).and_raise(err)
+        expect { klass.check_and_persist!(product, version, out) }.to raise_error(SystemExit)
+        expect(out.string).to match(/#{product}/)
+      end
+    end
+  end
+
   describe "#check_and_persist" do
     describe "when test environment variable is set" do
       before do

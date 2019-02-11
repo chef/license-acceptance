@@ -5,9 +5,19 @@ require "license_acceptance/prompt_acceptance"
 
 module LicenseAcceptance
   class Acceptor
-    # TODO let them pass in whether running this as a library tool or a workstation tool - maybe
-    # an environment variable?
-    def self.check_and_persist(product_name, version)
+
+    # For applications that just need simple logic to handle a failed license
+    # acceptance flow we include this small wrapper. Apps with more complex logic
+    # (like logging to a  logging engine) should call the non-bang version and
+    # handle the exception.
+    def self.check_and_persist!(product_name, version, output=$stdout)
+      check_and_persist(product_name, version, output)
+    rescue LicenseNotAcceptedError
+      output.puts "#{product_name} cannot execute without accepting the license"
+      exit 1
+    end
+
+    def self.check_and_persist(product_name, version, output=STDOUT)
       # flag for test environments to set - not for use by consumers
       return true if ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] == 'true'
 
@@ -24,9 +34,8 @@ module LicenseAcceptance
         return true
       # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask
       # for the new children
-      # TODO change this to take some kind of passed in output class instead of STDOUT
       # TODO what if they are not running in a TTY?
-      elsif PromptAcceptance.request(missing_licenses, STDOUT) do
+      elsif PromptAcceptance.request(missing_licenses, output) do
           FileAcceptance.persist(product_relationship, missing_licenses)
         end
         return true
@@ -34,6 +43,7 @@ module LicenseAcceptance
         raise LicenseNotAcceptedError.new(missing_licenses)
       end
     end
+
   end
 
   class LicenseNotAcceptedError < RuntimeError
