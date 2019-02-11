@@ -8,13 +8,17 @@ module LicenseAcceptance
     # TODO let them pass in whether running this as a library tool or a workstation tool - maybe
     # an environment variable?
     def self.check_and_persist(product_name, version)
+      # flag for test environments to set - not for use by consumers
+      return true if ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] == 'true'
+
       product_relationship = ProductRelationship.lookup(product_name, version)
       missing_licenses = FileAcceptance.check(product_relationship)
+
       # They have already accepted all licenses and stored their acceptance in the persistent files
-      if missing_licenses.empty?
-        return true
+      return true if missing_licenses.empty?
+
       # They passed the --accept-license flag on the command line
-      elsif ArgAcceptance.check(ARGV) do
+      if ArgAcceptance.check(ARGV) do
           FileAcceptance.persist(product_relationship, missing_licenses)
         end
         return true

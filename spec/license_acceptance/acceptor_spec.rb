@@ -14,6 +14,25 @@ RSpec.describe LicenseAcceptance::Acceptor do
   let(:missing) { [p1] }
 
   describe "#check_and_persist" do
+    describe "when test environment variable is set" do
+      before do
+        ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] = 'true'
+      end
+
+      after do
+        ENV.delete('ACCEPT_CHEF_LICENSE_NO_PERSIST')
+      end
+
+      it "returns true" do
+        expect(LicenseAcceptance::ProductRelationship).to_not receive(:lookup)
+        expect(LicenseAcceptance::FileAcceptance).to_not receive(:check)
+        expect(LicenseAcceptance::ArgAcceptance).to_not receive(:check)
+        expect(LicenseAcceptance::FileAcceptance).to_not receive(:persist)
+        expect(LicenseAcceptance::PromptAcceptance).to_not receive(:request)
+        expect(klass.check_and_persist(product, version)).to eq(true)
+      end
+    end
+
     describe "when there are no missing licenses" do
       it "returns true" do
         expect(LicenseAcceptance::ProductRelationship).to receive(:lookup).with(product, version)
