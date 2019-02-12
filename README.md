@@ -157,7 +157,9 @@ different from server tools which will be covered below.
 
 > Right now `hab` stores its license acceptance in `/hab`/`C:\hab` for root users and
 > `$HOME/.hab`/`C:\Users\<username>\.hab` for non root users. Do we want to have this license stored to
-> `/etc/chef` and `$home/.chef` instead?
+> `/etc/chef` and `$home/.chef` instead? If we don't, both tools probably need to attempt to read from both
+> locations (blegh) or the `habitat` license is written to `.hab` and all other licenses are written to `.chef`. That
+> seems weird... or does it?
 > https://doc.rust-lang.org/beta/std/env/fn.home_dir.html
 
 > `hab license accept` flow is different from ruby flow. How closely do we want to match UX? Kind of mirrors last
