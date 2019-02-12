@@ -5,26 +5,28 @@
 # Specification
 
 1. Users of Chef products must have a positive confirmation of the Chef license before using each Chef product.
-    * > What about organization acceptance vs user acceptance?
     * Positive confirmation flow - the idea that, to use any Chef Product, the user must have an interaction with that
       product and make some effort to accept the license. That could take the form of an interactive prompt on the
       command line, a web page in a browser that requires a user to click an 'accept' button, writing a confirmation
       flag into a config file, passing a confirmation flag on the command line or something else.
+    * There is no organization-level acceptance, only user-level acceptance.
 1. Multiple products can be accepted in a single license acceptance flow.
 1. If a tool is ran on a system that has accepted licenses and it installs a product onto a remote system, the set
    of existing license acceptances should be transfered to the remote system. If the remote system needs to accept
    new product licenses it should prompt for that acceptance on the originating system.
-    * For example, users install the ChefDK and accept the license for ChefDK, Test Kitchen, Inspec, etc. If the user
+    * For example, users install the ChefDK and accept the license for ChefDK, Test Kitchen, InSpec, etc. If the user
       runs `knife bootstrap` against a remote system then the licenses from the originating machine
       should be copied to the bootstrapped machine. This prevents having to accept those licenses on the new machine.
-    * > Would we copy across all local licenses or only ones for products we are installing on the remote machine?
+    * Tools only copy across licenses for the products being installed on the remote system. For example, a developer
+      has accepted the Chef Client and InSpec licenses on their workstation. When they use `knife bootstrap` to install
+      Chef Client on a remote system only the Chef Client license would be copied over, not the InSpec license.
     * If a local tool installs a new product on the remote machine that does not have a local license persisted it
       should prompt the user to accept the new license on the local machine. For example, imagine a user has accepted
       the license for Test Kitchen locally but no other licenses. The user creates a remote machine with Test Kitchen
       and installs Chef Client on the remote machine. Before trying to run Chef Client on the remote machine Test
       Kitchen should take the user through a license acceptance flow locally, persist the accepted Chef Client license
       and transfer it to the remote machine. This license should be persisted and used for all future Chef Client
-      runs, locally or remotely. Non acceptance should fail out the
+      runs, locally or remotely. Non acceptance should fail the Test Kitchen converge.
 1. The products will persist the license acceptance so users are not required to accept the license on every use.
     * Note: The products will *attempt* to persist this information but some product usage (EG, on ephemeral machines)
       cannot be persisted.
@@ -57,8 +59,6 @@ In addition the following tools/products embed other products:
 
 These top level tools will need to present the license for both the top level tool and all embedded tools for user
 acceptance.
-
-> Do I need to accept the InSpec license to use it in kitchen-inspec?
 
 ## Client Tools
 
@@ -108,7 +108,7 @@ The standard exit code of 210 is there to allow automated systems to detect a li
 it appropriately. Developers who consume this library can handle the exit logic differently but we recommend exiting 210
 to keep a consistent experience among all Chef Software products.
 
-#### License File Persistence
+#### *nix License File Persistence
 
 If the user accepts the license a marker file is deposited at `#{ENV[HOME]}/.chef/accepted_licenses/`. These marker
 files prevents the user from getting prompted for license acceptance on subsequent runs. Currently we write some
@@ -129,18 +129,36 @@ to read and see if a license has been accepted:
 > helps companies automate license acceptance because they can pre-seed all the license acceptance for shared developer
 > environments by accepting it initially as the root user. But does that violate our requirements?
 
+#### Windows License File Persistence
+
+Windows does not have the exact concept of a `root` user. Instead, users are granted permissions by belonging to
+elevated group, commonly called `Administrator`. License marker files are stored relative to what Chef sees as a user's
+home directory. The home directory is resolved by looking up the following environment variables and selecting the
+first one that is a valid path:
+
+1. `%HOME%` - typically not defined in Windows
+1. `%HOMEDRIVE%:%HOMEPATH%` - typically `C:\Users\<username>` but may not exist if defined as an unavailable network mounted drive
+1. `%HOMESHARE%:%HOMEPATH%` - could refer to a shared drive
+1. `%USERPROFILE%` - typically `C:\Users\<username>`
+
+Based on this logic license marker files will typically be stored to `C:\Users\<username>\.chef\accepted_licenses\`.
+
+> If we follow the hab model, we would also read from `C:\chef\accepted_licenses`. Do we want to do that?
+
 ### Habitat client tools
 
 The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in
 Rust it cannot leverage a shared library but has the same functionality and UI.
 
-Client products with executables designed to be ran by users (Chef Client, Inspec, etc.) that have a license
+Client products with executables designed to be ran by users (Chef Client, InSpec, etc.) that have a license
 acceptance flow will _not_ try and expose that flow via `hab pkg install`. For these tools Habitat operates much like
 a package manager. The license acceptance flow will be triggered when the user tries to use the product. This is
 different from server tools which will be covered below.
 
-> Right now `hab` stores its license acceptance in `/hab` for root users and `$HOME/.hab` for non root users. Do we want
-to have this license stored to `/etc/chef` and `$home/.chef` instead?
+> Right now `hab` stores its license acceptance in `/hab`/`C:\hab` for root users and
+> `$HOME/.hab`/`C:\Users\<username>\.hab` for non root users. Do we want to have this license stored to
+> `/etc/chef` and `$home/.chef` instead?
+> https://doc.rust-lang.org/beta/std/env/fn.home_dir.html
 
 > `hab license accept` flow is different from ruby flow. How closely do we want to match UX? Kind of mirrors last
 > question. How similar do we want `hab` and the rest of the Chef Software Inc. tools to look?
@@ -224,7 +242,7 @@ every time the service is started.
 
 > TODO
 
-> One issue we have is that someone using Habitat or Test Kitchen locally may end up needed to accept quite a lot of
+> One issue we have is that someone using Habitat or Test Kitchen locally may end up needing to accept quite a lot of
 > licenses to manage remote machines. We should consider some tool like `hab license accept` to accept licenses for
 > an array of products in bulk. Probably something like `chef accept license --all` since Chef Workstation is
 > our tool to manage all Chef Software products on user workstations.
@@ -243,3 +261,5 @@ every time the service is started.
 ## Windows
 
 > TODO: any special notes about Windows tools. Probably something about where we persist licenses acceptance information.
+
+https://docs.chef.io/dk_windows.html#spaces-and-directories
