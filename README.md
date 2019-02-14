@@ -165,6 +165,11 @@ different from server tools which will be covered below.
 > `hab license accept` flow is different from ruby flow. How closely do we want to match UX? Kind of mirrors last
 > question. How similar do we want `hab` and the rest of the Chef Software Inc. tools to look?
 
+> Need to look into the Habitat Terraform provisioner. That installs any Habitat package (like chef-client) using
+> Habitat. Our customers are using that to bake images and we need a way for them to accept the chef license as part
+> of that. Would they use the `hab license accept` tool? Or would we have them include a `chef-client --accept-license`
+> and `inspec --accept-license` to their terraform definition? That seems less than ideal.
+
 ## Server Tools
 
 Server tools are different from client tools in that users typically mange them with a process manager. Because of this
