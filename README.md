@@ -240,6 +240,11 @@ information anywhere. Rather than try to solve this problem by having customers 
 license acceptance information we recommend whatever tools they use to manage deployment simple accept the license
 every time the service is started.
 
+### A2
+
+> TODO - is A2 going to have a common flow? Or are they in their own world with the deployment service, being able to
+> configure it through the browser, etc.?
+
 ## Remote Management Tools
 
 > TODO
