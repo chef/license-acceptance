@@ -14,7 +14,7 @@ module LicenseAcceptance
       check_and_persist(product_name, version, output)
     rescue LicenseNotAcceptedError
       output.puts "#{product_name} cannot execute without accepting the license"
-      exit 1
+      exit 172
     end
 
     def self.check_and_persist(product_name, version, output=STDOUT)
