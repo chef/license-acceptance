@@ -30,6 +30,11 @@
 1. The products will persist the license acceptance so users are not required to accept the license on every use.
     * Note: The products will *attempt* to persist this information but some product usage (EG, on ephemeral machines)
       cannot be persisted.
+1. New product installs will need to have their license accepted.
+    * Example: a user is running A2 and has accepted the A2 license. Then the user installs the Workflow product into
+      their existing A2 installation. Before they can use that Workflow product they need to accept the license for it.
+    * If the install a new feature that is not considered a new 'product', they would not need to accept a license
+      for that.
 1. This is a new license that will be released sometime in 2019. Existing Chef users will need to accept this license
    to upgrade to any product released after that time frame. Existing product releases will be bound by existing
    licenses (EG, users can continue to use Chef 14 without accepting the new license).
