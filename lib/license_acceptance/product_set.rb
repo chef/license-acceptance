@@ -6,7 +6,8 @@ module LicenseAcceptance
     # The set of unique products, keyed by the product name for quick lookup
     PRODUCT_SET = {
       "chef" => Product.new("chef", "Chef"),
-      "inspec" => Product.new("inspec", "InSpec")
+      "inspec" => Product.new("inspec", "InSpec"),
+      "chef-server" => Product.new("chef-server", "Chef Server")
     }
 
     def self.[](name)
