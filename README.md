@@ -11,6 +11,8 @@
       flag into a config file, passing a confirmation flag on the command line or something else.
     * There is no organization-level acceptance, only user-level acceptance.
 1. Multiple products can be accepted in a single license acceptance flow.
+1. If the license is not accepted the product will exit with code 210
+    * This is a randomly chosen number that enables tools like CI to handle license failures with specific behavior.
 1. If a tool is ran on a system that has accepted licenses and it installs a product onto a remote system, the set
    of existing license acceptances should be transfered to the remote system. If the remote system needs to accept
    new product licenses it should prompt for that acceptance on the originating system.
@@ -49,7 +51,7 @@ https://www.tablesgenerator.com/markdown_tables#
 |------------------|-----------------------|--------------------------------|
 | Chef Client      | Automate 2            | Test Kitchen                   |
 | Chef Workstation | Chef Backend          | Knife                          |
-| ChefDK           | Chef Server           | Chef Provisioning (DEPRECATED) |
+| ChefDK           | Chef Server           | Terraform Habitat Provisioner  |
 | Habitat binary   | Habitat Build Service |                                |
 | InSpec           | Habitat Supervisor    |                                |
 | Push Jobs Client | Push Jobs Server      |                                |
@@ -97,7 +99,7 @@ rescue LicenseAcceptance::LicenseNotAcceptedError
   # Could be logging to stdout or a log file then existing, but is up
   # to the client to handle appropriately
   puts "InSpec cannot execute without accepting the license"
-  exit 1
+  exit 210
 end
 ```
 
@@ -152,28 +154,22 @@ Based on this logic license marker files will typically be stored to `C:\Users\<
 
 ### Habitat client tools
 
-The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in
-Rust it cannot leverage a shared library but has the same functionality and UI.
+The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in Rust
+it cannot leverage a shared library but has the same functionality and UI. The `hab` binary stores its license file in a
+different location than all the other software in the Chef Software ecosystem:
 
-Client products with executables designed to be ran by users (Chef Client, InSpec, etc.) that have a license
-acceptance flow will _not_ try and expose that flow via `hab pkg install`. For these tools Habitat operates much like
-a package manager. The license acceptance flow will be triggered when the user tries to use the product. This is
-different from server tools which will be covered below.
+* On *nix:
+    * For non-root users: `~/.hab/accepted_licenses/`
+    * For the root user: `/hab/accepted_licenses/`
+* On Windows: `C:\Users\<username>\.hab\accepted_licenses\`
 
-> Right now `hab` stores its license acceptance in `/hab`/`C:\hab` for root users and
-> `$HOME/.hab`/`C:\Users\<username>\.hab` for non root users. Do we want to have this license stored to
-> `/etc/chef` and `$home/.chef` instead? If we don't, both tools probably need to attempt to read from both
-> locations (blegh) or the `habitat` license is written to `.hab` and all other licenses are written to `.chef`. That
-> seems weird... or does it?
-> https://doc.rust-lang.org/beta/std/env/fn.home_dir.html
+The only licenses stored here will be for the Habitat products (`hab`, Habitat Builder, etc.).
 
-> `hab license accept` flow is different from ruby flow. How closely do we want to match UX? Kind of mirrors last
-> question. How similar do we want `hab` and the rest of the Chef Software Inc. tools to look?
+> TODO - where do the habitat Windows files get written?
 
-> Need to look into the Habitat Terraform provisioner. That installs any Habitat package (like chef-client) using
-> Habitat. Our customers are using that to bake images and we need a way for them to accept the chef license as part
-> of that. Would they use the `hab license accept` tool? Or would we have them include a `chef-client --accept-license`
-> and `inspec --accept-license` to their terraform definition? That seems less than ideal.
+Client products (Chef Client, InSpec, etc.) that have a license acceptance flow will _not_ try and expose that flow via
+`hab pkg install`. For these tools Habitat operates much like a package manager. The license acceptance flow will be
+triggered when the user tries to use the product. This is different from server tools which will be covered below.
 
 ## Server Tools
 
@@ -212,12 +208,18 @@ The omnibus-ctl commands require customers to run as the `root` user so licenses
 Omnibus managed products can leverage the shared library in the `license-acceptance` gem to facilitate the license
 acceptance flow.
 
+### A2
+
+A2 currently has a command line tool to install and configure it, much like Omnibus packaged applications do. This tool
+will be updated to follow the same UX we use for those Omnibus tools. The license can be accepted during configuration
+and reconfiguration in the case they install a tool later that needs a license accepted.
+
 ### Hab managed products
 
 Hab managed products will use a pattern pioneered by A2 called the [MLSA](https://github.com/chef/mlsa) (Master License
 Services Agreement). This is a package that, when included as a dependency, will prevent a service from running unless
 the user has set a configuration flag saying they accept the license agreement. This pattern requires no changes
-to habitat unless we want an interactive flow. Usage would look like the following:
+to Habitat. Usage would look similar to the following:
 
 ```
 $ hab svc load chef/chef-server --bind=database:mysql.default
@@ -227,53 +229,111 @@ $ echo 'mlsa.accept = true' | hab config apply chef-server.default 1
 Setting `mlsa.accept = true` on the service accepts the license and allows the service to start. Multiple products
 could be set by applying that config to each service group in habitat.
 
-> This pattern would exclude the option of an 'interactive' prompt based flow where a user who has not accepted the
-> license gets prompted to accept it. It instead would just prevent the services from starting. Is this something
-> we care about with server products? If so, I have heard that A2 has some kind of 'interactive' flow for starting
-> the service. We should investigate how that works and see if we could imbed it into the `chef/mlsa` package. Another
-> option would be to enhance Habitat with some kind of pre-start hook or license acceptance hook that would allow
-> user interaction in an interactive way. If we did that, the `chef/mlsa` package would become the implementation detail
-> of that more generic hook. Need to talk to the Habitat team about whether this kind of enhancement makes sense.
-> Already confirmed it is technically possible.
+We will make some changes to the existing MLSA package:
 
-> This is currently a very different UX from the existing license acceptance flow, and also is not very user friendly.
-> I propose we modify the `hab license accept` tool to manage license acceptance for products. This tool could attempt
-> to persist the license file as well as setting the hab config so the mlsa is accepted. EG:
-> `hab license accept chef/a2 chef/chef-client`
+1. The MLSA currently spins in a `sleep 5` loop if the license has not been accepted, outputting a log message every
+   time. We will change this logic to instead exit and output a message similar to the rest of our UX. It will tell
+   users where they can find information about how to accept the license.
+1. If the license is accepted the MLSA package will attempt to store the license marker file. If it cannot it logs a
+   message and proceeds.
+1. We will add more configuration to the package. This includes the ability to customize where license marker files will
+   attempt to be persisted, the option to not persist the license acceptance, etc.
+1. For services with a service lock the MLSA package will pass down configuration to that service so it can start
+   successfully.
+     * IE, if `chef/chef-server` has a service lock it cannot start unless service configuration is set showing the
+       license has been accepted. The MLSA package would pass the Habitat based license acceptance down into that
+       service.
+     * > This feature is TBD based on legal's input on whether we need a service lock (see above around omnibus managed
+       > services).
 
-> We should store product list in a centralized location that all products (ruby based or hab based) can read license
-> information from. Better to only have to manage this 1 place. That could probably be this repo and we could distribute
-> that list in all the forms consumers need it (EG, rubygem, cargo crate, hab package, etc.)
+These Habitat managed services will therefore not have an interactive prompt based flow like the client tools do. We
+feel this is acceptable because server tools are typically managed by a supervisor process instead of a user.
 
 Habitat can run services in an ephimeral environment. In this case it is not possible to persist the license acceptance
-information anywhere. Rather than try to solve this problem by having customers mount a persistent drive to store
-license acceptance information we recommend whatever tools they use to manage deployment simple accept the license
-every time the service is started.
+information anywhere. One option is to mount a persistent drive to store license marker files across all ephemeral
+environments but we do not recommend this. Instead we recommend whatever tools they use to manage deployment accept the
+license every time the service is started (EG, `hab license accept chef/chef-server && hab sup run chef/chef-server`).
 
-### A2
-
-> TODO - is A2 going to have a common flow? Or are they in their own world with the deployment service, being able to
-> configure it through the browser, etc.?
+To accept multiple Habitat licenses at once see the [Bulk License Acceptance Tools](#bulk-license-acceptance-tools)
+section.
 
 ## Remote Management Tools
 
-> TODO
+Chef Software produces a variety of products that manage remote systems (Test Kitchen, `knife bootstrap`, etc.). These tools will be updated to copy any local license acceptance markers to the remote systems they manage. If a user has accepted the Chef Client license and uses `knife bootstrap` to bootstrap a remote node, the acceptance will be copied to that remote node. This prevents `knife bootstrap` from failing to run Chef Client because of a missing license.
 
-> One issue we have is that someone using Habitat or Test Kitchen locally may end up needing to accept quite a lot of
-> licenses to manage remote machines. We should consider some tool like `hab license accept` to accept licenses for
-> an array of products in bulk. Probably something like `chef accept license --all` since Chef Workstation is
-> our tool to manage all Chef Software products on user workstations.
+They will also allow accepting the license as part of remote management configuration.
+
+> https://www.terraform.io/docs/provisioners/habitat.html
+> Need to look into the Habitat Terraform provisioner. That installs any Habitat package (like chef-client) using
+> Habitat. Our customers are using that to bake images and we need a way for them to accept the chef license as part
+> of that. Would they use the `hab license accept` tool? Or would we have them include a `chef-client --accept-license`
+> and `inspec --accept-license` to their terraform definition? That seems less than ideal.
+
+### Terraform Habitat Provisioner
+
+> in terraform config
+> read from local files for workstation based deploys
+> read from environment variable for Repo+CI based deploys?
 
 ## Upgrade Guidance for Customers
 
-> TODO
+There will be marketing and sales education internally to ensure our staff is ready to help customers through this
+transition. To enable this we will produce tools to help customers prepare ahead of time so they experience the least
+amount of frustration.
 
-> See note in [Remote Management Tools](#remote-management-tools) about accepting bulk licenses locally. Also need a
-> way to accept licenses for fleets of pre-installed products. Breaking customers on upgrade without warning them and
-> giving them tools to prevent the breakage is a non-starter.
+### Bulk License Acceptance Tools
 
-> We REALLY need to get this information to users and customers ahead of time to make sure all these flows will work
-> for them.
+> TODO need to get some time with UX on these
+
+We will produce two tools for users to accept licenses for multiple products in one invocation. There are a few purposes
+for this. The first is that it allows users to accept licenses before upgrading to product versions that would ask for a
+license. This prevents user frustration through this license change. Secondly it will allow Habitat users to accept
+licenses for multiple Habitat packages with a better UX than [`hab config apply`](#hab-managed-products). It can also be
+used by external tools (like the [Terraform Habitat Provisioner](#terraform-habitat-provisioner)) to accept licenses.
+
+Invoking both of the following tools will present the user with a similar UX, bridging our experience across our product
+lines. It will know about supported Chef Software products and fail if the user tries to accept a license for an unknown
+product.
+
+`chef license` will be used for all non-habitat products. Invoking it will take users through the same interactive
+prompt based flow that using a client product would. It will also have options to accept via a flag, where to persist
+licenses, etc. It can be used to accept licenses for multiple products. Examples:
+
+```
+chef license accept chef inspec
+chef license accept test-kitchen --prompt yes
+chef license accept chef-workstation --persist-location C:\mounted_dir\chef
+chef license list # List the licenses that can be accepted
+```
+
+`hab license` will be used to accept the license for Habitat products as well as any Habitat packaged Chef products.
+This means it can accept the license for the `hab` binary and a package like `chef/chef-server`. Invoking it will also
+take users through the same interactive prompt based flow unless they accept the license as part of the invocation. It
+can also accept a license for running Habitat services. Examples:
+
+> TODO what configuration will we need to point it to running services?
+
+```
+hab license accept # accepts the license for the hab binary only
+hab license accept chef/chef-server chef/push-jobs-server
+hab license accept chef/chef-server --prompt yes
+hab license accept chef/chef-server --prompt yes --persist no
+hab license list
+hab license list --running # Show running habitat services that have not accepted a license
+```
+
+### Chef Client installs
+
+We will produce a cookbook (or modify an existing one) that allows users to accept a license before upgrading to Chef
+Client 15. When applied and converged on their fleet it will create the license persistence markers. The upgrade to Chef
+Client 15 should then be seamless and not fail due to missing licenses.
+
+### Other Environments
+
+There are bound to be other paths users follow to package, deploy and configure chef products. We will update these
+tools to support the new license requirements. Our criteria should be that users can accept the license for product(s)
+with the least amount of resistence possible while still ensuring they have gone through a positive license acceptance
+flow.
 
 ## Windows
 
