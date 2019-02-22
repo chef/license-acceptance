@@ -11,7 +11,7 @@
       flag into a config file, passing a confirmation flag on the command line or something else.
     * There is no organization-level acceptance, only user-level acceptance.
 1. Multiple products can be accepted in a single license acceptance flow.
-1. If the license is not accepted the product will exit with code 210
+1. If the license is not accepted the product will exit with code 172
     * This is a randomly chosen number that enables tools like CI to handle license failures with specific behavior.
 1. If a tool is ran on a system that has accepted licenses and it installs a product onto a remote system, the set
    of existing license acceptances should be transfered to the remote system. If the remote system needs to accept
@@ -87,7 +87,7 @@ LicenseAcceptance::Acceptor.check_and_persist!('inspec', Inspec::VERSION)
 ```
 
 This method performs the license acceptance flow documented below. If the user declines or cannot accept the license
-for some reason it prints a simple message to stdout and exits with code 210. If a developer wishes to customize
+for some reason it prints a simple message to stdout and exits with code 172. If a developer wishes to customize
 this behavior they can instead add the following:
 
 ```ruby
@@ -99,7 +99,7 @@ rescue LicenseAcceptance::LicenseNotAcceptedError
   # Could be logging to stdout or a log file then existing, but is up
   # to the client to handle appropriately
   puts "InSpec cannot execute without accepting the license"
-  exit 210
+  exit 172
 end
 ```
 
@@ -111,8 +111,8 @@ require "license_acceptance/cli_flags/mixlib_cli"
 include LicenseAcceptance::CLIFlags::MixlibCLI
 ```
 
-The standard exit code of 210 is there to allow automated systems to detect a license acceptance failure and deal with
-it appropriately. Developers who consume this library can handle the exit logic differently but we recommend exiting 210
+The standard exit code of 172 is there to allow automated systems to detect a license acceptance failure and deal with
+it appropriately. Developers who consume this library can handle the exit logic differently but we recommend exiting 172
 to keep a consistent experience among all Chef Software products.
 
 #### License File Persistence
