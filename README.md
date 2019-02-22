@@ -115,57 +115,47 @@ The standard exit code of 210 is there to allow automated systems to detect a li
 it appropriately. Developers who consume this library can handle the exit logic differently but we recommend exiting 210
 to keep a consistent experience among all Chef Software products.
 
-#### *nix License File Persistence
+#### License File Persistence
 
 If the user accepts the license a marker file is deposited at `#{ENV[HOME]}/.chef/accepted_licenses/`. These marker
 files prevents the user from getting prompted for license acceptance on subsequent runs. Currently we write some
 metadata to that file. However, when checking to see if the user has already accepted the license only the presence of
 the file matters. It can be completely empty. We hypothesize that the metadata may become useful in the future.
 
-If the user running is the `root` user then we write the marker file to `/etc/chef/accepted_licenses/`. On attempting
-to read and see if a license has been accepted:
+When writing the license marker file different locations are used for different users:
 
-1. If the user is root
-    1. Check in `/etc/chef/accepted_licenses/` for an accepted license
-1. If the user is non-root
-    1. Check in `#{ENV[HOME]}/.chef/accepted_licenses/` for an accepted license
-    2. If none is found, check in `/etc/chef/accepted_licenses/`
+* On *nix systems
+    * If the user is root: `/etc/chef/accepted_licenses/`
+    * If the user is non-root: `#{ENV[HOME]}/.chef/accepted_licenses/`
+* On Windows systems
+    * If the user is Administrator: `%HOMEDRIVE%:\chef\accepted_licenses` (typically `C:\chef\accepted_licenses\`)
+    * If the user is not Administrator try the following root paths and use the first found (typically `C:\Users\<username>\.chef\accepted_licenses`):
+        1. `%HOME%` - typically not defined in Windows.
+        1. `%HOMEDRIVE%:%HOMEPATH%` - typically `C:\Users\<username>` but may not exist if defined as an unavailable network mounted drive.
+        1. `%HOMESHARE%:%HOMEPATH%` - could refer to a shared drive.
+        1. `%USERPROFILE%` - typically `C:\Users\<username>`.
 
-> Question for legal: This means that users could accept product licenses as the `root` user on a system (development
-> or production) and have accepted the license for all users on the system. Is this the desired behavior? Potentially
-> helps companies automate license acceptance because they can pre-seed all the license acceptance for shared developer
-> environments by accepting it initially as the root user. But does that violate our requirements?
-
-#### Windows License File Persistence
-
-Windows does not have the exact concept of a `root` user. Instead, users are granted permissions by belonging to
-elevated group, commonly called `Administrator`. License marker files are stored relative to what Chef sees as a user's
-home directory. The home directory is resolved by looking up the following environment variables and selecting the
-first one that is a valid path:
-
-1. `%HOME%` - typically not defined in Windows
-1. `%HOMEDRIVE%:%HOMEPATH%` - typically `C:\Users\<username>` but may not exist if defined as an unavailable network mounted drive
-1. `%HOMESHARE%:%HOMEPATH%` - could refer to a shared drive
-1. `%USERPROFILE%` - typically `C:\Users\<username>`
-
-Based on this logic license marker files will typically be stored to `C:\Users\<username>\.chef\accepted_licenses\`.
-
-> If we follow the hab model, we would also read from `C:\chef\accepted_licenses`. Do we want to do that?
+When reading the license file non-`Administrator`/`root` users will look in the `Administrator`/`root` location if it is
+not found in their default location. This pattern has the side effect that users could accept licenses as the
+`Administrator`/`root` user on a system to ensure the license is present for all users on the system.
 
 ### Habitat client tools
 
 The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in Rust
 it cannot leverage a shared library but has the same functionality and UI. The `hab` binary stores its license file in a
-different location than all the other software in the Chef Software ecosystem:
+different location than other software in the Chef Software ecosystem:
 
 * On *nix:
-    * For non-root users: `~/.hab/accepted_licenses/`
-    * For the root user: `/hab/accepted_licenses/`
-* On Windows: `C:\Users\<username>\.hab\accepted_licenses\`
+    * If the user is root: `/hab/accepted_licenses/`
+    * If the user is non-root: `~/.hab/accepted_licenses/`
+* On Windows:
+    * If the user is Administrator: `C:\hab\accepted_licenses\`
+    * If the user is not Administrator: `C:\Users\<username>\.hab\accepted_licenses\`
+
+Similar to the Chef license locations, non-`Administrator`/`root` users will look in the `Administrator`/`root` location
+if it is not found in their default location.
 
 The only licenses stored here will be for the Habitat products (`hab`, Habitat Builder, etc.).
-
-> TODO - where do the habitat Windows files get written?
 
 Client products (Chef Client, InSpec, etc.) that have a license acceptance flow will _not_ try and expose that flow via
 `hab pkg install`. For these tools Habitat operates much like a package manager. The license acceptance flow will be
@@ -178,14 +168,8 @@ there are less opportunities to inject a license acceptance flow. License failur
 by seeing the service fail to start, which is not an ideal UX. We therefore try to have the user accept the license
 when they try to *manage* the service.
 
-> Legal question:
-> Do we want to have a service lock that causes the service start to fail if the management tool has not been ran?
-> Without a lock, we avoid failure conditions users may not be expecting. But is this okay if they somehow avoid
-> running the management tool?
-> Users upgrading are required to run `chef-server-ctl reconfigure` to trigger data migrations, but there is nothing
-> technical today that *requires* them to do this. Their service simply won't work correctly. My understanding is that
-> customers do run this command on an upgrade because we tell them to do that. Is going through this 'standard flow'
-> enough enforcement?
+There is a small chance that users could skirt the license check by not using the management tools (IE, configuring and
+starting the services manually) but this is not a supported flow so we are not worried about it.
 
 There are two broad types of server side tools we manage - omnibus packaged tools and hab managed tools.
 
@@ -226,8 +210,9 @@ $ hab svc load chef/chef-server --bind=database:mysql.default
 $ echo 'mlsa.accept = true' | hab config apply chef-server.default 1
 ```
 
-Setting `mlsa.accept = true` on the service accepts the license and allows the service to start. Multiple products
-could be set by applying that config to each service group in habitat.
+Setting `mlsa.accept = true` on the service accepts the license and allows the service to start. Multiple products could
+be set by applying that config to each service group in habitat. Alternatively this config can be set in a `user.toml`
+and uploaded with `hab config apply`.
 
 We will make some changes to the existing MLSA package:
 
@@ -259,21 +244,58 @@ section.
 
 ## Remote Management Tools
 
-Chef Software produces a variety of products that manage remote systems (Test Kitchen, `knife bootstrap`, etc.). These tools will be updated to copy any local license acceptance markers to the remote systems they manage. If a user has accepted the Chef Client license and uses `knife bootstrap` to bootstrap a remote node, the acceptance will be copied to that remote node. This prevents `knife bootstrap` from failing to run Chef Client because of a missing license.
+Chef Software produces a variety of products that manage remote systems (Test Kitchen, `knife bootstrap`, `chef run`,
+etc.). These tools will be updated to copy any local licenses to the remote systems they manage. For example, if a user
+has accepted the Chef Client license and uses `knife bootstrap` to bootstrap a remote node, the acceptance will be
+copied to that remote node. This prevents `knife bootstrap` from failing to run Chef Client because of a missing
+license.
 
-They will also allow accepting the license as part of remote management configuration.
+Remote management tools will also allow license acceptance as part of remote management configuration. Let us assume the
+user has accepted the license for Test Kitchen but not for Chef Client. If they use Test Kitchen to converge a remote
+node then Test Kitchen will take the user through the interactive license accept flow for the Chef Client license. Once
+accepted it will be stored locally and copied to the remote machine.
 
-> https://www.terraform.io/docs/provisioners/habitat.html
-> Need to look into the Habitat Terraform provisioner. That installs any Habitat package (like chef-client) using
-> Habitat. Our customers are using that to bake images and we need a way for them to accept the chef license as part
-> of that. Would they use the `hab license accept` tool? Or would we have them include a `chef-client --accept-license`
-> and `inspec --accept-license` to their terraform definition? That seems less than ideal.
+Users will also be able to customize the tool to automatically accept the license instead of prompting. To continue the
+Test Kitchen example we will add an optional configuration option. Users could populate their `kitchen.yml` with:
+
+```yaml
+provisioner:
+  name: chef_zero
+  accept_license: true
+```
+
+That will automatically accept the Chef Client license locally and send it to all subsequent machines it converges.
+Because it will have accepted it locally for the current user it does not need to always be in the configuration.
 
 ### Terraform Habitat Provisioner
 
-> in terraform config
-> read from local files for workstation based deploys
-> read from environment variable for Repo+CI based deploys?
+The [Terraform Habitat Provisioner](https://www.terraform.io/docs/provisioners/habitat.html) covers a wide variety of licenses to potentially be accepted. Users only need to install Terraform but install habitat and any habitat packages on remote systems. Licenses for both habitat and any installed packages need to be accepted locally. This can be done in the following ways:
+
+1. In the Terraform config:
+```
+resource "aws_instance" "redis" {
+  count = 3
+
+  provisioner "habitat" {
+    peer = "${aws_instance.redis.0.private_ip}"
+    use_sudo = true
+    service_type = "systemd"
+    accept_license = ["habitat", "core/redis"]
+
+    service {
+      name = "core/redis"
+      topology = "leader"
+      user_toml = "${file("conf/redis.toml")}"
+    }
+  }
+}
+```
+1. If there are the required licenses present locally they will automatically be copied over to the remote machine.
+1. License acceptance can be ready from an environment variable to support CI workflows. EG, `ENV[TERRAFORM_HABITAT_LICENSE_ACCEPT]="habitat,core/redis"`
+
+Accepting the license as part of the Terraform config would attempt to persist the license locally so it would not need
+to be accepted in subsequent runs. The license could be seeded locally using the [Bulk License Acceptance
+Tools](#bulk-license-acceptance-tools) so they are present before attempting to use the Terraform Habitat Provisioner.
 
 ## Upgrade Guidance for Customers
 
