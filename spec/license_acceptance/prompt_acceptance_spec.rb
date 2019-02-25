@@ -6,7 +6,7 @@ require "tty-prompt"
 RSpec.describe LicenseAcceptance::PromptAcceptance do
   let(:klass) { LicenseAcceptance::PromptAcceptance }
   let(:prompt) { instance_double(TTY::Prompt) }
-  let(:p1) { instance_double(LicenseAcceptance::Product, pretty_name: "chef") }
+  let(:p1) { instance_double(LicenseAcceptance::Product, pretty_name: "Pretty Name") }
   let(:missing_licenses) { [p1] }
   let(:output) { StringIO.new }
 
@@ -27,7 +27,7 @@ RSpec.describe LicenseAcceptance::PromptAcceptance do
     end
 
     describe "when there are multiple products" do
-      let(:p2) { instance_double(LicenseAcceptance::Product, pretty_name: "inspec") }
+      let(:p2) { instance_double(LicenseAcceptance::Product, pretty_name: "Other") }
       let(:missing_licenses) { [p1, p2] }
       it "returns true" do
         expect(prompt).to receive(:ask).and_return("yes")
