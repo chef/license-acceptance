@@ -5,7 +5,7 @@ RSpec.describe LicenseAcceptance::ProductSet do
   let(:klass) { LicenseAcceptance::ProductSet }
 
   it "returns a known product" do
-    expect(klass["chef"]).to be_an_instance_of(LicenseAcceptance::Product)
+    expect(klass["chef_client"]).to be_an_instance_of(LicenseAcceptance::Product)
   end
 
   it "raises an UnknownProduct error when the product cannot be found" do

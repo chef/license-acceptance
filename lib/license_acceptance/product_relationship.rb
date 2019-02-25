@@ -3,7 +3,7 @@ require "license_acceptance/product_set"
 module LicenseAcceptance
   class ProductRelationship
 
-    CHEF = ProductSet["chef"]
+    CHEF = ProductSet["chef_client"]
     INSPEC = ProductSet["inspec"]
     KNOWN_RELATIONSHIPS = {
       CHEF => [INSPEC],

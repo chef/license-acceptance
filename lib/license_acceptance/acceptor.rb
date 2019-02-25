@@ -6,9 +6,8 @@ require "license_acceptance/prompt_acceptance"
 module LicenseAcceptance
   class Acceptor
 
-    # For applications that just need simple logic to handle a failed license
-    # acceptance flow we include this small wrapper. Apps with more complex logic
-    # (like logging to a  logging engine) should call the non-bang version and
+    # For applications that just need simple logic to handle a failed license acceptance flow we include this small
+    # wrapper. Apps with more complex logic (like logging to a logging engine) should call the non-bang version and
     # handle the exception.
     def self.check_and_persist!(product_name, version, output=$stdout)
       check_and_persist(product_name, version, output)
@@ -32,8 +31,8 @@ module LicenseAcceptance
           FileAcceptance.persist(product_relationship, missing_licenses)
         end
         return true
-      # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask
-      # for the new children
+      # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask for
+      # the new children
       # TODO what if they are not running in a TTY?
       elsif PromptAcceptance.request(missing_licenses, output) do
           FileAcceptance.persist(product_relationship, missing_licenses)

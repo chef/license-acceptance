@@ -6,7 +6,7 @@ require "license_acceptance/product"
 RSpec.describe LicenseAcceptance::FileAcceptance do
   let(:klass) { LicenseAcceptance::FileAcceptance }
   let(:license_dir) { File.join(ENV['HOME'], '.chef', 'accepted_licenses') }
-  let(:p1_name) { "chef" }
+  let(:p1_name) { "chef_client" }
   let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name) }
   let(:version) { "0.1.0" }
   let(:product_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: p1, children: [], parent_version: version) }

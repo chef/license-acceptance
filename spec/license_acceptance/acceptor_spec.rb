@@ -7,7 +7,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
   end
 
   let(:klass) { LicenseAcceptance::Acceptor }
-  let(:product) { "chef" }
+  let(:product) { "chef_client" }
   let(:version) { "version" }
   let(:relationship) { instance_double(LicenseAcceptance::ProductRelationship) }
   let(:p1) { instance_double(LicenseAcceptance::Product) }

@@ -9,8 +9,8 @@ RSpec.describe LicenseAcceptance::ProductRelationship do
 
   describe "::lookup" do
     it "returns a ProductRelationship instance successfully" do
-      expect(klass.lookup('chef', version)).to be_an_instance_of(klass) do |instance|
-        expect(instance.parent_product).to eq('chef')
+      expect(klass.lookup('chef_client', version)).to be_an_instance_of(klass) do |instance|
+        expect(instance.parent_product).to eq('chef_client')
         expect(instance.children).to_not be_empty
         expect(instance.version).to eq(version)
       end
@@ -30,7 +30,7 @@ RSpec.describe LicenseAcceptance::ProductRelationship do
 
     describe "when called with an invalid parent version type" do
       it "raises an ProductVersionTypeError error" do
-        expect { klass.lookup('chef', 1) }.to raise_error(LicenseAcceptance::ProductVersionTypeError)
+        expect { klass.lookup('chef_client', 1) }.to raise_error(LicenseAcceptance::ProductVersionTypeError)
       end
     end
   end

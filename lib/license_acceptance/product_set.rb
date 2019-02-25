@@ -5,7 +5,7 @@ module LicenseAcceptance
 
     # The set of unique products, keyed by the product name for quick lookup
     PRODUCT_SET = {
-      "chef" => Product.new("chef", "Chef"),
+      "chef_client" => Product.new("chef_client", "Chef Client"),
       "inspec" => Product.new("inspec", "InSpec")
     }
 
