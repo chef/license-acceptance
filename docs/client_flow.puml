@@ -1,0 +1,20 @@
+@startuml "client"
+(*) --> "Executable ran"
+
+if "All license files exist?" then
+  -->[true] (*)
+else
+  ->[false] "Check for command line flag"
+  if "Flag passed?" then
+    -->[true] "Persist acceptance"
+  else
+    ->[false] "Prompt user for license acceptance"
+    if "Prompt accepted?" then
+      -->[true] "Persist acceptance"
+    else
+      --> "Close executable"
+    endif
+  endif
+endif
+"Persist acceptance" --> (*)
+@enduml
