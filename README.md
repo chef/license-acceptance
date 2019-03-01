@@ -350,6 +350,11 @@ We will produce a cookbook (or modify an existing one) that allows users to acce
 Client 15. When applied and converged on their fleet it will create the license persistence markers. The upgrade to Chef
 Client 15 should then be seamless and not fail due to missing licenses.
 
+### Chef Ingredient cookbook
+
+Knows how to install and manage omnibus packaged products.
+> Is this the same as the section above?
+
 ### Other Environments
 
 There are bound to be other paths users follow to package, deploy and configure chef products. We will update these
