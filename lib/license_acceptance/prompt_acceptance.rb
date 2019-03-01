@@ -1,13 +1,23 @@
 require 'tty-prompt'
 require 'pastel'
+require "license_acceptance/logger"
 
 module LicenseAcceptance
   class PromptAcceptance
+    include Logger
+
+    attr_reader :output
+
+    def initialize(config)
+      @output = config.output
+    end
+
     WIDTH = 50.freeze
     PASTEL = Pastel.new
     BORDER = "+---------------------------------------------+".freeze
 
-    def self.request(missing_licenses, output, &accepted_callback)
+    def request(missing_licenses, &accepted_callback)
+      logger.debug("Requesting a license for #{missing_licenses.map(&:name)}")
       c = missing_licenses.size
       s = c > 1 ? "s": ""
       yes = PASTEL.green.bold("yes")
@@ -50,7 +60,8 @@ module LicenseAcceptance
 
     private
 
-    def self.ask(output, c, s, check, accepted_callback)
+    def ask(output, c, s, check, accepted_callback)
+      logger.debug("Attempting to request interactive prompt on TTY")
       prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
 
       answer = prompt.ask("$") do |q|

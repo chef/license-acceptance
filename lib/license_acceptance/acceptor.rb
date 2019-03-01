@@ -1,3 +1,7 @@
+require "forwardable"
+require "license_acceptance/config"
+require "license_acceptance/logger"
+require "license_acceptance/product_reader"
 require "license_acceptance/product_relationship"
 require "license_acceptance/file_acceptance"
 require "license_acceptance/arg_acceptance"
@@ -5,42 +9,73 @@ require "license_acceptance/prompt_acceptance"
 
 module LicenseAcceptance
   class Acceptor
+    extend Forwardable
+    include Logger
+
+    attr_reader :config, :product_reader, :file_acceptance, :arg_acceptance, :prompt_acceptance
+
+    def initialize(opts={})
+      @config = Config.new(opts)
+      Logger.initialize(config.logger)
+      @product_reader = ProductReader.new
+      @file_acceptance = FileAcceptance.new(config)
+      @arg_acceptance = ArgAcceptance.new
+      @prompt_acceptance = PromptAcceptance.new(config)
+    end
+
+    def_delegator :@config, :output
 
     # For applications that just need simple logic to handle a failed license acceptance flow we include this small
     # wrapper. Apps with more complex logic (like logging to a logging engine) should call the non-bang version and
     # handle the exception.
-    def self.check_and_persist!(product_name, version, output=$stdout)
-      check_and_persist(product_name, version, output)
+    def check_and_persist!(product_name, version)
+      check_and_persist(product_name, version)
     rescue LicenseNotAcceptedError
       output.puts "#{product_name} cannot execute without accepting the license"
       exit 172
     end
 
-    def self.check_and_persist(product_name, version, output=STDOUT)
+    def check_and_persist(product_name, version)
       # flag for test environments to set - not for use by consumers
-      return true if ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] == 'true'
+      if ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] == 'true'
+        logger.debug("ACCEPT_CHEF_LICENSE_NO_PERSIST provided")
+        return true
+      end
 
-      product_relationship = ProductRelationship.lookup(product_name, version)
-      missing_licenses = FileAcceptance.check(product_relationship)
+      product_reader.read
+      product_relationship = product_reader.lookup(product_name, version)
+
+      missing_licenses = file_acceptance.check(product_relationship)
 
       # They have already accepted all licenses and stored their acceptance in the persistent files
-      return true if missing_licenses.empty?
+      if missing_licenses.empty?
+        logger.debug("All licenses present")
+        return true
+      end
 
       # They passed the --accept-license flag on the command line
-      if ArgAcceptance.check(ARGV) do
-          FileAcceptance.persist(product_relationship, missing_licenses)
+      if arg_acceptance.check(ARGV) do
+          file_acceptance.persist(product_relationship, missing_licenses)
         end
         return true
       # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask for
       # the new children
       # TODO what if they are not running in a TTY?
-      elsif PromptAcceptance.request(missing_licenses, output) do
-          FileAcceptance.persist(product_relationship, missing_licenses)
+      elsif prompt_acceptance.request(missing_licenses) do
+          file_acceptance.persist(product_relationship, missing_licenses)
         end
         return true
       else
         raise LicenseNotAcceptedError.new(missing_licenses)
       end
+    end
+
+    def self.check_and_persist!(product_name, version, opts={})
+      new(opts).check_and_persist!(product_name, version)
+    end
+
+    def self.check_and_persist(product_name, version, opts={})
+      new(opts).check_and_persist(product_name, version)
     end
 
   end
