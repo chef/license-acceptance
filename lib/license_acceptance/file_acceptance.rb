@@ -2,61 +2,68 @@ require 'date'
 require 'yaml'
 require 'fileutils'
 require 'etc'
+require "license_acceptance/logger"
 
 module LicenseAcceptance
   class FileAcceptance
+    include Logger
 
-    # TODO pull these from Chef (the workstation config loader maybe?)
-    POSSIBLE_LOCATIONS = [
-      File.join(ENV['HOME'], '.chef', 'accepted_licenses'),
-      "/etc/chef/accepted_licenses",
-    ].freeze
+    attr_reader :config
+
+    def initialize(config)
+      @config = config
+    end
+
     INVOCATION_TIME = DateTime.now.freeze
 
     # For all the given products in the product set, search all possible locations for the
     # license acceptance files.
-    def self.check(product_relationship)
+    def check(product_relationship)
       searching = [product_relationship.parent] + product_relationship.children
       missing_licenses = searching.clone
+      logger.debug("Searching for the following licenses: #{missing_licenses.map(&:name)}")
 
       searching.each do |product|
         found = false
-        POSSIBLE_LOCATIONS.each do |loc|
+        config.license_locations.each do |loc|
           f = File.join(loc, product.name)
           if File.exist?(f)
             found = true
+            logger.debug("Found license #{product.name} at #{f}")
             missing_licenses.delete(product)
             break
           end
         end
         break if missing_licenses.empty?
       end
+      logger.debug("Missing licenses remaining: #{missing_licenses.map(&:name)}")
       missing_licenses
     end
 
-    # TODO how do we know when to set it in /etc and when in ENV['HOME'] ?
-    def self.persist(product_relationship, missing_licenses)
+    def persist(product_relationship, missing_licenses)
       parent = product_relationship.parent
       parent_version = product_relationship.parent_version
-      to_persist = [parent] + product_relationship.children
+      root_dir = config.persist_location
+
       if missing_licenses.include?(parent)
-        persist_license(POSSIBLE_LOCATIONS[0], parent.name, parent, parent_version)
+        persist_license(root_dir, parent.name, parent, parent_version)
       end
       product_relationship.children.each do |child|
         if missing_licenses.include?(child)
-          persist_license(POSSIBLE_LOCATIONS[0], child.name, parent, parent_version)
+          persist_license(root_dir, child.name, parent, parent_version)
         end
       end
     end
 
     private
 
-    def self.persist_license(folder_path, name, parent, parent_version)
+    def persist_license(folder_path, name, parent, parent_version)
       if !Dir.exist?(folder_path)
         FileUtils.mkdir_p(folder_path)
       end
       path = File.join(folder_path, name)
 
+      logger.info("Persisting a license for #{name} at path #{path}")
       # TODO do we care if there is an existing file?
       File.open(path, "w") do |license_file|
         contents = {

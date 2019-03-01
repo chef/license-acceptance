@@ -1,7 +1,7 @@
 module LicenseAcceptance
   class ArgAcceptance
 
-    def self.check(argv, &block)
+    def check(argv, &block)
       if argv.include?("--accept-license")
         block.call
         return true

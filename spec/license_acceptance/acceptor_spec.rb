@@ -6,7 +6,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
     expect(LicenseAcceptance::VERSION).not_to be nil
   end
 
-  let(:klass) { LicenseAcceptance::Acceptor }
+  let(:output) { StringIO.new }
+  let(:opts) { { output: output } }
+  let(:acc) { LicenseAcceptance::Acceptor.new(opts) }
   let(:product) { "chef_client" }
   let(:version) { "version" }
   let(:relationship) { instance_double(LicenseAcceptance::ProductRelationship) }
@@ -16,21 +18,25 @@ RSpec.describe LicenseAcceptance::Acceptor do
   describe "#check_and_persist!" do
     let(:err) { LicenseAcceptance::LicenseNotAcceptedError.new([product]) }
     it "outputs an error message to stdout and exits when license acceptance is declined" do
-      expect(klass).to receive(:check_and_persist).and_raise(err)
-      expect { klass.check_and_persist!(product, version) }.to output(/#{product}/).to_stdout.and raise_error(SystemExit)
-    end
-
-    describe "when output is not stdout" do
-      let(:out) { StringIO.new }
-      it "outputs an error message and exits when license acceptance is declined" do
-        expect(klass).to receive(:check_and_persist).and_raise(err)
-        expect { klass.check_and_persist!(product, version, out) }.to raise_error(SystemExit)
-        expect(out.string).to match(/#{product}/)
-      end
+      expect(acc).to receive(:check_and_persist).and_raise(err)
+      expect { acc.check_and_persist!(product, version) }.to raise_error(SystemExit)
+      expect(output.string).to match(/#{product}/)
     end
   end
 
   describe "#check_and_persist" do
+    let(:reader) { instance_double(LicenseAcceptance::ProductReader) }
+    let(:file_acc) { instance_double(LicenseAcceptance::FileAcceptance) }
+    let(:arg_acc) { instance_double(LicenseAcceptance::ArgAcceptance) }
+    let(:prompt_acc) { instance_double(LicenseAcceptance::PromptAcceptance) }
+
+    before do
+      expect(LicenseAcceptance::ProductReader).to receive(:new).and_return(reader)
+      expect(LicenseAcceptance::FileAcceptance).to receive(:new).and_return(file_acc)
+      expect(LicenseAcceptance::ArgAcceptance).to receive(:new).and_return(arg_acc)
+      expect(LicenseAcceptance::PromptAcceptance).to receive(:new).and_return(prompt_acc)
+    end
+
     describe "when test environment variable is set" do
       before do
         ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] = 'true'
@@ -41,59 +47,50 @@ RSpec.describe LicenseAcceptance::Acceptor do
       end
 
       it "returns true" do
-        expect(LicenseAcceptance::ProductRelationship).to_not receive(:lookup)
-        expect(LicenseAcceptance::FileAcceptance).to_not receive(:check)
-        expect(LicenseAcceptance::ArgAcceptance).to_not receive(:check)
-        expect(LicenseAcceptance::FileAcceptance).to_not receive(:persist)
-        expect(LicenseAcceptance::PromptAcceptance).to_not receive(:request)
-        expect(klass.check_and_persist(product, version)).to eq(true)
+        expect(acc.check_and_persist(product, version)).to eq(true)
       end
     end
 
     describe "when there are no missing licenses" do
       it "returns true" do
-        expect(LicenseAcceptance::ProductRelationship).to receive(:lookup).with(product, version)
-          .and_return(relationship)
-        expect(LicenseAcceptance::FileAcceptance).to receive(:check).with(relationship).and_return([])
-        expect(LicenseAcceptance::ArgAcceptance).to_not receive(:check)
-        expect(LicenseAcceptance::FileAcceptance).to_not receive(:persist)
-        expect(LicenseAcceptance::PromptAcceptance).to_not receive(:request)
-        expect(klass.check_and_persist(product, version)).to eq(true)
+        expect(reader).to receive(:read)
+        expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+        expect(file_acc).to receive(:check).with(relationship).and_return([])
+        expect(acc.check_and_persist(product, version)).to eq(true)
       end
     end
 
     describe "when the user accepts as an arg" do
       it "returns true" do
-        expect(LicenseAcceptance::ProductRelationship).to receive(:lookup).with(product, version)
-          .and_return(relationship)
-        expect(LicenseAcceptance::FileAcceptance).to receive(:check).with(relationship).and_return(missing)
-        expect(LicenseAcceptance::ArgAcceptance).to receive(:check).with(ARGV).and_yield.and_return(true)
-        expect(LicenseAcceptance::FileAcceptance).to receive(:persist).with(relationship, missing)
-        expect(LicenseAcceptance::PromptAcceptance).to_not receive(:request)
-        expect(klass.check_and_persist(product, version)).to eq(true)
+        expect(reader).to receive(:read)
+        expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+        expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+        expect(arg_acc).to receive(:check).with(ARGV).and_yield.and_return(true)
+        expect(file_acc).to receive(:persist).with(relationship, missing)
+        expect(acc.check_and_persist(product, version)).to eq(true)
       end
     end
 
     describe "when the user accepts with the prompt" do
       it "returns true" do
-        expect(LicenseAcceptance::ProductRelationship).to receive(:lookup).with(product, version)
-          .and_return(relationship)
-        expect(LicenseAcceptance::FileAcceptance).to receive(:check).with(relationship).and_return(missing)
-        expect(LicenseAcceptance::ArgAcceptance).to receive(:check).and_return(false)
-        expect(LicenseAcceptance::PromptAcceptance).to receive(:request).with(missing, STDOUT).and_yield.and_return(true)
-        expect(LicenseAcceptance::FileAcceptance).to receive(:persist).with(relationship, missing)
-        expect(klass.check_and_persist(product, version)).to eq(true)
+        expect(reader).to receive(:read)
+        expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+        expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+        expect(arg_acc).to receive(:check).with(ARGV).and_return(false)
+        expect(prompt_acc).to receive(:request).with(missing).and_yield.and_return(true)
+        expect(file_acc).to receive(:persist).with(relationship, missing)
+        expect(acc.check_and_persist(product, version)).to eq(true)
       end
     end
 
-    describe "when the user accepts with the prompt" do
+    describe "when the user declines with the prompt" do
       it "returns true" do
-        expect(LicenseAcceptance::ProductRelationship).to receive(:lookup).with(product, version)
-          .and_return(relationship)
-        expect(LicenseAcceptance::FileAcceptance).to receive(:check).with(relationship).and_return(missing)
-        expect(LicenseAcceptance::ArgAcceptance).to receive(:check).and_return(false)
-        expect(LicenseAcceptance::PromptAcceptance).to receive(:request).with(missing, STDOUT).and_return(false)
-        expect { klass.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
+        expect(reader).to receive(:read)
+        expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+        expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+        expect(arg_acc).to receive(:check).with(ARGV).and_return(false)
+        expect(prompt_acc).to receive(:request).with(missing).and_return(false)
+        expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
       end
     end
 
