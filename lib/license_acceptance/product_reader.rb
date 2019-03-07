@@ -12,19 +12,22 @@ module LicenseAcceptance
     # products and product relationships
     def read
       logger.debug("Reading products and relationships...")
-      chef = Product.new("chef_client", "Chef Client")
+      chef_client = Product.new("chef_client", "Chef Client")
       inspec = Product.new("inspec", "InSpec")
       chef_server = Product.new("chef_server", "Chef Server")
+      supermarket = Product.new("supermarket", "Supermarket")
       # The set of unique products, keyed by the product name for quick lookup
      self.products = {
-        chef.name => chef,
+        chef_client.name => chef_client,
         inspec.name => inspec,
-        chef_server.name => chef_server
+        chef_server.name => chef_server,
+	      supermarket.name => supermarket,
       }
       self.relationships = {
-        chef => [inspec],
+        chef_client => [inspec],
         inspec => [],
         chef_server => [],
+        supermarket => [],
       }
       logger.debug("Successfully read products and relationships")
     end
