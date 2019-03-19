@@ -1,0 +1,22 @@
+title = "All known products that require license acceptance, and the mapping of parent to child relationships"
+
+[[products]]
+name = "chef-client"
+pretty_name = "Chef Client"
+hab_pkg_id = "chef/chef-client"
+filename = "chef_client"
+
+[[products]]
+name = "inspec"
+pretty_name = "InSpec"
+hab_pkg_id = "chef/inspec"
+filename = "inspec"
+
+[[products]]
+name = "supermarket"
+pretty_name = "Supermarket"
+hab_pkg_id = "chefops/supermarket"
+filename = "supermarket"
+
+[relationships]
+"chef-client" = ["inspec"]

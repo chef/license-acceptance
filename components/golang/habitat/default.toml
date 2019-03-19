@@ -1,0 +1,4 @@
+[chef_license]
+accept = "undefined"
+# persist_path = "foo"
+# read_paths = ["/foo", "/bar"]
