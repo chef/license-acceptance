@@ -28,8 +28,13 @@ type ProductInfo struct {
 }
 
 func ReadProductInfo() *ProductInfo {
+	location, set := os.LookupEnv("CHEF_LICENSE_PRODUCT_INFO")
+	if set == false {
+		location = "../../product_info.toml"
+	}
+
 	var info ProductInfo
-	if _, err := toml.DecodeFile("../../product_info.toml", &info); err != nil {
+	if _, err := toml.DecodeFile(location, &info); err != nil {
 		fmt.Println("Could not read product information")
 		os.Exit(172)
 	}

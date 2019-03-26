@@ -17,13 +17,19 @@ type configWrapper struct {
 // Configuration TODO
 type Configuration struct {
 	ReadPaths []string `toml:"read_paths"`
-  PersistPath string `toml:"persist_path"`
+	PersistPath string `toml:"persist_path"`
+	Persist bool
 }
 
 // LoadConfig TODO
 func LoadConfig() Configuration {
-	var cw configWrapper
-	if _, err := toml.DecodeFile("./config/development.toml", &cw); err != nil {
+	location, set := os.LookupEnv("CHEF_LICENSE_CONFIG")
+	if set == false {
+		location = "./config/development.toml"
+	}
+	// We default Persist to true because the zero value of boolean is false
+	cw := configWrapper{Config: Configuration{Persist: true}}
+	if _, err := toml.DecodeFile(location, &cw); err != nil {
 		fmt.Println("Could not load config file")
 		os.Exit(172)
 	}

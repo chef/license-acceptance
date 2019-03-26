@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args) != 4 {
-		fmt.Println("3 required arguments: 'accept', habitat package id and habitat package version")
+		fmt.Println("3 required arguments: 'accept', habitat package id, habitat package version")
 		os.Exit(172)
 	}
 

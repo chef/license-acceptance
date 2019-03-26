@@ -28,5 +28,9 @@ do_build() {
 
 do_install() {
   install -m 0755 "${SRC_PATH}/bin/chef-license" "${pkg_prefix}/bin"
-  # fix_interpreter "${pkg_prefix}/bin/accept" core/busybox-static bin/env
+}
+
+do_setup_environment() {
+  set_runtime_env CHEF_LICENSE_CONFIG "./config/config.toml"
+  set_runtime_env CHEF_LICENSE_PRODUCT_INFO "./config/product_info.toml"
 }
