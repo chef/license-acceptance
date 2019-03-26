@@ -1,3 +1,4 @@
+require "tomlrb"
 require "license_acceptance/logger"
 require "license_acceptance/product"
 require "license_acceptance/product_relationship"
@@ -8,28 +9,39 @@ module LicenseAcceptance
 
     attr_accessor :products, :relationships
 
-    # TODO - Eventually this data will be read from a config file in this repo. Provides 1 source of truth for all
-    # products and product relationships
     def read
       logger.debug("Reading products and relationships...")
-      chef_client = Product.new("chef_client", "Chef Client")
-      inspec = Product.new("inspec", "InSpec")
-      chef_server = Product.new("chef_server", "Chef Server")
-      supermarket = Product.new("supermarket", "Supermarket")
-      # The set of unique products, keyed by the product name for quick lookup
-     self.products = {
-        chef_client.name => chef_client,
-        inspec.name => inspec,
-        chef_server.name => chef_server,
-	      supermarket.name => supermarket,
-      }
-      self.relationships = {
-        chef_client => [inspec],
-        inspec => [],
-        chef_server => [],
-        supermarket => [],
-      }
+      location = get_location
+      self.products = {}
+      self.relationships = {}
+
+      toml = Tomlrb.load_file(location, symbolize_keys: false)
+      raise InvalidProductInfo.new(location) if toml.empty? || toml["products"].nil? || toml["relationships"].nil?
+
+      for product in toml["products"]
+        products[product["name"]] = Product.new(product["name"], product["pretty_name"], product["filename"])
+      end
+
+      for parent_name, children in toml["relationships"]
+        parent = products[parent_name]
+        raise UnknownParent.new(parent_name) if parent.nil?
+        children.map! do |child_name|
+          child = products[child_name]
+          raise UnknownChild.new(child_name) if child.nil?
+          child
+        end
+        relationships[parent] = children
+      end
+
       logger.debug("Successfully read products and relationships")
+    end
+
+    def get_location
+      location = "../../../config/product_info.toml"
+      if ENV["CHEF_LICENSE_PRODUCT_INFO"]
+        location = ENV["CHEF_LICENSE_PRODUCT_INFO"]
+      end
+      File.absolute_path(File.join(__FILE__, location))
     end
 
     def lookup(parent_name, parent_version)
@@ -51,6 +63,27 @@ module LicenseAcceptance
   class UnknownProduct < RuntimeError
     def initialize(product)
       msg = "Unknown product '#{product}' - this represents a developer error"
+      super(msg)
+    end
+  end
+
+  class InvalidProductInfo < RuntimeError
+    def initialize(path)
+      msg = "Product info at path #{path} is invalid. Must list Products and relationships."
+      super(msg)
+    end
+  end
+
+  class UnknownParent < RuntimeError
+    def initialize(product)
+      msg = "Could not find product #{product} from relationship parents"
+      super(msg)
+    end
+  end
+
+  class UnknownChild < RuntimeError
+    def initialize(product)
+      msg = "Could not find product #{product} from relationship children"
       super(msg)
     end
   end

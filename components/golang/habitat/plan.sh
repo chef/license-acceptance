@@ -9,6 +9,7 @@ pkg_bin_dirs=(bin)
 
 pkg_build_deps=(
   core/go
+  core/git
 )
 
 # pkg_scaffolding=core/scaffolding-go
@@ -22,11 +23,10 @@ pkg_build_deps=(
 # )
 
 do_build() {
-  $(pkg_path_for core/go)/bin/go get -u golang.org/x/vgo
-  $(pkg_path_for core/go)/bin/vgo build -o bin/accept ./pkg/accept.go
+  $(pkg_path_for core/go)/bin/go build -o bin/chef-license ./*.go
 }
 
 do_install() {
-  install -m 0755 "${SRC_PATH}/bin/helloworld" "${pkg_prefix}/bin"
+  install -m 0755 "${SRC_PATH}/bin/chef-license" "${pkg_prefix}/bin"
   # fix_interpreter "${pkg_prefix}/bin/accept" core/busybox-static bin/env
 }

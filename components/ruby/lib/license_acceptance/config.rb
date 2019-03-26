@@ -3,7 +3,7 @@ require 'tty-platform'
 
 module LicenseAcceptance
   class Config
-    attr_accessor :output, :logger, :license_locations, :persist_location
+    attr_accessor :output, :logger, :license_locations, :persist_location, :persist
 
     def initialize(opts={})
       @output = opts.fetch(:output, $stdout)
@@ -12,6 +12,7 @@ module LicenseAcceptance
       @license_locations = opts.fetch(:license_locations, default_license_locations)
       @license_locations = [ @license_locations ].flatten
       @persist_location = opts.fetch(:persist_location, default_persist_location)
+      @persist = opts.fetch(:persist, true)
     end
 
     private
@@ -50,7 +51,7 @@ module LicenseAcceptance
       end
       l
     end
-
+    
     def default_persist_location
       license_locations[-1]
     end

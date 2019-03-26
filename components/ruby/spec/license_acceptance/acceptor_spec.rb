@@ -39,11 +39,11 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
     describe "when test environment variable is set" do
       before do
-        ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] = 'true'
+        ENV['CHEF_LICENSE_NO_PERSIST'] = 'accept'
       end
 
       after do
-        ENV.delete('ACCEPT_CHEF_LICENSE_NO_PERSIST')
+        ENV.delete('CHEF_LICENSE_NO_PERSIST')
       end
 
       it "returns true" do
@@ -69,6 +69,18 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(file_acc).to receive(:persist).with(relationship, missing)
         expect(acc.check_and_persist(product, version)).to eq(true)
       end
+
+      describe "when persist is set to false" do
+        let(:opts) { { output: output, persist: false } }
+
+        it "returns true" do
+          expect(reader).to receive(:read)
+          expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+          expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+          expect(arg_acc).to receive(:check).with(ARGV).and_yield.and_return(true)
+          expect(acc.check_and_persist(product, version)).to eq(true)
+        end
+      end
     end
 
     describe "when the user accepts with the prompt" do
@@ -80,6 +92,19 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(prompt_acc).to receive(:request).with(missing).and_yield.and_return(true)
         expect(file_acc).to receive(:persist).with(relationship, missing)
         expect(acc.check_and_persist(product, version)).to eq(true)
+      end
+
+      describe "when persist is set to false" do
+        let(:opts) { { output: output, persist: false } }
+
+        it "returns true" do
+          expect(reader).to receive(:read)
+          expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+          expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+          expect(arg_acc).to receive(:check).with(ARGV).and_return(false)
+          expect(prompt_acc).to receive(:request).with(missing).and_yield.and_return(true)
+          expect(acc.check_and_persist(product, version)).to eq(true)
+        end
       end
     end
 

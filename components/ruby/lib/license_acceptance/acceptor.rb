@@ -37,8 +37,8 @@ module LicenseAcceptance
 
     def check_and_persist(product_name, version)
       # flag for test environments to set - not for use by consumers
-      if ENV['ACCEPT_CHEF_LICENSE_NO_PERSIST'] == 'true'
-        logger.debug("ACCEPT_CHEF_LICENSE_NO_PERSIST provided")
+      if ENV['CHEF_LICENSE_NO_PERSIST'] && ENV['CHEF_LICENSE_NO_PERSIST'].downcase == 'accept'
+        logger.debug("CHEF_LICENSE_NO_PERSIST accepted")
         return true
       end
 
@@ -55,14 +55,14 @@ module LicenseAcceptance
 
       # They passed the --accept-license flag on the command line
       if arg_acceptance.check(ARGV) do
-          file_acceptance.persist(product_relationship, missing_licenses)
+          file_acceptance.persist(product_relationship, missing_licenses) if config.persist
         end
         return true
       # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask for
       # the new children
       # TODO what if they are not running in a TTY?
       elsif prompt_acceptance.request(missing_licenses) do
-          file_acceptance.persist(product_relationship, missing_licenses)
+          file_acceptance.persist(product_relationship, missing_licenses) if config.persist
         end
         return true
       else

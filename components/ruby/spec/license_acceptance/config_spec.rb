@@ -15,13 +15,16 @@ RSpec.describe LicenseAcceptance::Config do
     let(:output) { StringIO.new }
     let(:logger) { "logger" }
     let(:license_locations) { [] }
-    let(:opts) { { output: output, logger: logger, license_locations: license_locations } }
+    let(:persist_location) { "foo" }
+    let(:persist) { false }
+    let(:opts) { { output: output, logger: logger, license_locations: license_locations, persist_location: persist_location, persist: persist } }
 
     it "loads correctly" do
       expect(config.output).to eq(output)
       expect(config.logger).to eq(logger)
       expect(config.license_locations).to eq(license_locations)
-      expect(config.persist_location).to eq(nil)
+      expect(config.persist_location).to eq("foo")
+      expect(config.persist).to eq(false)
     end
   end
 

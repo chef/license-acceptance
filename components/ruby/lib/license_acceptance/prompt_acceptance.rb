@@ -39,6 +39,7 @@ module LicenseAcceptance
       EOM
 
       if ask(output, c, s, check, accepted_callback)
+        output.puts BORDER
         return true
       end
 
@@ -78,7 +79,6 @@ module LicenseAcceptance
         accepted_callback.call
         output.puts <<~EOM
         #{check} #{c} product license#{s} accepted.
-        #{BORDER}
 
         EOM
         return true
