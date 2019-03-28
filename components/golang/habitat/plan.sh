@@ -31,6 +31,6 @@ do_install() {
 }
 
 do_setup_environment() {
-  set_runtime_env CHEF_LICENSE_CONFIG "./config/config.toml"
-  set_runtime_env CHEF_LICENSE_PRODUCT_INFO "./config/product_info.toml"
+  set_runtime_env CHEF_LICENSE_CONFIG "${SRC_PATH}/config/config.toml"
+  set_runtime_env CHEF_LICENSE_PRODUCT_INFO "${SRC_PATH}/config/product_info.toml"
 }

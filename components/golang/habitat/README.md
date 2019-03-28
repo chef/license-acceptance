@@ -18,15 +18,22 @@ pkg_deps=(
 )
 ```
 
-### Your Configuration
+### default.toml
 ```toml
 [chef_license]
-acceptance = "accept"
+acceptance = "undefined"
 ```
 
 ### run hook
 ```sh
 #!/bin/sh
+set -e
 # Call the script to fail the service if the user has not accepted the license
 {{pkgPathFor "chef/license-acceptance"}}/bin/chef-license {{cfg.chef_license.acceptance}} {{pkg.origin}}/{{pkg.name}} {{pkg.version}}
+```
+
+### Your Configuration
+```toml
+[chef_license]
+acceptance = "accept"
 ```

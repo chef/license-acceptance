@@ -38,7 +38,7 @@ func main() {
 		}
 		if len(missingLicenses) > 0 {
 			s := ""
-      if len(missingLicenses) > 1 {
+			if len(missingLicenses) > 1 {
 				s = "s"
 			}
 			header := `+---------------------------------------------+
@@ -50,18 +50,18 @@ https://www.chef.io/distribution-agreement
 
 License%s that need accepting:`
 
-
 			var msg strings.Builder
 			fmt.Fprintf(&msg, header, len(missingLicenses), s, s)
 
-			for _, l := range(missingLicenses) {
+			for _, l := range missingLicenses {
 				fmt.Fprintf(&msg, "\n  * %s", l.HabPkgID)
 			}
 
 			fmt.Fprint(&msg, "\n\n")
 			footer := `If you do not accept this license you will
 not be able to use Chef products.
-+---------------------------------------------+`
++---------------------------------------------+
+`
 			fmt.Fprint(&msg, footer)
 
 			fmt.Print(msg.String())

@@ -10,10 +10,10 @@ import (
 )
 
 type Product struct {
-	Name string
+	Name       string
 	PrettyName string `toml:"pretty_name"`
-	HabPkgID string `toml:"hab_pkg_id"`
-	Filename string
+	HabPkgID   string `toml:"hab_pkg_id"`
+	Filename   string
 }
 
 type ProductSet []Product
@@ -21,10 +21,10 @@ type ProductSet []Product
 type Relationships map[string]([]string)
 
 type ProductInfo struct {
-	Products ProductSet
-	Relationships Relationships
+	Products       ProductSet
+	Relationships  Relationships
 	ProductByHabID map[string]Product
-	ProductByName map[string]Product
+	ProductByName  map[string]Product
 }
 
 func ReadProductInfo() *ProductInfo {
@@ -40,7 +40,10 @@ func ReadProductInfo() *ProductInfo {
 	}
 	info.ProductByHabID = make(map[string]Product, 0)
 	info.ProductByName = make(map[string]Product, 0)
-	for _, product := range(info.Products) {
+	for _, product := range info.Products {
+		if product.HabPkgID == "" {
+			continue
+		}
 		info.ProductByHabID[product.HabPkgID] = product
 		info.ProductByName[product.Name] = product
 	}
@@ -57,7 +60,7 @@ func (info *ProductInfo) RequiredProductLicenses(habPkgID string) []Product {
 	required = append(required, firstProduct)
 	childrenNames, ok := info.Relationships[firstProduct.Name]
 	if ok {
-		for _, childName := range(childrenNames) {
+		for _, childName := range childrenNames {
 			child, ok := info.ProductByName[childName]
 			if !ok {
 				fmt.Printf("Defined relationship from %s to %s in product_info.toml but child does not exist\n", firstProduct.Name, childName)
@@ -66,12 +69,12 @@ func (info *ProductInfo) RequiredProductLicenses(habPkgID string) []Product {
 			required = append(required, child)
 		}
 	}
-  return required
+	return required
 }
 
 func HasAcceptedLicense(config Configuration, product Product) bool {
 	searchPaths := config.ReadPaths
-	for _, path := range(searchPaths) {
+	for _, path := range searchPaths {
 		if _, err := os.Stat(filepath.Join(path, product.Filename)); err == nil {
 			return true
 		}
@@ -93,12 +96,12 @@ func AttemptPersistLicense(config Configuration, product Product, t time.Time, a
 
 	formattedTime := t.Format(time.RFC3339)
 	out := "---\n" +
-	"name: %s\n" +
-	"date_accepted: '%s'\n" +
-	"accepting_product: %s\n" +
-	"accepting_product_version: %s\n" +
-	"user: %s\n" +
-	"file_format: 1"
+		"name: %s\n" +
+		"date_accepted: '%s'\n" +
+		"accepting_product: %s\n" +
+		"accepting_product_version: %s\n" +
+		"user: %s\n" +
+		"file_format: 1"
 	out = fmt.Sprintf(out, product.Name, formattedTime, acceptingProductName, acceptingProductVersion, username)
 
 	f.Write([]byte(out))
