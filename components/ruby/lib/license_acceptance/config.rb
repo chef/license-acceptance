@@ -51,7 +51,7 @@ module LicenseAcceptance
       end
       l
     end
-    
+
     def default_persist_location
       license_locations[-1]
     end

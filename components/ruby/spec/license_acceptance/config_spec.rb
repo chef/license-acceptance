@@ -1,4 +1,5 @@
 require "spec_helper"
+require "climate_control"
 require "license_acceptance/config"
 require "license_acceptance/product_relationship"
 
@@ -9,6 +10,26 @@ RSpec.describe LicenseAcceptance::Config do
 
   it "loads correctly with default values" do
     config
+  end
+
+  describe "when user is pid 0" do
+    it "returns the root path" do
+      expect(Process).to receive(:uid).twice.and_return(0)
+      config
+      expect(config.license_locations).to eq(["/etc/chef/accepted_licenses"])
+      expect(config.persist_location).to eq("/etc/chef/accepted_licenses")
+    end
+  end
+
+  describe "when user is not pid 0" do
+    it "returns the home path" do
+      ClimateControl.modify HOME: "/user/foo" do
+        expect(Process).to receive(:uid).twice.and_return(1000)
+        config
+        expect(config.license_locations).to eq(["/etc/chef/accepted_licenses", "/user/foo/.chef/accepted_licenses"])
+        expect(config.persist_location).to eq("/user/foo/.chef/accepted_licenses")
+      end
+    end
   end
 
   describe "with overwritten values" do

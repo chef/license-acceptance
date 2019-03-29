@@ -1,4 +1,5 @@
 require "spec_helper"
+require "climate_control"
 require "license_acceptance/acceptor"
 
 RSpec.describe LicenseAcceptance::Acceptor do
@@ -38,16 +39,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
     end
 
     describe "when test environment variable is set" do
-      before do
-        ENV['CHEF_LICENSE_NO_PERSIST'] = 'accept'
-      end
-
-      after do
-        ENV.delete('CHEF_LICENSE_NO_PERSIST')
-      end
-
       it "returns true" do
-        expect(acc.check_and_persist(product, version)).to eq(true)
+        ClimateControl.modify CHEF_LICENSE_NO_PERSIST: "accept" do
+          expect(acc.check_and_persist(product, version)).to eq(true)
+        end
       end
     end
 
