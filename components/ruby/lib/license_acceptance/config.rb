@@ -8,7 +8,6 @@ module LicenseAcceptance
     def initialize(opts={})
       @output = opts.fetch(:output, $stdout)
       @logger = opts.fetch(:logger, ::Logger.new(IO::NULL))
-      # TODO Windows paths, and different logic based on root/Administrator user
       @license_locations = opts.fetch(:license_locations, default_license_locations)
       @license_locations = [ @license_locations ].flatten
       @persist_location = opts.fetch(:persist_location, default_persist_location)

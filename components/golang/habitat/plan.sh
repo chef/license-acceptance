@@ -12,16 +12,6 @@ pkg_build_deps=(
   core/git
 )
 
-# pkg_scaffolding=core/scaffolding-go
-# scaffolding_go_base_path=github.com/chef
-# scaffolding_go_repo_name=a2
-# scaffolding_go_import_path="${scaffolding_go_base_path}/${scaffolding_go_repo_name}/components/${pkg_name}"
-# scaffolding_go_build_tags=(netgo)
-# scaffolding_go_binary_list=(
-#   "${scaffolding_go_import_path}/cmd/${pkg_name}"
-#   "${scaffolding_go_import_path}/cmd/inspec_runner"
-# )
-
 do_build() {
   $(pkg_path_for core/go)/bin/go build -o bin/chef-license ./*.go
 }
