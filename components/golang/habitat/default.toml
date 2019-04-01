@@ -1,0 +1,7 @@
+[chef_license]
+acceptance = "undefined"
+# acceptance = "accept"
+# acceptance = "decline"
+# persist_path = "foo"
+# read_paths = ["/foo", "/bar"]
+# persist = true

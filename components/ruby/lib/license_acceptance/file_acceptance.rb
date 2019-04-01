@@ -26,10 +26,10 @@ module LicenseAcceptance
       searching.each do |product|
         found = false
         config.license_locations.each do |loc|
-          f = File.join(loc, product.name)
+          f = File.join(loc, product.filename)
           if File.exist?(f)
             found = true
-            logger.debug("Found license #{product.name} at #{f}")
+            logger.debug("Found license #{product.filename} at #{f}")
             missing_licenses.delete(product)
             break
           end
@@ -46,28 +46,28 @@ module LicenseAcceptance
       root_dir = config.persist_location
 
       if missing_licenses.include?(parent)
-        persist_license(root_dir, parent.name, parent, parent_version)
+        persist_license(root_dir, parent, parent, parent_version)
       end
       product_relationship.children.each do |child|
         if missing_licenses.include?(child)
-          persist_license(root_dir, child.name, parent, parent_version)
+          persist_license(root_dir, child, parent, parent_version)
         end
       end
     end
 
     private
 
-    def persist_license(folder_path, name, parent, parent_version)
+    def persist_license(folder_path, product, parent, parent_version)
       if !Dir.exist?(folder_path)
         FileUtils.mkdir_p(folder_path)
       end
-      path = File.join(folder_path, name)
+      path = File.join(folder_path, product.filename)
 
-      logger.info("Persisting a license for #{name} at path #{path}")
+      logger.info("Persisting a license for #{product.name} at path #{path}")
       # TODO do we care if there is an existing file?
       File.open(path, "w") do |license_file|
         contents = {
-          name: name,
+          name: product.name,
           date_accepted: INVOCATION_TIME.iso8601,
           accepting_product: parent.name,
           accepting_product_version: parent_version,

@@ -1,4 +1,5 @@
 require "spec_helper"
+require "climate_control"
 require "license_acceptance/config"
 require "license_acceptance/product_relationship"
 
@@ -15,13 +16,16 @@ RSpec.describe LicenseAcceptance::Config do
     let(:output) { StringIO.new }
     let(:logger) { "logger" }
     let(:license_locations) { [] }
-    let(:opts) { { output: output, logger: logger, license_locations: license_locations } }
+    let(:persist_location) { "foo" }
+    let(:persist) { false }
+    let(:opts) { { output: output, logger: logger, license_locations: license_locations, persist_location: persist_location, persist: persist } }
 
     it "loads correctly" do
       expect(config.output).to eq(output)
       expect(config.logger).to eq(logger)
       expect(config.license_locations).to eq(license_locations)
-      expect(config.persist_location).to eq(nil)
+      expect(config.persist_location).to eq("foo")
+      expect(config.persist).to eq(false)
     end
   end
 
@@ -40,9 +44,10 @@ RSpec.describe LicenseAcceptance::Config do
         let(:uid) { 0 }
 
         it "returns the default value" do
-          stub_const("ENV", {"HOMEDRIVE" => "C:"})
-          expect(config.license_locations).to eq(["C:/chef/accepted_licenses/"])
-          expect(config.persist_location).to eq("C:/chef/accepted_licenses/")
+          ClimateControl.modify HOMEDRIVE: "C:" do
+            expect(config.license_locations).to eq(["C:/chef/accepted_licenses/"])
+            expect(config.persist_location).to eq("C:/chef/accepted_licenses/")
+          end
         end
       end
 
@@ -50,29 +55,25 @@ RSpec.describe LicenseAcceptance::Config do
         let(:uid) { 1000 }
 
         it "returns the default USERPROFILE value" do
-          stub_const("ENV", {
-            "HOMEDRIVE" => "C:",
-            "USERPROFILE" => "C:/Users/foo"
-          })
-          expect(Dir).to receive(:exist?).with("C:/Users/foo").and_return(true)
-          expect(config.license_locations).to eq([
-            "C:/chef/accepted_licenses/",
-            "C:/Users/foo/.chef/accepted_licenses/"
-          ])
-          expect(config.persist_location).to eq("C:/Users/foo/.chef/accepted_licenses/")
+          ClimateControl.modify HOMEDRIVE: "C:", USERPROFILE: "C:/Users/foo", HOME: nil do
+            expect(Dir).to receive(:exist?).with("C:/Users/foo").and_return(true)
+            expect(config.license_locations).to eq([
+              "C:/chef/accepted_licenses/",
+              "C:/Users/foo/.chef/accepted_licenses/"
+            ])
+            expect(config.persist_location).to eq("C:/Users/foo/.chef/accepted_licenses/")
+          end
         end
 
         it "returns the default HOMEDRIVE + HOMEPATH value" do
-          stub_const("ENV", {
-            "HOMEDRIVE" => "C:",
-            "HOMEPATH" => "/Users/bar"
-          })
-          expect(Dir).to receive(:exist?).with("C:/Users/bar").and_return(true)
-          expect(config.license_locations).to eq([
-            "C:/chef/accepted_licenses/",
-            "C:/Users/bar/.chef/accepted_licenses/"
-          ])
-          expect(config.persist_location).to eq("C:/Users/bar/.chef/accepted_licenses/")
+          ClimateControl.modify HOMEDRIVE: "C:", USERPROFILE: "C:/Users/bar", HOME: nil do
+            expect(Dir).to receive(:exist?).with("C:/Users/bar").and_return(true)
+            expect(config.license_locations).to eq([
+              "C:/chef/accepted_licenses/",
+              "C:/Users/bar/.chef/accepted_licenses/"
+            ])
+            expect(config.persist_location).to eq("C:/Users/bar/.chef/accepted_licenses/")
+          end
         end
       end
 
@@ -96,12 +97,13 @@ RSpec.describe LicenseAcceptance::Config do
         let(:uid) { 1000 }
 
         it "returns the default user value" do
-          stub_const("ENV", { "HOME" => "/Users/foo" })
-          expect(config.license_locations).to eq([
-            "/etc/chef/accepted_licenses/",
-            "/Users/foo/.chef/accepted_licenses/"
-          ])
-          expect(config.persist_location).to eq("/Users/foo/.chef/accepted_licenses/")
+          ClimateControl.modify HOME: "/Users/foo" do
+            expect(config.license_locations).to eq([
+              "/etc/chef/accepted_licenses/",
+              "/Users/foo/.chef/accepted_licenses/"
+            ])
+            expect(config.persist_location).to eq("/Users/foo/.chef/accepted_licenses/")
+          end
         end
       end
 

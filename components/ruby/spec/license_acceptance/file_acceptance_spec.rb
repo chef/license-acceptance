@@ -13,22 +13,23 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
   end
   let(:acc) { LicenseAcceptance::FileAcceptance.new(config) }
   let(:p1_name) { "chef_client" }
-  let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name) }
+  let(:p1_filename) { "p1_filename" }
+  let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name, filename: p1_filename) }
   let(:version) { "0.1.0" }
   let(:product_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: p1, children: [], parent_version: version) }
 
   describe "#check" do
     describe "when there is an existing license file" do
       it "returns an empty missing product list" do
-        expect(File).to receive(:exist?).with(File.join(dir1, p1_name)).and_return(true)
+        expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(true)
         expect(acc.check(product_relationship)).to eq([])
       end
     end
 
     describe "when there is not an existing license file" do
       it "returns the product in the missing product list" do
-        expect(File).to receive(:exist?).with(File.join(dir1, p1_name)).and_return(false)
-        expect(File).to receive(:exist?).with(File.join(dir2, p1_name)).and_return(false)
+        expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(false)
+        expect(File).to receive(:exist?).with(File.join(dir2, p1_filename)).and_return(false)
         expect(acc.check(product_relationship)).to eq([p1])
       end
     end
@@ -41,7 +42,7 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
       end
 
       it "stores a single license without children" do
-        expect(File).to receive(:open).with(File.join(dir3, p1_name), "w").and_yield(file)
+        expect(File).to receive(:open).with(File.join(dir3, p1_filename), "w").and_yield(file)
         expect(file).to receive(:<<) do |yaml|
           yaml = YAML.load(yaml)
           expect(yaml["name"]).to eq(p1_name)
@@ -53,7 +54,8 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
 
       describe "when license has children" do
         let(:p2_name) { "inspec" }
-        let(:p2) { instance_double(LicenseAcceptance::Product, name: p2_name) }
+        let(:p2_filename) { "p2_filename" }
+        let(:p2) { instance_double(LicenseAcceptance::Product, name: p2_name, filename: p2_filename) }
         let(:product_relationship) {
           instance_double(
             LicenseAcceptance::ProductRelationship,
@@ -64,14 +66,14 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
         }
 
         it "stores a license file for all" do
-          expect(File).to receive(:open).with(File.join(dir3, p1_name), "w").and_yield(file)
+          expect(File).to receive(:open).with(File.join(dir3, p1_filename), "w").and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
             expect(yaml["name"]).to eq(p1_name)
             expect(yaml["accepting_product"]).to eq(p1_name)
             expect(yaml["accepting_product_version"]).to eq(version)
           end
-          expect(File).to receive(:open).with(File.join(dir3, p2_name), "w").and_yield(file)
+          expect(File).to receive(:open).with(File.join(dir3, p2_filename), "w").and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
             expect(yaml["name"]).to eq(p2_name)
@@ -83,7 +85,7 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
 
         describe "when parent is already persisted" do
           it "only stores a license file for the child" do
-            expect(File).to receive(:open).once.with(File.join(dir3, p2_name), "w").and_yield(file)
+            expect(File).to receive(:open).once.with(File.join(dir3, p2_filename), "w").and_yield(file)
             expect(file).to receive(:<<) do |yaml|
               yaml = YAML.load(yaml)
               expect(yaml["name"]).to eq(p2_name)
