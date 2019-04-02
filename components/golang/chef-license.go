@@ -20,7 +20,7 @@ func main() {
 	config := LoadConfig()
 	productInfo := ReadProductInfo()
 
-	if acceptance == "accept" {
+	if acceptance == "accept" && config.Persist == true {
 		// attempt to write persistence - do not fail if we cannot
 		requiredLicenses := productInfo.RequiredProductLicenses(habPkgID)
 		acceptingProduct := requiredLicenses[0]
@@ -38,7 +38,7 @@ func main() {
 				"+---------------------------------------------+\n"
 			fmt.Printf(out, numPersisted, s)
 		}
-	} else {
+	} else if acceptance != "accept" {
 		// Attempt to read from existing marker files
 		missingLicenses := make([]Product, 0)
 		requiredLicenses := productInfo.RequiredProductLicenses(habPkgID)
