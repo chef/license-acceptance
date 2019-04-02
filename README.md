@@ -1,6 +1,14 @@
 # Chef License Acceptance Flow
 
-> TODO: Table of contents and introduction
+This repo consists of a few parts:
+
+1. A specification for the acceptance of the new [Chef EULA](https://www.chef.io/end-user-license-agreement/)
+    1. The [Trademark](https://www.chef.io/trademark-policy/) page contains useful information, especially for users who
+       have questions about building an open source fork of Chef Software products.
+1. A Ruby library used for accepting the license
+1. A Golang library intended to be used by a Habitat package for accepting the license
+
+> All items in a quote block are pending TODOs that we will solve.
 
 # Specification
 
@@ -9,37 +17,40 @@
       product and make some effort to accept the license. That could take the form of an interactive prompt on the
       command line, a web page in a browser that requires a user to click an 'accept' button, writing a confirmation
       flag into a config file, passing a confirmation flag on the command line or something else.
-    * There is no organization-level acceptance, only user-level acceptance.
+    * There is no organization-level acceptance, only user-level acceptance. Users in an organization who accept the
+      license accept it for the entire organization.
 1. Multiple products can be accepted in a single license acceptance flow.
-1. If the license is not accepted the product will exit with code 172
-    * This is a randomly chosen number that enables tools like CI to handle license failures with specific behavior.
-1. If a tool is ran on a system that has accepted licenses and it installs a product onto a remote system, the set
-   of existing license acceptances should be transfered to the remote system. If the remote system needs to accept
-   new product licenses it should prompt for that acceptance on the originating system.
-    * For example, users install the ChefDK and accept the license for ChefDK, Test Kitchen, InSpec, etc. If the user
-      runs `knife bootstrap` against a remote system then the licenses from the originating machine
-      should be copied to the bootstrapped machine. This prevents having to accept those licenses on the new machine.
-    * Tools only copy across licenses for the products being installed on the remote system. For example, a developer
-      has accepted the Chef Client and InSpec licenses on their workstation. When they use `knife bootstrap` to install
-      Chef Client on a remote system only the Chef Client license would be copied over, not the InSpec license.
-    * If a local tool installs a new product on the remote machine that does not have a local license persisted it
-      should prompt the user to accept the new license on the local machine. For example, imagine a user has accepted
-      the license for Test Kitchen locally but no other licenses. The user creates a remote machine with Test Kitchen
+1. If the license is not accepted the product will exit with code `172`.
+    * This is a randomly chosen number that enables CI tools to handle license failures with specific behavior.
+1. If a local product has accepted licenses and it installs a product onto a remote machine, the set of existing accepted
+   licenses should be transfered to the remote machine. If the remote machine needs to accept new product licenses it
+   should prompt for that acceptance on the local machine.
+    * For example, users install the ChefDK and accept the license for ChefDK, Chef Client, InSpec, etc. If the user
+      runs `knife bootstrap` against a remote machine then the licenses from the local machine will be copied to the
+      bootstrapped machine. This prevents having to accept those licenses on the new machine.
+    * Local products only copy across licenses for the products being installed on the remote machine. For example, a
+      developer has accepted the ChefDK and Chef Client licenses on their workstation. When they use `knife bootstrap`
+      to install Chef Client on a remote machine only the Chef Client license would be copied over, not the ChefDK
+      license.
+    * If a local product installs a new product on the remote machine that does not have a local license the local
+      product will prompt the user to accept the new license on the local machine. For example, imagine a user has
+      accepted the license for Inspec locally but no other licenses. The user creates a remote machine with Test Kitchen
       and installs Chef Client on the remote machine. Before trying to run Chef Client on the remote machine Test
-      Kitchen should take the user through a license acceptance flow locally, persist the accepted Chef Client license
-      and transfer it to the remote machine. This license should be persisted and used for all future Chef Client
-      runs, locally or remotely. Non acceptance should fail the Test Kitchen converge.
-1. The products will persist the license acceptance so users are not required to accept the license on every use.
+      Kitchen should take the user through a license acceptance flow locally, persist the accepted Chef Client license,
+      and transfer it to the remote machine. This license should be persisted and used for all future Chef Client runs,
+      locally or remotely. Non acceptance should fail the Test Kitchen converge.
+1. Chef products will persist the license acceptance so users are not required to accept the license on every use.
     * Note: The products will *attempt* to persist this information but some product usage (EG, on ephemeral machines)
-      cannot be persisted.
-1. New product installs will need to have their license accepted.
+      cannot be persisted. Non-persistance will not cause the product to fail, but it does mean users would need to
+      accept the license on next product usage.
+1. New product component installs will need to have their license accepted.
     * Example: a user is running A2 and has accepted the A2 license. Then the user installs the Workflow product into
       their existing A2 installation. Before they can use that Workflow product they need to accept the license for it.
-    * If the install a new feature that is not considered a new 'product', they would not need to accept a license
-      for that.
-1. This is a new license that will be released sometime in 2019. Existing Chef users will need to accept this license
-   to upgrade to any product released after that time frame. Existing product releases will be bound by existing
-   licenses (EG, users can continue to use Chef 14 without accepting the new license).
+    * If the install a new component that is not considered a new 'product', they would not need to accept a license for
+      that.
+1. The license content is available at https://www.chef.io/end-user-license-agreement/. Existing Chef users will need to
+   accept this license to upgrade to any product released after this license goes into effect. Existing product releases
+   will be bound by existing licenses (EG, users can continue to use Chef Client 14 without accepting the new license).
 1. Chef Software will provide tools and guidance on how to accept this license ahead of upgrading products so customers
    can avoid outages and pain that could result from upgrading and being denied usage without understanding why.
 
@@ -47,75 +58,48 @@
 <!---
 https://www.tablesgenerator.com/markdown_tables#
 -->
-| Client Tools     | Server Tools          | Remote Management Tools        |
+| Client Products  | Server Products       | Remote Management Products     |
 |------------------|-----------------------|--------------------------------|
-| Chef Client      | Automate 2            | Test Kitchen                   |
-| Chef Workstation | Chef Backend          | Knife                          |
-| ChefDK           | Chef Server           | Terraform Habitat Provisioner  |
+| Chef Client      | Automate 2            | Knife                          |
+| Chef Workstation | Chef Backend          | Terraform Habitat Provisioner  |
+| ChefDK           | Chef Server           |                                |
 | Habitat binary   | Habitat Build Service |                                |
 | InSpec           | Habitat Supervisor    |                                |
 | Push Jobs Client | Push Jobs Server      |                                |
 |                  | Supermarket           |                                |
 
-In addition the following tools/products embed other products:
+In addition the following products embed other products:
 
 * kitchen-inspec -> inspec
 * chef-client -> audit-cookbook -> inspec
 * A2 -> chef-client -> audit-cookbook -> inspec
 * > ...
 
-These top level tools will need to present the license for both the top level tool and all embedded tools for user
-acceptance.
+These top level products will need to present the license for both the top level product and all embedded products for
+user acceptance.
 
-## Client Tools
+## Client Products
 
-### Ruby Client Tools
+Client products are ones installed and ran by users. This is in contrast to server products which are installed and ran
+by automation and/or supervisors.
 
-Ruby based client-side tools can all be updated to match this specification by incorporating a shared library. This
-library will be loaded by command line executables (EG, `chef-client`, `knife`, `inspec`, etc.) and used to enforce a
-a common UX for license acceptance.
+### Ruby Client Products
+
+Ruby based client products can all be updated to match this specification by incorporating a shared library. This
+library will be loaded by command line executables (EG, `chef-client`, `knife`, `inspec`, etc.) and used to enforce a a
+common UX for license acceptance.
 
 ![](docs/client.png)
 
-The above diagram illustrates the UX flow of client side Ruby tools.
+The above diagram illustrates the UX flow of client side Ruby products.
 
-For developers to consume this library, add the following lines to your executable's startup:
-
-```ruby
-require 'license_acceptance/acceptor'
-LicenseAcceptance::Acceptor.check_and_persist!('inspec', Inspec::VERSION)
-```
-
-This method performs the license acceptance flow documented below. If the user declines or cannot accept the license
-for some reason it prints a simple message to stdout and exits with code 172. If a developer wishes to customize
-this behavior they can instead add the following:
-
-```ruby
-require 'license_acceptance/acceptor'
-begin
-  LicenseAcceptance::Acceptor.check_and_persist('inspec', Inspec::VERSION)
-rescue LicenseAcceptance::LicenseNotAcceptedError
-  # Client specific implementation of how to handle the missing license
-  # Could be logging to stdout or a log file then existing, but is up
-  # to the client to handle appropriately
-  puts "InSpec cannot execute without accepting the license"
-  exit 172
-end
-```
-
-The library also includes a helper to add a command line flag that customers can pass:
-
-```ruby
-require "license_acceptance/cli_flags/mixlib_cli"
-...
-include LicenseAcceptance::CLIFlags::MixlibCLI
-```
-
-The standard exit code of 172 is there to allow automated systems to detect a license acceptance failure and deal with
+The standard exit code of 172 is there to allow automated machines to detect a license acceptance failure and deal with
 it appropriately. Developers who consume this library can handle the exit logic differently but we recommend exiting 172
 to keep a consistent experience among all Chef Software products.
 
-#### License File Persistence
+See the [Ruby README](./components/ruby/README.md) for developer notes on consuming this library.
+
+### License File Persistence
 
 If the user accepts the license a marker file is deposited at `#{ENV[HOME]}/.chef/accepted_licenses/`. These marker
 files prevents the user from getting prompted for license acceptance on subsequent runs. Currently we write some
@@ -124,22 +108,23 @@ the file matters. It can be completely empty. We hypothesize that the metadata m
 
 When writing the license marker file different locations are used for different users:
 
-* On *nix systems
+* On *nix OS
     * If the user is root: `/etc/chef/accepted_licenses/`
     * If the user is non-root: `#{ENV[HOME]}/.chef/accepted_licenses/`
-* On Windows systems
+* On Windows OS
     * If the user is Administrator: `%HOMEDRIVE%:\chef\accepted_licenses` (typically `C:\chef\accepted_licenses\`)
     * If the user is not Administrator try the following root paths and use the first found (typically `C:\Users\<username>\.chef\accepted_licenses`):
         1. `%HOME%` - typically not defined in Windows.
-        1. `%HOMEDRIVE%:%HOMEPATH%` - typically `C:\Users\<username>` but may not exist if defined as an unavailable network mounted drive.
+        1. `%HOMEDRIVE%:%HOMEPATH%` - typically `C:\Users\<username>` but may not exist if defined as an unavailable
+           network mounted drive.
         1. `%HOMESHARE%:%HOMEPATH%` - could refer to a shared drive.
         1. `%USERPROFILE%` - typically `C:\Users\<username>`.
 
 When reading the license file non-`Administrator`/`root` users will look in the `Administrator`/`root` location if it is
 not found in their default location. This pattern has the side effect that users could accept licenses as the
-`Administrator`/`root` user on a system to ensure the license is present for all users on the system.
+`Administrator`/`root` user ensure the license is present for all users on the machine.
 
-### Habitat client tools
+### Habitat Client Croduct
 
 The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in Rust
 it cannot leverage a shared library but has the same functionality and UI. The `hab` binary stores its license file in a
@@ -158,30 +143,27 @@ if it is not found in their default location.
 The only licenses stored here will be for the Habitat products (`hab`, Habitat Builder, etc.).
 
 Client products (Chef Client, InSpec, etc.) that have a license acceptance flow will _not_ try and expose that flow via
-`hab pkg install`. For these tools Habitat operates much like a package manager. The license acceptance flow will be
-triggered when the user tries to use the product. This is different from server tools which will be covered below.
+`hab pkg install`. For these products Habitat operates much like a package manager. The license acceptance flow will be
+triggered when the user tries to use the product. This is different from server products which will be covered below.
 
-## Server Tools
+## Server Products
 
-Server tools are different from client tools in that users typically mange them with a process manager. Because of this
-there are less opportunities to inject a license acceptance flow. License failures may not be obvious to the user except
-by seeing the service fail to start, which is not an ideal UX. We therefore try to have the user accept the license
-when they try to *manage* the service.
+Server products are different from client products in that users typically mange them with a process manager. Because of
+this there are less opportunities to inject a license acceptance flow. License failures may not be obvious to the user
+except by seeing the service fail to start, which is not an ideal UX. We therefore try to have the user accept the
+license when they try to *manage* the service.
 
-There is a small chance that users could skirt the license check by not using the management tools (IE, configuring and
-starting the services manually) but this is not a supported flow so we are not worried about it.
+There are two broad types of server products we manage - omnibus packaged products and hab packaged/managed products.
 
-There are two broad types of server side tools we manage - omnibus packaged tools and hab managed tools.
-
-### Omnibus managed products
+### Omnibus Managed Products
 
 All our omnibus managed products use some form of the `omnibus-ctl` command to manage the installation. We will inject
-the license acceptance flow into these commands. All the products require some kind of configuration command to run
-before the product will start. That should prevent users from running the application in a meaningful way without
-encountering the license acceptance flow.
+the license acceptance flow into these commands. The configuration command is required to successfully run the product.
+This should prevent users from running the application in a meaningful way without encountering the license acceptance
+flow.
 
-The one difference from the client products is that the server products also contain a user managed service
-configuration file where the license can be accepted. The flow therefore is updated to:
+In addition to the supported configuration methods in the client flow the server can be configured with a custom
+`omnibus.rb` configuration file. The flow therefore is updated to:
 
 ![](docs/server.png)
 
@@ -195,68 +177,42 @@ acceptance flow.
 ### A2
 
 A2 currently has a command line tool to install and configure it, much like Omnibus packaged applications do. This tool
-will be updated to follow the same UX we use for those Omnibus tools. The license can be accepted during configuration
-and reconfiguration in the case they install a tool later that needs a license accepted.
+will be updated to follow the same UX we use for those Omnibus products. The license can be accepted during configuration;
+later the license can be accepted during reconfiguration for new components.
 
 ### Hab managed products
 
-Hab managed products will use a pattern pioneered by A2 called the [MLSA](https://github.com/chef/mlsa) (Master License
-Services Agreement). This is a package that, when included as a dependency, will prevent a service from running unless
-the user has set a configuration flag saying they accept the license agreement. This pattern requires no changes
-to Habitat. Usage would look similar to the following:
+Hab managed products will use a pattern similar to the one implemented in the [MLSA](https://github.com/chef/mlsa)
+project. This is a package that, when included as a dependency, will prevent a service from running unless the user has
+set a configuration flag saying they accept the license agreement. See the [enclosed
+README](./components/golang/habitat/README.md) for details on implementation.
 
-```
-$ hab svc load chef/chef-server --bind=database:mysql.default
-$ echo 'mlsa.accept = true' | hab config apply chef-server.default 1
-```
-
-Setting `mlsa.accept = true` on the service accepts the license and allows the service to start. Multiple products could
-be set by applying that config to each service group in habitat. Alternatively this config can be set in a `user.toml`
-and uploaded with `hab config apply`.
-
-We will make some changes to the existing MLSA package:
-
-1. The MLSA currently spins in a `sleep 5` loop if the license has not been accepted, outputting a log message every
-   time. We will change this logic to instead exit and output a message similar to the rest of our UX. It will tell
-   users where they can find information about how to accept the license.
-1. If the license is accepted the MLSA package will attempt to store the license marker file. If it cannot it logs a
-   message and proceeds.
-1. We will add more configuration to the package. This includes the ability to customize where license marker files will
-   attempt to be persisted, the option to not persist the license acceptance, etc.
-1. For services with a service lock the MLSA package will pass down configuration to that service so it can start
-   successfully.
-     * IE, if `chef/chef-server` has a service lock it cannot start unless service configuration is set showing the
-       license has been accepted. The MLSA package would pass the Habitat based license acceptance down into that
-       service.
-     * > This feature is TBD based on legal's input on whether we need a service lock (see above around omnibus managed
-       > services).
-
-These Habitat managed services will therefore not have an interactive prompt based flow like the client tools do. We
-feel this is acceptable because server tools are typically managed by a supervisor process instead of a user.
+These Habitat managed services will not have an interactive prompt based flow like the client products do. We feel this
+is acceptable because server products are typically managed by a supervisor process instead of a user.
 
 Habitat can run services in an ephimeral environment. In this case it is not possible to persist the license acceptance
 information anywhere. One option is to mount a persistent drive to store license marker files across all ephemeral
-environments but we do not recommend this. Instead we recommend whatever tools they use to manage deployment accept the
-license every time the service is started (EG, `hab license accept chef/chef-server && hab sup run chef/chef-server`).
+environments but we do not recommend this. Instead we recommend make their deployment tools accept the license every
+time the service is started (EG, `hab sup run chef/chef-server && hab config apply chef-server.default 1 accept.toml`).
 
 To accept multiple Habitat licenses at once see the [Bulk License Acceptance Tools](#bulk-license-acceptance-tools)
 section.
 
-## Remote Management Tools
+## Remote Management Products
 
-Chef Software produces a variety of products that manage remote systems (Test Kitchen, `knife bootstrap`, `chef run`,
-etc.). These tools will be updated to copy any local licenses to the remote systems they manage. For example, if a user
-has accepted the Chef Client license and uses `knife bootstrap` to bootstrap a remote node, the acceptance will be
+Chef Software produces a variety of products that manage remote machines (Test Kitchen, `knife bootstrap`, `chef run`,
+etc.). These products will be updated to copy any local licenses to the remote machines they manage. For example, if a
+user has accepted the Chef Client license and uses `knife bootstrap` to bootstrap a remote node, the acceptance will be
 copied to that remote node. This prevents `knife bootstrap` from failing to run Chef Client because of a missing
 license.
 
-Remote management tools will also allow license acceptance as part of remote management configuration. Let us assume the
-user has accepted the license for Test Kitchen but not for Chef Client. If they use Test Kitchen to converge a remote
-node then Test Kitchen will take the user through the interactive license accept flow for the Chef Client license. Once
-accepted it will be stored locally and copied to the remote machine.
+Remote management products will also allow license acceptance as part of remote management configuration. Let us assume
+the user is running Test Kitchen without accepting the license for Chef Client. If they use Test Kitchen to converge a
+remote node then Test Kitchen will take the user through the interactive license acceptance flow for the Chef Client
+license. Once accepted it will be stored locally and copied to the remote machine.
 
-Users will also be able to customize the tool to automatically accept the license instead of prompting. To continue the
-Test Kitchen example we will add an optional configuration option. Users could populate their `kitchen.yml` with:
+Users will also be able to customize the product to automatically accept the license instead of prompting. To continue
+the Test Kitchen example we will add an optional configuration option. Users could populate their `kitchen.yml` with:
 
 ```yaml
 provisioner:
@@ -269,7 +225,7 @@ Because it will have accepted it locally for the current user it does not need t
 
 ### Terraform Habitat Provisioner
 
-The [Terraform Habitat Provisioner](https://www.terraform.io/docs/provisioners/habitat.html) covers a wide variety of licenses to potentially be accepted. Users only need to install Terraform but install habitat and any habitat packages on remote systems. Licenses for both habitat and any installed packages need to be accepted locally. This can be done in the following ways:
+The [Terraform Habitat Provisioner](https://www.terraform.io/docs/provisioners/habitat.html) covers a wide variety of licenses to potentially be accepted. Users only need to install Terraform but install habitat and any habitat packages on remote machines. Licenses for both habitat and any installed packages need to be accepted locally. This can be done in the following ways:
 
 1. In the Terraform config:
 ```
@@ -290,11 +246,11 @@ resource "aws_instance" "redis" {
   }
 }
 ```
-1. If there are the required licenses present locally they will automatically be copied over to the remote machine.
-1. License acceptance can be ready from an environment variable to support CI workflows. EG, `ENV[TERRAFORM_HABITAT_LICENSE_ACCEPT]="habitat,core/redis"`
+1. If the required licenses are present locally they will automatically be copied over to the remote machine.
+1. License acceptance can be accepted as an environment variable to support CI workflows. EG, `ENV[TERRAFORM_HABITAT_LICENSE_ACCEPT]="habitat,core/redis"`
 
-Accepting the license as part of the Terraform config would attempt to persist the license locally so it would not need
-to be accepted in subsequent runs. The license could be seeded locally using the [Bulk License Acceptance
+Accepting the license as part of the Terraform config will attempt to persist the license locally so it would not need
+to be accepted in subsequent runs. The license can be seeded locally using the [Bulk License Acceptance
 Tools](#bulk-license-acceptance-tools) so they are present before attempting to use the Terraform Habitat Provisioner.
 
 ## Upgrade Guidance for Customers
@@ -323,9 +279,8 @@ licenses, etc. It can be used to accept licenses for multiple products. Examples
 
 ```
 chef license accept chef inspec
-chef license accept test-kitchen --prompt yes
 chef license accept chef-workstation --persist-location C:\mounted_dir\chef
-chef license list # List the licenses that can be accepted
+chef license list # List the licenses that have and can be accepted
 ```
 
 `hab license` will be used to accept the license for Habitat products as well as any Habitat packaged Chef products.
@@ -338,9 +293,7 @@ can also accept a license for running Habitat services. Examples:
 ```
 hab license accept # accepts the license for the hab binary only
 hab license accept chef/chef-server chef/push-jobs-server
-hab license accept chef/chef-server --prompt yes
-hab license accept chef/chef-server --prompt yes --persist no
-hab license list
+hab license list --read-paths /etc/hab/accepted_licenses/
 hab license list --running # Show running habitat services that have not accepted a license
 ```
 
