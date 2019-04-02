@@ -99,6 +99,14 @@ to keep a consistent experience among all Chef Software products.
 
 See the [Ruby README](./components/ruby/README.md) for developer notes on consuming this library.
 
+Users accept the license by passing one of the following options. The `no-persist` options means the license marker file
+will not attempt to be persisted to the filesystem:
+
+* `--chef-license accept`
+* `--chef-license accept-no-persist`
+* `ENV[CHEF_LICENSE]=accept`
+* `ENV[CHEF_LICENSE]=accept-no-persist`
+
 ### License File Persistence
 
 If the user accepts the license a marker file is deposited at `#{ENV[HOME]}/.chef/accepted_licenses/`. These marker

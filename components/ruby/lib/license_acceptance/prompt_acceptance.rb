@@ -65,7 +65,7 @@ module LicenseAcceptance
       logger.debug("Attempting to request interactive prompt on TTY")
       prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
 
-      answer = prompt.ask("$") do |q|
+      answer = prompt.ask(">") do |q|
         q.modify :down, :trim
         q.required true
         q.messages[:required?] = "You must enter 'yes' or 'no'"

@@ -48,6 +48,39 @@ RSpec.describe LicenseAcceptance::ProductReader do
       end
     end
 
+    describe "with a relationship of nil children" do
+      let(:toml) { {"products" => [p1], "relationships" => {"p1" => nil}} }
+
+      it "raises a NoChildRelationships error" do
+        expect(reader).to receive(:get_location).and_return(location)
+        expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+
+        expect { reader.read }.to raise_error(LicenseAcceptance::NoChildRelationships)
+      end
+    end
+
+    describe "with a relationship of empty children" do
+      let(:toml) { {"products" => [p1], "relationships" => {"p1" => []}} }
+
+      it "raises a NoChildRelationships error" do
+        expect(reader).to receive(:get_location).and_return(location)
+        expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+
+        expect { reader.read }.to raise_error(LicenseAcceptance::NoChildRelationships)
+      end
+    end
+
+    describe "with a relationship of non-array children" do
+      let(:toml) { {"products" => [p1], "relationships" => {"p1" => "p2"}} }
+
+      it "raises a NoChildRelationships error" do
+        expect(reader).to receive(:get_location).and_return(location)
+        expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+
+        expect { reader.read }.to raise_error(LicenseAcceptance::NoChildRelationships)
+      end
+    end
+
     describe "with an unknown child" do
       let(:toml) { {"products" => [p1, p2], "relationships" => {"p1" => ["p2", "p3"]}} }
 
@@ -81,13 +114,18 @@ RSpec.describe LicenseAcceptance::ProductReader do
       end
     end
 
-    describe "when called on a product with an unknown relationship" do
+    let(:nonya) { LicenseAcceptance::Product.new("nonya", "NonYa", "nofile") }
+    describe "when called on a product with no relationship" do
       before do
-        reader.products = { "nonya" => LicenseAcceptance::Product.new("nonya", "NonYa", "nofile") }
+        reader.products = { "nonya" => nonya }
       end
 
-      it "raises an NoLicense error" do
-        expect { reader.lookup('nonya', nil) }.to raise_error(LicenseAcceptance::NoLicense)
+      it "returns the product" do
+        expect(reader.lookup('nonya', version)).to be_an_instance_of(LicenseAcceptance::ProductRelationship) do |instance|
+          expect(instance.parent_product).to eq(nonya)
+          expect(instance.children).to eq([])
+          expect(instance.version).to eq(version)
+        end
       end
     end
 

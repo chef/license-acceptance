@@ -6,18 +6,20 @@ require "license_acceptance/product_relationship"
 require "license_acceptance/file_acceptance"
 require "license_acceptance/arg_acceptance"
 require "license_acceptance/prompt_acceptance"
+require "license_acceptance/env_acceptance"
 
 module LicenseAcceptance
   class Acceptor
     extend Forwardable
     include Logger
 
-    attr_reader :config, :product_reader, :file_acceptance, :arg_acceptance, :prompt_acceptance
+    attr_reader :config, :product_reader, :env_acceptance, :file_acceptance, :arg_acceptance, :prompt_acceptance
 
     def initialize(opts={})
       @config = Config.new(opts)
       Logger.initialize(config.logger)
       @product_reader = ProductReader.new
+      @env_acceptance = EnvAcceptance.new
       @file_acceptance = FileAcceptance.new(config)
       @arg_acceptance = ArgAcceptance.new
       @prompt_acceptance = PromptAcceptance.new(config)
@@ -37,8 +39,13 @@ module LicenseAcceptance
 
     def check_and_persist(product_name, version)
       # flag for test environments to set - not for use by consumers
-      if ENV['CHEF_LICENSE_NO_PERSIST'] && ENV['CHEF_LICENSE_NO_PERSIST'].downcase == 'accept'
-        logger.debug("CHEF_LICENSE_NO_PERSIST accepted")
+      if env_acceptance.check_no_persist(ENV)
+        logger.debug("Chef License accepted with no persistence through environment variable")
+        return true
+      end
+
+      if arg_acceptance.check_no_persist(ARGV)
+        logger.debug("Chef License accepted with no persistence through command line argument")
         return true
       end
 
@@ -53,13 +60,14 @@ module LicenseAcceptance
         return true
       end
 
-      # They passed the --accept-license flag on the command line
-      if arg_acceptance.check(ARGV) do
+      if env_acceptance.check(ENV) do
           file_acceptance.persist(product_relationship, missing_licenses) if config.persist
         end
         return true
-      # TODO what if they have accepted the license for chef, but a new child gets added? Seems like we need to ask for
-      # the new children
+      elsif arg_acceptance.check(ARGV) do
+          file_acceptance.persist(product_relationship, missing_licenses) if config.persist
+        end
+        return true
       # TODO what if they are not running in a TTY?
       elsif prompt_acceptance.request(missing_licenses) do
           file_acceptance.persist(product_relationship, missing_licenses) if config.persist
