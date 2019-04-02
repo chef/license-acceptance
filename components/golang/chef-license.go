@@ -24,8 +24,19 @@ func main() {
 		// attempt to write persistence - do not fail if we cannot
 		requiredLicenses := productInfo.RequiredProductLicenses(habPkgID)
 		acceptingProduct := requiredLicenses[0]
+		numPersisted := 0
 		for _, product := range requiredLicenses {
-			AttemptPersistLicense(config, product, time.Now(), acceptingProduct.Name, version, GetCurrentUser().Username)
+			numPersisted += AttemptPersistLicense(config, product, time.Now(), acceptingProduct.Name, version, GetCurrentUser().Username)
+		}
+		if numPersisted > 0 {
+			s := ""
+			if numPersisted > 1 {
+				s = "s"
+			}
+			out := "+---------------------------------------------+\n" +
+				"%d product license%s accepted.\n" +
+				"+---------------------------------------------+\n"
+			fmt.Printf(out, numPersisted, s)
 		}
 	} else {
 		// Attempt to read from existing marker files

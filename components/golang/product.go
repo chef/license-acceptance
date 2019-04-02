@@ -82,16 +82,18 @@ func HasAcceptedLicense(config Configuration, product Product) bool {
 	return false
 }
 
-func AttemptPersistLicense(config Configuration, product Product, t time.Time, acceptingProductName string, acceptingProductVersion string, username string) {
+// AttemptPersistLicense - Attempt to persist the license marker file for the
+// given product. Does not fail if the file cannot be written.
+func AttemptPersistLicense(config Configuration, product Product, t time.Time, acceptingProductName string, acceptingProductVersion string, username string) int {
 	err := os.MkdirAll(config.PersistPath, 0755)
 	if err != nil {
-		return
+		return 0
 	}
 
 	path := filepath.Join(config.PersistPath, product.Filename)
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
-		return
+		return 0
 	}
 
 	formattedTime := t.Format(time.RFC3339)
@@ -104,5 +106,9 @@ func AttemptPersistLicense(config Configuration, product Product, t time.Time, a
 		"file_format: 1"
 	out = fmt.Sprintf(out, product.Name, formattedTime, acceptingProductName, acceptingProductVersion, username)
 
-	f.Write([]byte(out))
+	n, err := f.Write([]byte(out))
+	if n > 0 && err == nil {
+		return 1
+	}
+	return 0
 }
