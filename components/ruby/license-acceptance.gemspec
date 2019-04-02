@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["tyler-ball"]
   spec.email         = ["tball@chef.io"]
 
-  spec.summary       = %q{License acceptance flow for Chef Ruby products}
-  spec.description   = %q{License acceptance flow for Chef Ruby products}
+  spec.summary       = %q{Chef End User License Agreement Acceptance}
+  spec.description   = %q{Chef End User License Agreement Acceptance for Ruby products}
   spec.homepage      = "https://chef.io"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

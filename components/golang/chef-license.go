@@ -46,7 +46,7 @@ func main() {
 
 Before you can continue, %d product license%s
 must be accepted. View the license at
-https://www.chef.io/distribution-agreement
+https://www.chef.io/end-user-license-agreement/
 
 License%s that need accepting:`
 
