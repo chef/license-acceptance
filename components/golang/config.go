@@ -16,9 +16,9 @@ type configWrapper struct {
 
 // Configuration TODO
 type Configuration struct {
-	ReadPaths []string `toml:"read_paths"`
-	PersistPath string `toml:"persist_path"`
-	Persist bool
+	ReadPaths   []string `toml:"read_paths"`
+	PersistPath string   `toml:"persist_path"`
+	Persist     bool
 }
 
 // LoadConfig TODO
@@ -52,6 +52,8 @@ func LoadConfig() Configuration {
 	return config
 }
 
+// GetCurrentUser - wrapper function for looking up the current user and failing
+// if it cannot be looked up
 func GetCurrentUser() *user.User {
 	currentUser, err := user.Current()
 	if err != nil {
