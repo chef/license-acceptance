@@ -7,23 +7,17 @@ RSpec.describe LicenseAcceptance::EnvAcceptance do
   describe "#check" do
     it "returns true if the env contains the correct key and value" do
       env = {"CHEF_LICENSE" => "accept"}
-      r = nil
-      expect { |b| r = acc.check(env, &b) }.to yield_control
-      expect(r).to eq(true)
+      expect(acc.check(env)).to eq(true)
     end
 
     it "returns false if the env has a key but nil value" do
       env = {"CHEF_LICENSE" => nil}
-      r = nil
-      expect { |b| r = acc.check(env, &b) }.to_not yield_control
-      expect(r).to eq(false)
+      expect(acc.check(env)).to eq(false)
     end
 
     it "returns false if the env has a key but incorrect value" do
       env = {"CHEF_LICENSE" => "foo"}
-      r = nil
-      expect { |b| r = acc.check(env, &b) }.to_not yield_control
-      expect(r).to eq(false)
+      expect(acc.check(env)).to eq(false)
     end
   end
 

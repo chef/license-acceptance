@@ -38,14 +38,8 @@ module LicenseAcceptance
     end
 
     def check_and_persist(product_name, version)
-      # flag for test environments to set - not for use by consumers
-      if env_acceptance.check_no_persist(ENV)
-        logger.debug("Chef License accepted with no persistence through environment variable")
-        return true
-      end
-
-      if arg_acceptance.check_no_persist(ARGV)
-        logger.debug("Chef License accepted with no persistence through command line argument")
+      if env_acceptance.check_no_persist(ENV) || arg_acceptance.check_no_persist(ARGV)
+        logger.debug("Chef License accepted with no persistence")
         return true
       end
 
@@ -60,12 +54,10 @@ module LicenseAcceptance
         return true
       end
 
-      if env_acceptance.check(ENV) do
-          file_acceptance.persist(product_relationship, missing_licenses) if config.persist
-        end
-        return true
-      elsif arg_acceptance.check(ARGV) do
-          file_acceptance.persist(product_relationship, missing_licenses) if config.persist
+      if env_acceptance.check(ENV) || arg_acceptance.check(ARGV)
+        if config.persist
+          file_acceptance.persist(product_relationship, missing_licenses)
+          output_num_accepted(missing_licenses.size)
         end
         return true
       # TODO what if they are not running in a TTY?
@@ -84,6 +76,17 @@ module LicenseAcceptance
 
     def self.check_and_persist(product_name, version, opts={})
       new(opts).check_and_persist(product_name, version)
+    end
+
+    # In the case where users accept with a command line argument or environment variable
+    # we still want to output the fact that the filesystem was changed.
+    def output_num_accepted(count)
+      s = count > 1 ? "s": ""
+      output.puts <<~EOM
+      #{PromptAcceptance::BORDER}
+      #{PromptAcceptance::CHECK} #{count} product license#{s} accepted.
+      #{PromptAcceptance::BORDER}
+      EOM
     end
 
   end

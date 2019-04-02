@@ -1,9 +1,8 @@
 module LicenseAcceptance
   class EnvAcceptance
 
-    def check(env, &block)
+    def check(env)
       if env['CHEF_LICENSE'] && env['CHEF_LICENSE'].downcase == 'accept'
-        block.call
         return true
       end
       return false

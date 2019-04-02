@@ -1,16 +1,14 @@
 module LicenseAcceptance
   class ArgAcceptance
 
-    def check(argv, &block)
+    def check(argv)
       if argv.include?("--chef-license=accept")
-        block.call
         return true
       end
       i = argv.index("--chef-license")
       unless i.nil?
         val = argv[i+1]
         if val != nil && val.downcase == "accept"
-          block.call
           return true
         end
       end

@@ -15,14 +15,15 @@ module LicenseAcceptance
     WIDTH = 50.freeze
     PASTEL = Pastel.new
     BORDER = "+---------------------------------------------+".freeze
+    YES = PASTEL.green.bold("yes")
+    CHECK  = PASTEL.green("✔")
 
     def request(missing_licenses, &accepted_callback)
       logger.debug("Requesting a license for #{missing_licenses.map(&:name)}")
       c = missing_licenses.size
       s = c > 1 ? "s": ""
-      yes = PASTEL.green.bold("yes")
-      check = PASTEL.green("✔")
-      acceptance_question = "Do you accept the #{c} product license#{s} (#{yes}/no)?"
+
+      acceptance_question = "Do you accept the #{c} product license#{s} (#{YES}/no)?"
       output.puts <<~EOM
       #{BORDER}
                   Chef License Acceptance
@@ -38,7 +39,7 @@ module LicenseAcceptance
 
       EOM
 
-      if ask(output, c, s, check, accepted_callback)
+      if ask(output, c, s, accepted_callback)
         output.puts BORDER
         return true
       end
@@ -52,7 +53,7 @@ module LicenseAcceptance
 
       EOM
 
-      answer = ask(output, c, s, check, accepted_callback)
+      answer = ask(output, c, s, accepted_callback)
       if answer != "yes"
         output.puts BORDER
       end
@@ -61,7 +62,7 @@ module LicenseAcceptance
 
     private
 
-    def ask(output, c, s, check, accepted_callback)
+    def ask(output, c, s, accepted_callback)
       logger.debug("Attempting to request interactive prompt on TTY")
       prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
 
@@ -78,7 +79,7 @@ module LicenseAcceptance
         output.puts "Accepting #{c} product license#{s}..."
         accepted_callback.call
         output.puts <<~EOM
-        #{check} #{c} product license#{s} accepted.
+        #{CHECK} #{c} product license#{s} accepted.
 
         EOM
         return true

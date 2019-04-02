@@ -6,23 +6,15 @@ RSpec.describe LicenseAcceptance::ArgAcceptance do
 
   describe "#check" do
     it "returns true if the args contain the required flag with spaces" do
-      r = nil
-      expect { |b| r = acc.check(["--chef-license", "accept"], &b) }.to yield_control
-      expect(r).to eq(true)
+      expect(acc.check(["--chef-license", "accept"])).to eq(true)
     end
 
     it "returns true if the args contain the required flag with equal" do
-      r = nil
-      expect { |b| r = acc.check(["--chef-license=accept"], &b) }.to yield_control
-      expect(r).to eq(true)
+      expect(acc.check(["--chef-license=accept"])).to eq(true)
     end
 
     it "returns false if the args do not contain the required value" do
-      r = nil
-      expect { |b| r = acc.check(["--chef-license", "foo"], &b) }.to_not yield_control
-      expect(r).to eq(false)
-      expect { |b| r = acc.check(["--chef-license"], &b) }.to_not yield_control
-      expect(r).to eq(false)
+      expect(acc.check(["--chef-license"])).to eq(false)
     end
   end
 
