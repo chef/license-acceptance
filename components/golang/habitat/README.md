@@ -1,5 +1,5 @@
-# Chef Online Master License and Services Agreement
-See the [README](../../README.md) for an overview of the license-acceptance project. This component contains the Golang
+# Chef EULA
+See the [README](../../README.md) for an overview of the license-acceptance project. This README contains the Golang
 implementation and notes for using it.
 
 ## Usage
