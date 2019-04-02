@@ -1,8 +1,8 @@
 pkg_name=license-acceptance
 pkg_origin=chef
 pkg_version=0.1.0
-pkg_description="TODO: Chef Online Master License and Services Agreement"
-pkg_upstream_url="TODO: https://www.chef.io/online-master-agreement"
+pkg_description="Chef End User License Agreement Acceptance"
+pkg_upstream_url="https://www.chef.io/end-user-license-agreement/"
 pkg_maintainer="Chef Software Inc."
 pkg_license=('Apache-2.0')
 pkg_bin_dirs=(bin)
