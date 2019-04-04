@@ -1,6 +1,7 @@
 require 'tty-prompt'
 require 'pastel'
 require "license_acceptance/logger"
+require "timeout"
 
 module LicenseAcceptance
   class PromptAcceptance
@@ -64,14 +65,20 @@ module LicenseAcceptance
 
     def ask(output, c, s, persist_callback)
       logger.debug("Attempting to request interactive prompt on TTY")
-      prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
+      prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output)
 
-      answer = prompt.ask(">") do |q|
-        q.modify :down, :trim
-        q.required true
-        q.messages[:required?] = "You must enter 'yes' or 'no'"
-        q.validate /^\s*(yes|no)\s*$/i
-        q.messages[:valid?] = "You must enter 'yes' or 'no'"
+      answer = "no"
+      Timeout::timeout(60, PromptTimeout) do
+        answer = prompt.ask(">") do |q|
+          q.modify :down, :trim
+          q.required true
+          q.messages[:required?] = "You must enter 'yes' or 'no'"
+          q.validate /^\s*(yes|no)\s*$/i
+          q.messages[:valid?] = "You must enter 'yes' or 'no'"
+        end
+      rescue PromptTimeout
+        prompt.unsubscribe(prompt.reader)
+        output.puts "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
       end
 
       if answer == "yes"
@@ -92,4 +99,6 @@ module LicenseAcceptance
     end
 
   end
+
+  class PromptTimeout < StandardError; end
 end

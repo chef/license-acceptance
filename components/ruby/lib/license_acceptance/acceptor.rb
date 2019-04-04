@@ -64,8 +64,7 @@ module LicenseAcceptance
           end
         end
         return true
-      # TODO what if they are not running in a TTY?
-      elsif prompt_acceptance.request(missing_licenses) do
+      elsif config.output.isatty && prompt_acceptance.request(missing_licenses) do
           if config.persist
             file_acceptance.persist(product_relationship, missing_licenses)
           else

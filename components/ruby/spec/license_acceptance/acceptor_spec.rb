@@ -6,7 +6,11 @@ RSpec.describe LicenseAcceptance::Acceptor do
     expect(LicenseAcceptance::VERSION).not_to be nil
   end
 
-  let(:output) { StringIO.new }
+  let(:output) do
+    d = StringIO.new
+    allow(d).to receive(:isatty).and_return(true)
+    d
+  end
   let(:opts) { { output: output } }
   let(:acc) { LicenseAcceptance::Acceptor.new(opts) }
   let(:product) { "chef_client" }
@@ -154,6 +158,21 @@ RSpec.describe LicenseAcceptance::Acceptor do
       end
     end
 
+    describe "when the prompt is not a tty" do
+      let(:opts) { { output: File.open(File::NULL, "w") } }
+      it "raises a LicenseNotAcceptedError error" do
+        expect(env_acc).to receive(:check_no_persist).and_return(false)
+        expect(arg_acc).to receive(:check_no_persist).and_return(false)
+        expect(reader).to receive(:read)
+        expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+        expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+        expect(env_acc).to receive(:check).and_return(false)
+        expect(arg_acc).to receive(:check).and_return(false)
+        expect(prompt_acc).to_not receive(:request)
+        expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
+      end
+    end
+
     describe "when the user accepts with the prompt" do
       it "returns true" do
         expect(env_acc).to receive(:check_no_persist).and_return(false)
@@ -186,7 +205,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
     end
 
     describe "when the user declines with the prompt" do
-      it "returns true" do
+      it "raises a LicenseNotAcceptedError error" do
         expect(env_acc).to receive(:check_no_persist).and_return(false)
         expect(arg_acc).to receive(:check_no_persist).and_return(false)
         expect(reader).to receive(:read)

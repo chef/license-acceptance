@@ -57,6 +57,19 @@ RSpec.describe LicenseAcceptance::PromptAcceptance do
     end
   end
 
+  describe "when the prompt times out" do
+    it "returns false" do
+      expect(Timeout).to receive(:timeout).twice.and_yield
+      expect(prompt).to receive(:ask).twice.and_raise(LicenseAcceptance::PromptTimeout)
+      expect(prompt).to receive(:unsubscribe).twice
+      expect(prompt).to receive(:reader).twice
+      msg1 = /Prompt timed out./
+      b = Proc.new { [] }
+      expect(acc.request(missing_licenses, &b)).to eq(false)
+      expect(output.string).to match(msg1)
+    end
+  end
+
   describe "when the user declines twice" do
     it "returns false" do
       expect(prompt).to receive(:ask).twice.and_return("no")
