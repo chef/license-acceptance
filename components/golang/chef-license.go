@@ -25,10 +25,24 @@ func main() {
 		requiredLicenses := productInfo.RequiredProductLicenses(habPkgID)
 		acceptingProduct := requiredLicenses[0]
 		numPersisted := 0
+		errs := make([]error, 0)
 		for _, product := range requiredLicenses {
-			numPersisted += AttemptPersistLicense(config, product, time.Now(), acceptingProduct.Name, version, GetCurrentUser().Username)
+			n, err := AttemptPersistLicense(config, product, time.Now(), acceptingProduct.Name, version, GetCurrentUser().Username)
+			numPersisted += n
+			if err != nil {
+				errs = append(errs, err)
+			}
 		}
-		if numPersisted > 0 {
+		if len(errs) > 0 {
+			out := "+---------------------------------------------+\n" +
+				"Product license accepted.\n" +
+				"Could not persist acceptance:\n"
+			for _, err := range errs {
+				out += fmt.Sprintf("\t* %s\n", err.Error())
+			}
+			out += "+---------------------------------------------+\n"
+			fmt.Print(out)
+		} else if numPersisted > 0 {
 			s := ""
 			if numPersisted > 1 {
 				s = "s"

@@ -97,17 +97,26 @@ func HasAcceptedLicense(config Configuration, product Product) bool {
 }
 
 // AttemptPersistLicense - Attempt to persist the license marker file for the
-// given product. Does not fail if the file cannot be written.
-func AttemptPersistLicense(config Configuration, product Product, t time.Time, acceptingProductName string, acceptingProductVersion string, username string) int {
+// given product. Does not fail if the file cannot be written. Returns the number
+// of licenses persisted (1 or 0) and any error.
+func AttemptPersistLicense(config Configuration, product Product, t time.Time, acceptingProductName string, acceptingProductVersion string, username string) (int, error) {
 	err := os.MkdirAll(config.PersistPath, 0755)
 	if err != nil {
-		return 0
+		return 0, err
 	}
 
 	path := filepath.Join(config.PersistPath, product.Filename)
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
-		return 0
+		// We do not return the err here because its likely caused by the license
+		// already existing. Golang says not to do a stat because the file could
+		// be written between doing a stat and trying to write to it. They recommend
+		// simply trying to write to it and dealing with the O_EXCL error if it
+		// already exists.
+		if err.(*os.PathError).Err.Error() == "file exists" {
+			return 0, nil
+		}
+		return 0, err
 	}
 
 	formattedTime := t.Format(time.RFC3339)
@@ -120,9 +129,12 @@ func AttemptPersistLicense(config Configuration, product Product, t time.Time, a
 		"file_format: 1"
 	out = fmt.Sprintf(out, product.Name, formattedTime, acceptingProductName, acceptingProductVersion, username)
 
-	n, err := f.Write([]byte(out))
-	if n > 0 && err == nil {
-		return 1
+	_, err = f.Write([]byte(out))
+	if err != nil {
+		return 0, err
 	}
-	return 0
+	if err = f.Close(); err != nil {
+		return 1, err
+	}
+	return 1, nil
 }

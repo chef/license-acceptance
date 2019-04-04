@@ -17,6 +17,7 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
   let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name, filename: p1_filename) }
   let(:version) { "0.1.0" }
   let(:product_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: p1, children: [], parent_version: version) }
+  let(:mode) { File::WRONLY | File::CREAT | File::EXCL }
 
   describe "#check" do
     describe "when there is an existing license file" do
@@ -37,19 +38,16 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
     describe "#persist" do
       let(:file) { double("file") }
 
-      before do
-        expect(Dir).to receive(:exist?).with(dir3).at_least(:once).and_return(true)
-      end
-
       it "stores a single license without children" do
-        expect(File).to receive(:open).with(File.join(dir3, p1_filename), "w").and_yield(file)
+        expect(Dir).to receive(:exist?).with(dir3).and_return(true)
+        expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
         expect(file).to receive(:<<) do |yaml|
           yaml = YAML.load(yaml)
           expect(yaml["name"]).to eq(p1_name)
           expect(yaml["accepting_product"]).to eq(p1_name)
           expect(yaml["accepting_product_version"]).to eq(version)
         end
-        acc.persist(product_relationship, [p1])
+        expect(acc.persist(product_relationship, [p1])).to eq([])
       end
 
       describe "when license has children" do
@@ -66,34 +64,55 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
         }
 
         it "stores a license file for all" do
-          expect(File).to receive(:open).with(File.join(dir3, p1_filename), "w").and_yield(file)
+          expect(Dir).to receive(:exist?).with(dir3).and_return(true)
+          expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
             expect(yaml["name"]).to eq(p1_name)
             expect(yaml["accepting_product"]).to eq(p1_name)
             expect(yaml["accepting_product_version"]).to eq(version)
           end
-          expect(File).to receive(:open).with(File.join(dir3, p2_filename), "w").and_yield(file)
+          expect(File).to receive(:open).with(File.join(dir3, p2_filename), mode).and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
             expect(yaml["name"]).to eq(p2_name)
             expect(yaml["accepting_product"]).to eq(p1_name)
             expect(yaml["accepting_product_version"]).to eq(version)
           end
-          acc.persist(product_relationship, [p1, p2])
+          expect(acc.persist(product_relationship, [p1, p2])).to eq([])
         end
 
         describe "when parent is already persisted" do
           it "only stores a license file for the child" do
-            expect(File).to receive(:open).once.with(File.join(dir3, p2_filename), "w").and_yield(file)
+            expect(Dir).to receive(:exist?).with(dir3).and_return(true)
+            expect(File).to receive(:open).once.with(File.join(dir3, p2_filename), mode).and_yield(file)
             expect(file).to receive(:<<) do |yaml|
               yaml = YAML.load(yaml)
               expect(yaml["name"]).to eq(p2_name)
               expect(yaml["accepting_product"]).to eq(p1_name)
               expect(yaml["accepting_product_version"]).to eq(version)
             end
-            acc.persist(product_relationship, [p2])
+            expect(acc.persist(product_relationship, [p2])).to eq([])
           end
+        end
+      end
+
+      describe "when the folder cannot be created" do
+        let(:err) { StandardError.new("foo") }
+        it "returns the error" do
+          expect(Dir).to receive(:exist?).with(dir3).and_return(false)
+          expect(FileUtils).to receive(:mkdir_p).and_raise(err)
+          expect(File).to_not receive(:open)
+          expect(acc.persist(product_relationship, [p1])).to eq([err])
+        end
+      end
+
+      describe "when the file cannot be written" do
+        let(:err) { StandardError.new("bar") }
+        it "returns the error" do
+          expect(Dir).to receive(:exist?).with(dir3).and_return(true)
+          expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_raise(err)
+          expect(acc.persist(product_relationship, [p1])).to eq([err])
         end
       end
     end

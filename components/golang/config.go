@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	// "io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -14,14 +13,14 @@ type configWrapper struct {
 	Config Configuration `toml:"chef_license"`
 }
 
-// Configuration TODO
+// Configuration Data struct for holding configuration
 type Configuration struct {
 	ReadPaths   []string `toml:"read_paths"`
 	PersistPath string   `toml:"persist_path"`
 	Persist     bool
 }
 
-// LoadConfig TODO
+// LoadConfig Read the config file and load it into the data struct
 func LoadConfig() Configuration {
 	location, set := os.LookupEnv("CHEF_LICENSE_CONFIG")
 	if set == false {

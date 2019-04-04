@@ -45,27 +45,36 @@ module LicenseAcceptance
       parent_version = product_relationship.parent_version
       root_dir = config.persist_location
 
+      if !Dir.exist?(root_dir)
+        begin
+          FileUtils.mkdir_p(root_dir)
+        rescue StandardError => e
+          msg = "Could not create license directory #{root_dir}"
+          logger.info "#{msg}\n\t#{e.message}\n\t#{e.backtrace.join("\n\t")}"
+          return [e]
+        end
+      end
+
+      errs = []
       if missing_licenses.include?(parent)
-        persist_license(root_dir, parent, parent, parent_version)
+        err = persist_license(root_dir, parent, parent, parent_version)
+        errs << err unless err.nil?
       end
       product_relationship.children.each do |child|
         if missing_licenses.include?(child)
-          persist_license(root_dir, child, parent, parent_version)
+          err = persist_license(root_dir, child, parent, parent_version)
+          errs << err unless err.nil?
         end
       end
+      return errs
     end
 
     private
 
     def persist_license(folder_path, product, parent, parent_version)
-      if !Dir.exist?(folder_path)
-        FileUtils.mkdir_p(folder_path)
-      end
       path = File.join(folder_path, product.filename)
-
       logger.info("Persisting a license for #{product.name} at path #{path}")
-      # TODO do we care if there is an existing file?
-      File.open(path, "w") do |license_file|
+      File.open(path, File::WRONLY | File::CREAT | File::EXCL) do |license_file|
         contents = {
           name: product.name,
           date_accepted: INVOCATION_TIME.iso8601,
@@ -77,6 +86,11 @@ module LicenseAcceptance
         contents = Hash[contents.map { |k, v| [k.to_s, v] }]
         license_file << YAML.dump(contents)
       end
+      return nil
+    rescue StandardError => e
+      msg = "Could not persist license to #{path}"
+      logger.info "#{msg}\n\t#{e.message}\n\t#{e.backtrace.join("\n\t")}"
+      return e
     end
 
   end

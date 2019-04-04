@@ -56,13 +56,21 @@ module LicenseAcceptance
 
       if env_acceptance.check(ENV) || arg_acceptance.check(ARGV)
         if config.persist
-          file_acceptance.persist(product_relationship, missing_licenses)
-          output_num_accepted(missing_licenses.size)
+          errs = file_acceptance.persist(product_relationship, missing_licenses)
+          if errs.empty?
+            output_num_persisted(missing_licenses.size)
+          else
+            output_persist_failed(errs)
+          end
         end
         return true
       # TODO what if they are not running in a TTY?
       elsif prompt_acceptance.request(missing_licenses) do
-          file_acceptance.persist(product_relationship, missing_licenses) if config.persist
+          if config.persist
+            file_acceptance.persist(product_relationship, missing_licenses)
+          else
+            []
+          end
         end
         return true
       else
@@ -80,11 +88,20 @@ module LicenseAcceptance
 
     # In the case where users accept with a command line argument or environment variable
     # we still want to output the fact that the filesystem was changed.
-    def output_num_accepted(count)
+    def output_num_persisted(count)
       s = count > 1 ? "s": ""
       output.puts <<~EOM
       #{PromptAcceptance::BORDER}
       #{PromptAcceptance::CHECK} #{count} product license#{s} accepted.
+      #{PromptAcceptance::BORDER}
+      EOM
+    end
+
+    def output_persist_failed(errs)
+      output.puts <<~EOM
+      #{PromptAcceptance::BORDER}
+      #{PromptAcceptance::CHECK} Product license accepted.
+      Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
       #{PromptAcceptance::BORDER}
       EOM
     end
