@@ -1,0 +1,56 @@
+# Documentation available at https://expeditor.chef.io/docs/getting-started/
+
+# https://expeditor.chef.io/docs/integrations/slack/
+slack:
+  notify_channel: _license_acceptance
+
+# https://expeditor.chef.io/docs/integrations/rubygems/
+rubygems:
+  - license-acceptance
+
+# https://expeditor.chef.io/docs/integrations/github/
+github:
+  # Delete the PR branch after successfully merged into release branch.
+  delete_branch_on_merge: true
+  # The tag format to use (e.g. v1.0.0)
+  version_tag_format: "v{{version}}"
+  # allow bumping the minor release via label
+  minor_bump_labels:
+    - "Expeditor: Bump Version Minor"
+  major_bump_labels:
+    - "Expeditor: Bump Version Major"
+
+pipelines:
+  - verify
+  - habitat/build
+
+# These actions are taken, in order they are specified, anytime a Pull Request is merged.
+merge_actions:
+  - built_in:bump_version:
+      ignore_labels:
+        - "Expeditor: Skip Version Bump"
+        - "Expeditor: Skip All"
+  - bash:.expeditor/update_version.sh:
+      only_if: built_in:bump_version
+  - built_in:update_changelog:
+      ignore_labels:
+        - "Expeditor: Skip Changelog"
+        - "Expeditor: Skip All"
+  - built_in:build_gem:
+      only_if: built_in:bump_version
+  - trigger_pipeline:habitat/build:
+      post_commit: true
+      ignore_labels:
+        - "Expeditor: Skip All"
+        - "Expeditor: Skip Habitat"
+      only_if: built_in:bump_version
+  #https://github.com/golang/go/wiki/Modules#releasing-modules-all-versions
+
+promote:
+  channels:
+    - unstable
+    - current
+    - stable
+  actions:
+    - built_in:promote_habitat_packages
+    - built_in:publish_rubygems
