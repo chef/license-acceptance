@@ -1,6 +1,7 @@
 require 'tty-prompt'
 require 'pastel'
 require "license_acceptance/logger"
+require "timeout"
 
 module LicenseAcceptance
   class PromptAcceptance
@@ -15,14 +16,15 @@ module LicenseAcceptance
     WIDTH = 50.freeze
     PASTEL = Pastel.new
     BORDER = "+---------------------------------------------+".freeze
+    YES = PASTEL.green.bold("yes")
+    CHECK  = PASTEL.green("✔")
 
-    def request(missing_licenses, &accepted_callback)
+    def request(missing_licenses, &persist_callback)
       logger.debug("Requesting a license for #{missing_licenses.map(&:name)}")
       c = missing_licenses.size
       s = c > 1 ? "s": ""
-      yes = PASTEL.green.bold("yes")
-      check = PASTEL.green("✔")
-      acceptance_question = "Do you accept the #{c} product license#{s} (#{yes}/no)?"
+
+      acceptance_question = "Do you accept the #{c} product license#{s} (#{YES}/no)?"
       output.puts <<~EOM
       #{BORDER}
                   Chef License Acceptance
@@ -38,7 +40,7 @@ module LicenseAcceptance
 
       EOM
 
-      if ask(output, c, s, check, accepted_callback)
+      if ask(output, c, s, persist_callback)
         output.puts BORDER
         return true
       end
@@ -52,7 +54,7 @@ module LicenseAcceptance
 
       EOM
 
-      answer = ask(output, c, s, check, accepted_callback)
+      answer = ask(output, c, s, persist_callback)
       if answer != "yes"
         output.puts BORDER
       end
@@ -61,30 +63,42 @@ module LicenseAcceptance
 
     private
 
-    def ask(output, c, s, check, accepted_callback)
+    def ask(output, c, s, persist_callback)
       logger.debug("Attempting to request interactive prompt on TTY")
-      prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit)
+      prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output)
 
-      answer = prompt.ask("$") do |q|
-        q.modify :down, :trim
-        q.required true
-        q.messages[:required?] = "You must enter 'yes' or 'no'"
-        q.validate /^\s*(yes|no)\s*$/i
-        q.messages[:valid?] = "You must enter 'yes' or 'no'"
+      answer = "no"
+      Timeout::timeout(60, PromptTimeout) do
+        answer = prompt.ask(">") do |q|
+          q.modify :down, :trim
+          q.required true
+          q.messages[:required?] = "You must enter 'yes' or 'no'"
+          q.validate /^\s*(yes|no)\s*$/i
+          q.messages[:valid?] = "You must enter 'yes' or 'no'"
+        end
+      rescue PromptTimeout
+        prompt.unsubscribe(prompt.reader)
+        output.puts "Prompt timed out. Use non-interactive flags or enter an answer within 60 seconds."
       end
 
       if answer == "yes"
         output.puts
-        output.puts "Accepting #{c} product license#{s}..."
-        accepted_callback.call
-        output.puts <<~EOM
-        #{check} #{c} product license#{s} accepted.
-
-        EOM
+        output.puts "Persisting #{c} product license#{s}..."
+        errs = persist_callback.call
+        if errs.empty?
+          output.puts "#{CHECK} #{c} product license#{s} persisted.\n\n"
+        else
+          output.puts <<~EOM
+          #{CHECK} #{c} product license#{s} accepted.
+          Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
+          EOM
+        end
         return true
       end
       return false
     end
 
   end
+
+  class PromptTimeout < StandardError; end
 end

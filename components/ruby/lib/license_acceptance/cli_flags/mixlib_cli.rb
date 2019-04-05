@@ -10,10 +10,10 @@ module LicenseAcceptance
     module MixlibCLI
 
       def self.included(klass)
-        klass.option :accept_license,
-          long: "--accept-license",
-          description: "Accept the license for this product and any contained products",
-          boolean: true
+        klass.option :chef_license,
+          long: "--chef-license ACCEPTANCE",
+          description: "Accept the license for this product and any contained products ('accept' or 'accept-no-persist')",
+          required: false
       end
 
     end

@@ -1,5 +1,4 @@
-# [chef_license]
+[chef_license]
 # persist_path = "foo"
 # read_paths = ["/foo", "/bar"]
-# persist = true
-[chef_license]
+# persist = false

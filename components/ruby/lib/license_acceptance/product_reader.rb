@@ -25,6 +25,11 @@ module LicenseAcceptance
       for parent_name, children in toml["relationships"]
         parent = products[parent_name]
         raise UnknownParent.new(parent_name) if parent.nil?
+        # Its fine to not have a relationship entry, but not fine to have
+        # a relationship where the children are nil or empty.
+        if children.nil? || children.empty? || !children.is_a?(Array)
+          raise NoChildRelationships.new(parent)
+        end
         children.map! do |child_name|
           child = products[child_name]
           raise UnknownChild.new(child_name) if child.nil?
@@ -37,21 +42,20 @@ module LicenseAcceptance
     end
 
     def get_location
-      location = "../../../config/product_info.toml"
+      # For local development point this to the product_info.toml at the root of the repo.
+      # When bundled as a gem we will use the the relative path to find the file in the
+      # gem package.
       if ENV["CHEF_LICENSE_PRODUCT_INFO"]
-        location = ENV["CHEF_LICENSE_PRODUCT_INFO"]
+        return ENV["CHEF_LICENSE_PRODUCT_INFO"]
       end
-      File.absolute_path(File.join(__FILE__, location))
+      File.absolute_path(File.join(__FILE__, "../../../config/product_info.toml"))
     end
 
     def lookup(parent_name, parent_version)
       parent_product = products.fetch(parent_name) do
         raise UnknownProduct.new(parent_name)
       end
-      children = relationships[parent_product]
-      if children.nil?
-        raise NoLicense.new(parent_product)
-      end
+      children = relationships.fetch(parent_product, [])
       if !parent_version.is_a? String
         raise ProductVersionTypeError.new(parent_version)
       end
@@ -88,9 +92,9 @@ module LicenseAcceptance
     end
   end
 
-  class NoLicense < RuntimeError
+  class NoChildRelationships < RuntimeError
     def initialize(product)
-      msg = "No license information known for product '#{product.name}'"
+      msg = "No child relationships for #{product.name}, should be removed from product info or fixed"
       super(msg)
     end
   end

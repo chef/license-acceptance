@@ -20,14 +20,39 @@ func main() {
 	config := LoadConfig()
 	productInfo := ReadProductInfo()
 
-	if acceptance == "accept" {
+	if acceptance == "accept" && config.Persist == true {
 		// attempt to write persistence - do not fail if we cannot
 		requiredLicenses := productInfo.RequiredProductLicenses(habPkgID)
 		acceptingProduct := requiredLicenses[0]
+		numPersisted := 0
+		errs := make([]error, 0)
 		for _, product := range requiredLicenses {
-			AttemptPersistLicense(config, product, time.Now(), acceptingProduct.Name, version, GetCurrentUser().Username)
+			n, err := AttemptPersistLicense(config, product, time.Now(), acceptingProduct.Name, version, GetCurrentUser().Username)
+			numPersisted += n
+			if err != nil {
+				errs = append(errs, err)
+			}
 		}
-	} else {
+		if len(errs) > 0 {
+			out := "+---------------------------------------------+\n" +
+				"Product license accepted.\n" +
+				"Could not persist acceptance:\n"
+			for _, err := range errs {
+				out += fmt.Sprintf("\t* %s\n", err.Error())
+			}
+			out += "+---------------------------------------------+\n"
+			fmt.Print(out)
+		} else if numPersisted > 0 {
+			s := ""
+			if numPersisted > 1 {
+				s = "s"
+			}
+			out := "+---------------------------------------------+\n" +
+				"%d product license%s accepted.\n" +
+				"+---------------------------------------------+\n"
+			fmt.Printf(out, numPersisted, s)
+		}
+	} else if acceptance != "accept" {
 		// Attempt to read from existing marker files
 		missingLicenses := make([]Product, 0)
 		requiredLicenses := productInfo.RequiredProductLicenses(habPkgID)
@@ -65,6 +90,10 @@ not be able to use Chef products.
 			fmt.Fprint(&msg, footer)
 
 			fmt.Print(msg.String())
+			// We sleep when the user has not yet accepted the license so their Habitat
+			// log isn't filled with messages about the service failing then getting
+			// restarted immediately.
+			time.Sleep(60 * time.Second)
 			os.Exit(172)
 		}
 	}

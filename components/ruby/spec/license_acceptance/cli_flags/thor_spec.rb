@@ -9,6 +9,6 @@ end
 RSpec.describe LicenseAcceptance::CLIFlags::Thor do
   let(:klass) { TestThorKlass.new }
   it "adds the correct command line flag" do
-    expect(klass.class.class_options.keys).to eq([:accept_license])
+    expect(klass.class.class_options.keys).to eq([:chef_license])
   end
 end
