@@ -90,6 +90,10 @@ not be able to use Chef products.
 			fmt.Fprint(&msg, footer)
 
 			fmt.Print(msg.String())
+			// We sleep when the user has not yet accepted the license so their Habitat
+			// log isn't filled with messages about the service failing then getting
+			// restarted immediately.
+			time.Sleep(60 * time.Second)
 			os.Exit(172)
 		}
 	}
