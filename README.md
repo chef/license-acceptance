@@ -261,6 +261,19 @@ Accepting the license as part of the Terraform config will attempt to persist th
 to be accepted in subsequent runs. The license can be seeded locally using the [Bulk License Acceptance
 Tools](#bulk-license-acceptance-tools) so they are present before attempting to use the Terraform Habitat Provisioner.
 
+### Packer
+
+> TODO - Packer is used to bake chef-client and post-converge state into images
+
+### Effortless Infrastructure
+
+Effortless Infrastructure is a habitat based approach for deploying cookbooks and InSpec profiles. Users are able to
+adjust configuration via Habitat config (`default.toml`, `user.toml`, `hab config apply`, etc.). Habitat is responsible
+for running `chef-client` or `inspec` to converge/scan the infrastructure. This requires accepting the EULA.
+
+Chef Software will present the same UI/UX to users as other Habitat managed products (EG, Chef Server). Users will need
+to set the Habitat config as described in the [README](./components/golang/habitat/README.md#your-configuration).
+
 ## Upgrade Guidance for Customers
 
 There will be marketing and sales education internally to ensure our staff is ready to help customers through this
@@ -322,9 +335,3 @@ There are bound to be other paths users follow to package, deploy and configure 
 tools to support the new license requirements. Our criteria should be that users can accept the license for product(s)
 with the least amount of resistence possible while still ensuring they have gone through a positive license acceptance
 flow.
-
-## Windows
-
-> TODO: any special notes about Windows tools. Probably something about where we persist licenses acceptance information.
-
-https://docs.chef.io/dk_windows.html#spaces-and-directories
