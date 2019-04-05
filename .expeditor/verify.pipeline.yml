@@ -1,0 +1,20 @@
+---
+expeditor:
+  defaults:
+    buildkite:
+      timeout_in_minutes: 5
+
+steps:
+
+#########################################################################
+  # Ruby Tests
+#########################################################################
+
+- label: rspec
+  command:
+    - cd /components/ruby
+    - bundle install
+    - bundle exec rspec
+  expeditor:
+    executor:
+      docker:
