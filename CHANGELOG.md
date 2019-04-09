@@ -1,9 +1,14 @@
-<!-- latest_release 0.2.1 -->
+<!-- latest_release 0.2.2 -->
+## [v0.2.2](https://github.com/chef/license-acceptance/tree/v0.2.2) (2019-04-09)
+
+#### Merged Pull Requests
+- Build and publish gem with Expeditor [#18](https://github.com/chef/license-acceptance/pull/18) ([tyler-ball](https://github.com/tyler-ball))
+<!-- latest_release -->
+
 ## [v0.2.1](https://github.com/chef/license-acceptance/tree/v0.2.1) (2019-04-05)
 
 #### Merged Pull Requests
 - Fixing Ruby tests in pipeline [#17](https://github.com/chef/license-acceptance/pull/17) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_release -->
 
 ## [v0.2.0](https://github.com/chef/license-acceptance/tree/v0.2.0) (2019-04-05)
 
