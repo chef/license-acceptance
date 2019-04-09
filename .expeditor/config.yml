@@ -5,8 +5,9 @@ slack:
   notify_channel: _license_acceptance
 
 # https://expeditor.chef.io/docs/integrations/rubygems/
-# rubygems:
-#   - license-acceptance
+rubygems:
+  - license-acceptance:
+      gemspec_path: ./components/ruby/
 
 # https://expeditor.chef.io/docs/integrations/github/
 github:
@@ -36,8 +37,8 @@ merge_actions:
       ignore_labels:
         - "Expeditor: Skip Changelog"
         - "Expeditor: Skip All"
-  # - built_in:build_gem:
-  #     only_if: built_in:bump_version
+  - built_in:build_gem:
+      only_if: built_in:bump_version
   - trigger_pipeline:habitat/build:
       post_commit: true
       ignore_labels:
@@ -53,4 +54,4 @@ promote:
     - stable
   actions:
     - built_in:promote_habitat_packages
-#   - built_in:publish_rubygems
+    - built_in:publish_rubygems
