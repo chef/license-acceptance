@@ -132,7 +132,7 @@ When reading the license file non-`Administrator`/`root` users will look in the 
 not found in their default location. This pattern has the side effect that users could accept licenses as the
 `Administrator`/`root` user ensure the license is present for all users on the machine.
 
-### Habitat Client Croduct
+### Habitat Client Product
 
 The `hab` binary has been updated to match the same license acceptance UX documented here. Because it is written in Rust
 it cannot leverage a shared library but has the same functionality and UI. The `hab` binary stores its license file in a
