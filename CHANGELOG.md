@@ -1,9 +1,14 @@
-<!-- latest_release 0.2.4 -->
+<!-- latest_release 0.2.5 -->
+## [v0.2.5](https://github.com/chef/license-acceptance/tree/v0.2.5) (2019-04-10)
+
+#### Merged Pull Requests
+- We don&#39;t care where we push the gem [#21](https://github.com/chef/license-acceptance/pull/21) ([tyler-ball](https://github.com/tyler-ball))
+<!-- latest_release -->
+
 ## [v0.2.4](https://github.com/chef/license-acceptance/tree/v0.2.4) (2019-04-10)
 
 #### Merged Pull Requests
 - Fixing expeditor config, see description [#20](https://github.com/chef/license-acceptance/pull/20) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_release -->
 
 ## [v0.2.3](https://github.com/chef/license-acceptance/tree/v0.2.3) (2019-04-10)
 
