@@ -31,6 +31,8 @@ merge_actions:
       ignore_labels:
         - "Expeditor: Skip Version Bump"
         - "Expeditor: Skip All"
+  - bash:.expeditor/copy_product_info.sh:
+      only_if: built_in:bump_version
   - bash:.expeditor/update_version.sh:
       only_if: built_in:bump_version
   - built_in:update_changelog:
