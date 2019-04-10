@@ -68,13 +68,15 @@ module LicenseAcceptance
       prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output)
 
       answer = "no"
-      Timeout::timeout(60, PromptTimeout) do
-        answer = prompt.ask(">") do |q|
-          q.modify :down, :trim
-          q.required true
-          q.messages[:required?] = "You must enter 'yes' or 'no'"
-          q.validate /^\s*(yes|no)\s*$/i
-          q.messages[:valid?] = "You must enter 'yes' or 'no'"
+      begin
+        Timeout::timeout(60, PromptTimeout) do
+          answer = prompt.ask(">") do |q|
+            q.modify :down, :trim
+            q.required true
+            q.messages[:required?] = "You must enter 'yes' or 'no'"
+            q.validate /^\s*(yes|no)\s*$/i
+            q.messages[:valid?] = "You must enter 'yes' or 'no'"
+          end
         end
       rescue PromptTimeout
         prompt.unsubscribe(prompt.reader)
