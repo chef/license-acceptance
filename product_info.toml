@@ -20,7 +20,7 @@ filename = "supermarket"
 [[products]]
 name = "chef-server"
 pretty_name = "Chef Server"
-hab_pkg_id = "tyler/oc_erchef"
+hab_pkg_id = "chef/oc_erchef"
 filename = "chef_server"
 
 [relationships]
