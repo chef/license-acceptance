@@ -1,9 +1,14 @@
-<!-- latest_release 0.2.3 -->
+<!-- latest_release 0.2.4 -->
+## [v0.2.4](https://github.com/chef/license-acceptance/tree/v0.2.4) (2019-04-10)
+
+#### Merged Pull Requests
+- Fixing expeditor config, see description [#20](https://github.com/chef/license-acceptance/pull/20) ([tyler-ball](https://github.com/tyler-ball))
+<!-- latest_release -->
+
 ## [v0.2.3](https://github.com/chef/license-acceptance/tree/v0.2.3) (2019-04-10)
 
 #### Merged Pull Requests
 - Add explicit begin for Timeout block to support ruby &lt; 2.5 [#19](https://github.com/chef/license-acceptance/pull/19) ([clintoncwolfe](https://github.com/clintoncwolfe))
-<!-- latest_release -->
 
 ## [v0.2.2](https://github.com/chef/license-acceptance/tree/v0.2.2) (2019-04-09)
 
