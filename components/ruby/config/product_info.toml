@@ -1,1 +1,28 @@
 # DO NOT CHANGE - overwritten by expeditor at build time
+title = "All known products that require license acceptance, and the mapping of parent to child relationships"
+
+[[products]]
+name = "chef-client"
+pretty_name = "Chef Client"
+hab_pkg_id = "chef/chef-client"
+filename = "chef_client"
+
+[[products]]
+name = "inspec"
+pretty_name = "InSpec"
+hab_pkg_id = "chef/inspec"
+filename = "inspec"
+
+[[products]]
+name = "supermarket"
+pretty_name = "Supermarket"
+filename = "supermarket"
+
+[[products]]
+name = "chef-server"
+pretty_name = "Chef Server"
+hab_pkg_id = "tyler/oc_erchef"
+filename = "chef_server"
+
+[relationships]
+"chef-client" = ["inspec"]
