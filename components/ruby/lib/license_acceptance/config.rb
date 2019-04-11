@@ -1,5 +1,4 @@
 require 'logger'
-require 'tty-platform'
 
 module LicenseAcceptance
   class Config
@@ -16,16 +15,12 @@ module LicenseAcceptance
 
     private
 
-    def platform
-      @platform ||= TTY::Platform.new
-    end
-
     def is_root?
       Process.uid == 0
     end
 
     def default_license_locations
-      if platform.windows?
+      if windows?
         l = [ File.join(ENV["HOMEDRIVE"], "chef/accepted_licenses/") ]
         unless is_root?
           # Look through a list of possible user locations and pick the first one that exists
@@ -53,6 +48,10 @@ module LicenseAcceptance
 
     def default_persist_location
       license_locations[-1]
+    end
+
+    def windows?
+      !!(RUBY_PLATFORM =~ /(cygwin|mswin|mingw|bccwin|wince|emx)/i)
     end
 
   end
