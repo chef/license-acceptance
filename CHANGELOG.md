@@ -1,9 +1,14 @@
-<!-- latest_release 0.2.5 -->
+<!-- latest_release 0.2.6 -->
+## [v0.2.6](https://github.com/chef/license-acceptance/tree/v0.2.6) (2019-04-11)
+
+#### Merged Pull Requests
+- tty-platform library is interfering with chef-client [#22](https://github.com/chef/license-acceptance/pull/22) ([tyler-ball](https://github.com/tyler-ball))
+<!-- latest_release -->
+
 ## [v0.2.5](https://github.com/chef/license-acceptance/tree/v0.2.5) (2019-04-10)
 
 #### Merged Pull Requests
 - We don&#39;t care where we push the gem [#21](https://github.com/chef/license-acceptance/pull/21) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_release -->
 
 ## [v0.2.4](https://github.com/chef/license-acceptance/tree/v0.2.4) (2019-04-10)
 
