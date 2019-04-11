@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pastel', "~> 0.7"
   spec.add_dependency 'tomlrb', "~> 1.2"
   spec.add_dependency 'tty-box', "~> 0.3"
-  spec.add_dependency 'tty-platform', "~> 0.2"
   spec.add_dependency 'tty-prompt', "~> 0.18"
 
   spec.add_development_dependency "rake", "~> 10.0"

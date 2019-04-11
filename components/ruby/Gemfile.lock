@@ -1,11 +1,10 @@
 PATH
   remote: .
   specs:
-    license-acceptance (0.2.3)
+    license-acceptance (0.2.5)
       pastel (~> 0.7)
       tomlrb (~> 1.2)
       tty-box (~> 0.3)
-      tty-platform (~> 0.2)
       tty-prompt (~> 0.18)
 
 GEM
@@ -62,7 +61,6 @@ GEM
       tty-cursor (~> 0.6.0)
     tty-color (0.4.3)
     tty-cursor (0.6.1)
-    tty-platform (0.2.0)
     tty-prompt (0.18.1)
       necromancer (~> 0.4.0)
       pastel (~> 0.7.0)

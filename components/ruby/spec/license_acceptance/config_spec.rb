@@ -6,7 +6,6 @@ require "license_acceptance/product_relationship"
 RSpec.describe LicenseAcceptance::Config do
   let(:opts) { {} }
   let(:config) { LicenseAcceptance::Config.new(opts) }
-  let(:platform) { instance_double(TTY::Platform) }
 
   it "loads correctly with default values" do
     config
@@ -31,13 +30,12 @@ RSpec.describe LicenseAcceptance::Config do
 
   describe "#default_license_locations and #default_persist_location" do
     before do
-      expect(TTY::Platform).to receive(:new).and_return(platform)
       expect(Process).to receive(:uid).and_return(uid)
     end
 
     describe "when platform is Windows" do
       before do
-        expect(platform).to receive(:windows?).and_return(true)
+        stub_const("RUBY_PLATFORM", "mingw")
       end
 
       describe "when user is Administrator" do
@@ -81,7 +79,7 @@ RSpec.describe LicenseAcceptance::Config do
 
     describe "when platform is non-Windows" do
       before do
-        expect(platform).to receive(:windows?).and_return(false)
+        stub_const("RUBY_PLATFORM", "darwin")
       end
 
       describe "when user is root" do
