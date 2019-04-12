@@ -49,6 +49,17 @@ merge_actions:
       only_if: built_in:bump_version
   #https://github.com/golang/go/wiki/Modules#releasing-modules-all-versions
 
+subscriptions:
+  - workload: artifact_published:current:license-acceptance:*
+    actions:
+      - built_in:promote_habitat_packages
+  - workload: artifact_published:stable:license-acceptance:*
+    actions:
+      - built_in:rollover_changelog
+      - built_in:promote_habitat_packages
+      - built_in:publish_rubygems
+      - built_in:notify_chefio_slack_channels
+
 promote:
   channels:
     - unstable
