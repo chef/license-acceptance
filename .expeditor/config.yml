@@ -1,5 +1,8 @@
 # Documentation available at https://expeditor.chef.io/docs/getting-started/
 
+project:
+  alias: license-acceptance
+
 # https://expeditor.chef.io/docs/integrations/slack/
 slack:
   notify_channel: _license_acceptance
@@ -22,7 +25,8 @@ github:
     - "Expeditor: Bump Version Major"
 
 pipelines:
-  - verify
+  - verify:
+      public: true
   - habitat/build
 
 # These actions are taken, in order they are specified, anytime a Pull Request is merged.
@@ -50,10 +54,7 @@ merge_actions:
   #https://github.com/golang/go/wiki/Modules#releasing-modules-all-versions
 
 promote:
-  channels:
-    - unstable
-    - current
-    - stable
   actions:
+    - built_in:rollover_changelog
     - built_in:promote_habitat_packages
     - built_in:publish_rubygems

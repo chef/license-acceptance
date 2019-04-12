@@ -5,6 +5,8 @@
 - tty-platform library is interfering with chef-client [#22](https://github.com/chef/license-acceptance/pull/22) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
+<!-- release_rollup since=0.2.5-->
+
 ## [v0.2.5](https://github.com/chef/license-acceptance/tree/v0.2.5) (2019-04-10)
 
 #### Merged Pull Requests
@@ -34,3 +36,9 @@
 
 #### Merged Pull Requests
 - Adding initial expeditor configuration [#16](https://github.com/chef/license-acceptance/pull/16) ([tyler-ball](https://github.com/tyler-ball))
+
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
+
+<!-- latest_stable_release -->
