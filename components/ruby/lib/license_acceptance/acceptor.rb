@@ -58,7 +58,9 @@ module LicenseAcceptance
         if config.persist
           errs = file_acceptance.persist(product_relationship, missing_licenses)
           if errs.empty?
-            output_num_persisted(missing_licenses.size)
+            unless env_acceptance.silent?(ENV) || arg_acceptance.silent?(ARGV)
+              output_num_persisted(missing_licenses.size)
+            end
           else
             output_persist_failed(errs)
           end
