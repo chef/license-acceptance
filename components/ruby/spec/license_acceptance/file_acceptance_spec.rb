@@ -23,7 +23,7 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
     describe "when there is an existing license file" do
       it "returns an empty missing product list" do
         expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(true)
-        expect(acc.check(product_relationship)).to eq([])
+        expect(acc.accepted?(product_relationship)).to eq([])
       end
     end
 
@@ -31,7 +31,7 @@ RSpec.describe LicenseAcceptance::FileAcceptance do
       it "returns the product in the missing product list" do
         expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(false)
         expect(File).to receive(:exist?).with(File.join(dir2, p1_filename)).and_return(false)
-        expect(acc.check(product_relationship)).to eq([p1])
+        expect(acc.accepted?(product_relationship)).to eq([p1])
       end
     end
 
