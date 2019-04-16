@@ -12,7 +12,7 @@ module LicenseAcceptance
       def self.included(klass)
         klass.option :chef_license,
           long: "--chef-license ACCEPTANCE",
-          description: "Accept the license for this product and any contained products ('accept' or 'accept-no-persist')",
+          description: "Accept the license for this product and any contained products ('accept', 'accept-no-persist', or 'accept-silent')",
           required: false
       end
 
