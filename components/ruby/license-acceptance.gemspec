@@ -11,13 +11,11 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Chef End User License Agreement Acceptance}
   spec.description   = %q{Chef End User License Agreement Acceptance for Ruby products}
-  spec.homepage      = "https://chef.io"
+  spec.homepage      = "https://github.com/chef/license-acceptance/"
   spec.license       = "Apache-2.0"
 
-  spec.files         = %w{Gemfile Gemfile.lock Rakefile} + Dir.glob("{lib,spec,config}/**/*")
+  spec.files         = %w{Gemfile Gemfile.lock Rakefile LICENSE} + Dir.glob("{lib,spec,config}/**/*")
 
-  spec.bindir        = "bin"
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'pastel', "~> 0.7"
