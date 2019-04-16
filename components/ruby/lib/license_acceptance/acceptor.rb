@@ -38,7 +38,7 @@ module LicenseAcceptance
     end
 
     def check_and_persist(product_name, version)
-      if env_acceptance.check_no_persist(ENV) || arg_acceptance.check_no_persist(ARGV)
+      if accepted_no_persist?
         logger.debug("Chef License accepted with no persistence")
         return true
       end
@@ -46,7 +46,7 @@ module LicenseAcceptance
       product_reader.read
       product_relationship = product_reader.lookup(product_name, version)
 
-      missing_licenses = file_acceptance.check(product_relationship)
+      missing_licenses = file_acceptance.accepted?(product_relationship)
 
       # They have already accepted all licenses and stored their acceptance in the persistent files
       if missing_licenses.empty?
@@ -54,13 +54,11 @@ module LicenseAcceptance
         return true
       end
 
-      if env_acceptance.check(ENV) || arg_acceptance.check(ARGV)
+      if accepted? || accepted_silent?
         if config.persist
           errs = file_acceptance.persist(product_relationship, missing_licenses)
           if errs.empty?
-            unless env_acceptance.silent?(ENV) || arg_acceptance.silent?(ARGV)
-              output_num_persisted(missing_licenses.size)
-            end
+            output_num_persisted(missing_licenses.size) unless accepted_silent?
           else
             output_persist_failed(errs)
           end
@@ -85,6 +83,20 @@ module LicenseAcceptance
 
     def self.check_and_persist(product_name, version, opts={})
       new(opts).check_and_persist(product_name, version)
+    end
+
+    def accepted?
+      env_acceptance.accepted?(ENV) || arg_acceptance.accepted?(ARGV)
+    end
+
+    # no-persist is silent too
+    def accepted_no_persist?
+      env_acceptance.no_persist?(ENV) || arg_acceptance.no_persist?(ARGV)
+    end
+
+    # persist but be silent like no-persist
+    def accepted_silent?
+      env_acceptance.silent?(ENV) || arg_acceptance.silent?(ARGV)
     end
 
     # In the case where users accept with a command line argument or environment variable

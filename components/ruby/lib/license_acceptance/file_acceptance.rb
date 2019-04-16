@@ -18,7 +18,7 @@ module LicenseAcceptance
 
     # For all the given products in the product set, search all possible locations for the
     # license acceptance files.
-    def check(product_relationship)
+    def accepted?(product_relationship)
       searching = [product_relationship.parent] + product_relationship.children
       missing_licenses = searching.clone
       logger.debug("Searching for the following licenses: #{missing_licenses.map(&:name)}")
