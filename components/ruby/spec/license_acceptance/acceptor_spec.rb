@@ -77,6 +77,8 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:check).with(relationship).and_return(missing)
         expect(env_acc).to receive(:check).with(ENV).and_return(true)
+        expect(env_acc).to receive(:silent?).with(ENV).and_return(false)
+        expect(arg_acc).to receive(:silent?).with(ARGV).and_return(false)
         expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
         expect(acc.check_and_persist(product, version)).to eq(true)
         expect(output.string).to match(/1 product license accepted./)
@@ -94,6 +96,23 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(env_acc).to receive(:check).with(ENV).and_return(true)
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to_not match(/accepted./)
+        end
+      end
+
+      describe "when the silent option is used" do
+        let(:opts) { { output: output } }
+
+        it "returns true and silently persists the file" do
+          expect(env_acc).to receive(:check_no_persist).and_return(false)
+          expect(arg_acc).to receive(:check_no_persist).and_return(false)
+          expect(reader).to receive(:read)
+          expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+          expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+          expect(env_acc).to receive(:check).with(ENV).and_return(true)
+          expect(env_acc).to receive(:silent?).with(ENV).and_return(true)
+          expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
+          expect(acc.check_and_persist(product, version)).to eq(true)
+          expect(output.string).to be_empty
         end
       end
 
@@ -121,10 +140,32 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(file_acc).to receive(:check).with(relationship).and_return(missing)
         expect(env_acc).to receive(:check).and_return(false)
         expect(arg_acc).to receive(:check).with(ARGV).and_return(true)
+        expect(env_acc).to receive(:silent?).with(ENV).and_return(false)
+        expect(arg_acc).to receive(:silent?).with(ARGV).and_return(false)
         expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
         expect(acc.check_and_persist(product, version)).to eq(true)
         expect(output.string).to match(/1 product license accepted./)
       end
+
+      describe "when the silent option is used" do
+        let(:opts) { { output: output } }
+
+        it "returns true and silently persists the file" do
+          expect(env_acc).to receive(:check_no_persist).and_return(false)
+          expect(arg_acc).to receive(:check_no_persist).and_return(false)
+          expect(reader).to receive(:read)
+          expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+          expect(file_acc).to receive(:check).with(relationship).and_return(missing)
+          expect(env_acc).to receive(:check).and_return(false)
+          expect(arg_acc).to receive(:check).with(ARGV).and_return(true)
+          expect(env_acc).to receive(:silent?).with(ENV).and_return(false)
+          expect(arg_acc).to receive(:silent?).with(ARGV).and_return(true)
+          expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
+          expect(acc.check_and_persist(product, version)).to eq(true)
+          expect(output.string).to be_empty
+        end
+      end
+
 
       describe "when persist is set to false" do
         let(:opts) { { output: output, persist: false } }
