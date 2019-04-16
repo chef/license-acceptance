@@ -1,50 +1,32 @@
 module LicenseAcceptance
   class ArgAcceptance
 
-    # TODO: DRY this up
-
     def check(argv)
       return true if silent?(argv)
-      if argv.include?("--chef-license=accept")
-        return true
-      end
-      i = argv.index("--chef-license")
-      unless i.nil?
-        val = argv[i+1]
-        if val != nil && val.downcase == "accept"
-          return true
-        end
-      end
-      return false
+      look_for_value(argv, "accept")
     end
 
     def silent?(argv)
-      if argv.include?("--chef-license=accept-silent")
-        return true
-      end
-      i = argv.index("--chef-license")
-      unless i.nil?
-        val = argv[i+1]
-        if val != nil && val.downcase == "accept-silent"
-          return true
-        end
-      end
-      return false
+      look_for_value(argv, "accept-silent")
     end
 
     def check_no_persist(argv)
-      if argv.include?("--chef-license=accept-no-persist")
+      look_for_value(argv, "accept-no-persist")
+    end
+
+    private
+    def look_for_value(argv, sought)
+      if argv.include?("--chef-license=#{sought}")
         return true
       end
       i = argv.index("--chef-license")
       unless i.nil?
         val = argv[i+1]
-        if val != nil && val.downcase == "accept-no-persist"
+        if val != nil && val.downcase == sought
           return true
         end
       end
       return false
     end
-
   end
 end
