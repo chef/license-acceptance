@@ -37,7 +37,3 @@ steps:
   expeditor:
     executor:
       docker:
-  timeout_in_minutes: 15
-  expeditor:
-    executor:
-      docker:
