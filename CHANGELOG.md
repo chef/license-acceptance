@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 0.2.11 -->
+## [v0.2.11](https://github.com/chef/license-acceptance/tree/v0.2.11) (2019-04-17)
+
+#### Merged Pull Requests
+- Require Ruby 2.4 or later [#30](https://github.com/chef/license-acceptance/pull/30) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=0.2.10 -->
+### Changes since 0.2.10 release
+
+#### Merged Pull Requests
+- Require Ruby 2.4 or later [#30](https://github.com/chef/license-acceptance/pull/30) ([tas50](https://github.com/tas50)) <!-- 0.2.11 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
