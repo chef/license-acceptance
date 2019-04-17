@@ -37,13 +37,6 @@ steps:
   expeditor:
     executor:
       docker:
-- label: rspec 2.3
-  command:
-    - asdf install ruby 2.3.8
-    - asdf local ruby 2.3.8
-    - cd /workdir/components/ruby
-    - bundle install
-    - bundle exec rspec
   timeout_in_minutes: 15
   expeditor:
     executor:
