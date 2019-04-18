@@ -11,9 +11,9 @@ require 'license_acceptance/acceptor'
 LicenseAcceptance::Acceptor.check_and_persist!('inspec', Inspec::VERSION)
 ```
 
-This method performs the license acceptance flow documented in the root README. If the user declines or cannot accept the license
-for some reason it prints a simple message to stdout and exits with code 172. If a developer wishes to customize
-this behavior they can instead add the following:
+This method performs the license acceptance flow documented in the root README. If the user declines or cannot accept
+the license for some reason it prints a simple message to stdout and exits with code 172. If a developer wishes to
+customize this behavior they can instead add the following:
 
 ```ruby
 require 'license_acceptance/acceptor'
@@ -35,3 +35,31 @@ require "license_acceptance/cli_flags/mixlib_cli"
 ...
 include LicenseAcceptance::CLIFlags::MixlibCLI
 ```
+
+```ruby
+require "license_acceptance/cli_flags/thor"
+...
+include LicenseAcceptance::CLIFlags::Thor
+```
+
+## Configuration
+
+The `Acceptor` class allows optional configuration to be passed when invoking it:
+
+```ruby
+LicenseAcceptance::Acceptor.check_and_persist('inspec', Inspec::VERSION,
+  output: $stdout,
+  logger: Inspec::Log,
+  license_locations: ["/license_dir1", "/license_dir2"],
+  persist_location: "/license_dir",
+  persist: true,
+)
+```
+
+* `output` - Output stream for license interactions, defaults to `$stdout`
+* `logger` - Ruby logger device for developer logs, defaults to nil
+* `license_locations` - Array of locations to search for existing licenses, defaults described in top level README
+* `persist_location` - Location to persist license marker files, should be one of the locations from `license_locations`
+  if future reads are supposed to work
+* `persist` - Whether to persist the license marker files, setting is overwritten by `accept-no-license` arguments /
+  environment variables
