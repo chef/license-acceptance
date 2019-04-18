@@ -1,14 +1,15 @@
-<!-- latest_release 0.2.11 -->
-## [v0.2.11](https://github.com/chef/license-acceptance/tree/v0.2.11) (2019-04-17)
+<!-- latest_release 0.2.12 -->
+## [v0.2.12](https://github.com/chef/license-acceptance/tree/v0.2.12) (2019-04-18)
 
 #### Merged Pull Requests
-- Require Ruby 2.4 or later [#30](https://github.com/chef/license-acceptance/pull/30) ([tas50](https://github.com/tas50))
+- Updating the Ruby README for clarity about config settings [#32](https://github.com/chef/license-acceptance/pull/32) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
 <!-- release_rollup since=0.2.10 -->
 ### Changes since 0.2.10 release
 
 #### Merged Pull Requests
+- Updating the Ruby README for clarity about config settings [#32](https://github.com/chef/license-acceptance/pull/32) ([tyler-ball](https://github.com/tyler-ball)) <!-- 0.2.12 -->
 - Require Ruby 2.4 or later [#30](https://github.com/chef/license-acceptance/pull/30) ([tas50](https://github.com/tas50)) <!-- 0.2.11 -->
 <!-- release_rollup -->
 
