@@ -1,14 +1,14 @@
 require "spec_helper"
-require "license_acceptance/prompt_acceptance"
+require "license_acceptance/strategy/prompt"
 require "license_acceptance/product"
 require "tty-prompt"
 
-RSpec.describe LicenseAcceptance::PromptAcceptance do
+RSpec.describe LicenseAcceptance::Strategy::Prompt do
   let(:output) { StringIO.new }
   let(:config) do
     instance_double(LicenseAcceptance::Config, output: output)
   end
-  let(:acc) { LicenseAcceptance::PromptAcceptance.new(config) }
+  let(:acc) { LicenseAcceptance::Strategy::Prompt.new(config) }
   let(:prompt) { instance_double(TTY::Prompt) }
   let(:p1) { instance_double(LicenseAcceptance::Product, name: "name", pretty_name: "Pretty Name") }
   let(:missing_licenses) { [p1] }
@@ -60,7 +60,7 @@ RSpec.describe LicenseAcceptance::PromptAcceptance do
   describe "when the prompt times out" do
     it "returns false" do
       expect(Timeout).to receive(:timeout).twice.and_yield
-      expect(prompt).to receive(:ask).twice.and_raise(LicenseAcceptance::PromptTimeout)
+      expect(prompt).to receive(:ask).twice.and_raise(LicenseAcceptance::Strategy::PromptTimeout)
       expect(prompt).to receive(:unsubscribe).twice
       expect(prompt).to receive(:reader).twice
       msg1 = /Prompt timed out./
