@@ -213,13 +213,9 @@ README](./components/golang/habitat/README.md) for details on implementation.
 These Habitat managed services will not have an interactive prompt based flow like the client products do. We feel this
 is acceptable because server products are typically managed by a supervisor process instead of a user.
 
-Habitat can run services in an ephimeral environment. In this case it is not possible to persist the license acceptance
-information anywhere. One option is to mount a persistent drive to store license marker files across all ephemeral
-environments but we do not recommend this. Instead we recommend make their deployment tools accept the license every
-time the service is started (EG, `hab sup run chef/chef-server && hab config apply chef-server.default 1 accept.toml`).
-
-To accept multiple Habitat licenses at once see the [Bulk License Acceptance Tools](#bulk-license-acceptance-tools)
-section.
+This Habitat service will not attempt to do product verification or persistence. It is a very simple binary check. In
+the future we may modify this to be more like the Ruby managed services but it complicated the Automate deployment case
+so we leave that for a later date.
 
 ## Remote Management Products
 
