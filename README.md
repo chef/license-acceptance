@@ -99,6 +99,8 @@ to keep a consistent experience among all Chef Software products.
 
 See the [Ruby README](./components/ruby/README.md) for developer notes on consuming this library.
 
+### Acceptance Values and Precedence
+
 Users accept the license by passing one of the following options. The `silent` options suppress any output on STDOUT.
 The `no-persist` options means the license marker file will not attempt to be persisted to the filesystem.
 
@@ -108,6 +110,17 @@ The `no-persist` options means the license marker file will not attempt to be pe
 * `ENV[CHEF_LICENSE]=accept`
 * `ENV[CHEF_LICENSE]=accept-no-persist`
 * `ENV[CHEF_LICENSE]=accept-silent`
+
+Additionally consumers of this library can manually provide an acceptance value. See the [Ruby README](./components/ruby/README.md#configuration) for details on how to provide this value.
+
+This library uses the following precedence order:
+
+1. If `accept-no-persist` value is provided via any means (from caller, command line argument, environment variable) then the acceptance check will pass with no output.
+1. Existing marker files will attempt to be read. If all required marker files for the checked product are found then the acceptance check will pass.
+1. If `accept-silent` value is provided via any means then the acceptance check will pass with no output. Acceptance will attempt to be persisted.
+1. If `accept` value is provided via any means then the acceptance check will pass and echo this on STDOUT. Acceptance will attempt to be persisted.
+1. If STDIN is a TTY then the interactive prompt will be ran.  Acceptance will attempt to be persisted.
+1. If none of these checks succeed then the application will exit with code 172.
 
 ### License File Persistence
 

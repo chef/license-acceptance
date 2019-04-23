@@ -3,26 +3,28 @@ require "license_acceptance/config"
 require "license_acceptance/logger"
 require "license_acceptance/product_reader"
 require "license_acceptance/product_relationship"
-require "license_acceptance/file_acceptance"
-require "license_acceptance/arg_acceptance"
-require "license_acceptance/prompt_acceptance"
-require "license_acceptance/env_acceptance"
+require "license_acceptance/strategy/environment"
+require "license_acceptance/strategy/file"
+require "license_acceptance/strategy/argument"
+require "license_acceptance/strategy/prompt"
+require "license_acceptance/strategy/provided_value"
 
 module LicenseAcceptance
   class Acceptor
     extend Forwardable
     include Logger
 
-    attr_reader :config, :product_reader, :env_acceptance, :file_acceptance, :arg_acceptance, :prompt_acceptance
+    attr_reader :config, :product_reader, :env_strategy, :file_strategy, :arg_strategy, :prompt_strategy, :provided_strategy
 
     def initialize(opts={})
       @config = Config.new(opts)
       Logger.initialize(config.logger)
       @product_reader = ProductReader.new
-      @env_acceptance = EnvAcceptance.new
-      @file_acceptance = FileAcceptance.new(config)
-      @arg_acceptance = ArgAcceptance.new
-      @prompt_acceptance = PromptAcceptance.new(config)
+      @env_strategy = Strategy::Environment.new(ENV)
+      @file_strategy = Strategy::File.new(config)
+      @arg_strategy = Strategy::Argument.new(ARGV)
+      @prompt_strategy = Strategy::Prompt.new(config)
+      @provided_strategy = Strategy::ProvidedValue.new(opts.fetch(:provided, nil))
     end
 
     def_delegator :@config, :output
@@ -46,7 +48,7 @@ module LicenseAcceptance
       product_reader.read
       product_relationship = product_reader.lookup(product_name, version)
 
-      missing_licenses = file_acceptance.accepted?(product_relationship)
+      missing_licenses = file_strategy.accepted?(product_relationship)
 
       # They have already accepted all licenses and stored their acceptance in the persistent files
       if missing_licenses.empty?
@@ -56,7 +58,7 @@ module LicenseAcceptance
 
       if accepted? || accepted_silent?
         if config.persist
-          errs = file_acceptance.persist(product_relationship, missing_licenses)
+          errs = file_strategy.persist(product_relationship, missing_licenses)
           if errs.empty?
             output_num_persisted(missing_licenses.size) unless accepted_silent?
           else
@@ -64,9 +66,9 @@ module LicenseAcceptance
           end
         end
         return true
-      elsif config.output.isatty && prompt_acceptance.request(missing_licenses) do
+      elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
           if config.persist
-            file_acceptance.persist(product_relationship, missing_licenses)
+            file_strategy.persist(product_relationship, missing_licenses)
           else
             []
           end
@@ -86,17 +88,17 @@ module LicenseAcceptance
     end
 
     def accepted?
-      env_acceptance.accepted?(ENV) || arg_acceptance.accepted?(ARGV)
+      provided_strategy.accepted? || env_strategy.accepted? || arg_strategy.accepted?
     end
 
     # no-persist is silent too
     def accepted_no_persist?
-      env_acceptance.no_persist?(ENV) || arg_acceptance.no_persist?(ARGV)
+      provided_strategy.no_persist? || env_strategy.no_persist? || arg_strategy.no_persist?
     end
 
     # persist but be silent like no-persist
     def accepted_silent?
-      env_acceptance.silent?(ENV) || arg_acceptance.silent?(ARGV)
+      provided_strategy.silent? || env_strategy.silent? || arg_strategy.silent?
     end
 
     # In the case where users accept with a command line argument or environment variable
@@ -104,18 +106,18 @@ module LicenseAcceptance
     def output_num_persisted(count)
       s = count > 1 ? "s": ""
       output.puts <<~EOM
-      #{PromptAcceptance::BORDER}
-      #{PromptAcceptance::CHECK} #{count} product license#{s} accepted.
-      #{PromptAcceptance::BORDER}
+      #{Strategy::Prompt::BORDER}
+      #{Strategy::Prompt::CHECK} #{count} product license#{s} accepted.
+      #{Strategy::Prompt::BORDER}
       EOM
     end
 
     def output_persist_failed(errs)
       output.puts <<~EOM
-      #{PromptAcceptance::BORDER}
-      #{PromptAcceptance::CHECK} Product license accepted.
+      #{Strategy::Prompt::BORDER}
+      #{Strategy::Prompt::CHECK} Product license accepted.
       Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
-      #{PromptAcceptance::BORDER}
+      #{Strategy::Prompt::BORDER}
       EOM
     end
 

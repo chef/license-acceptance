@@ -1,17 +1,17 @@
 require "spec_helper"
 require "license_acceptance/config"
-require "license_acceptance/file_acceptance"
+require "license_acceptance/strategy/file"
 require "license_acceptance/product_relationship"
 require "license_acceptance/product"
 
-RSpec.describe LicenseAcceptance::FileAcceptance do
+RSpec.describe LicenseAcceptance::Strategy::File do
   let(:dir1) { "/dir1" }
   let(:dir2) { "/dir2" }
   let(:dir3) { "/dir3" }
   let(:config) do
     instance_double(LicenseAcceptance::Config, license_locations: [dir1, dir2], persist_location: dir3)
   end
-  let(:acc) { LicenseAcceptance::FileAcceptance.new(config) }
+  let(:acc) { LicenseAcceptance::Strategy::File.new(config) }
   let(:p1_name) { "chef_client" }
   let(:p1_filename) { "p1_filename" }
   let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name, filename: p1_filename) }

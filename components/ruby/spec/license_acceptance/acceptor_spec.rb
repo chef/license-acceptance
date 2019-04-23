@@ -30,29 +30,47 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
   describe "#check_and_persist" do
     let(:reader) { instance_double(LicenseAcceptance::ProductReader) }
-    let(:file_acc) { instance_double(LicenseAcceptance::FileAcceptance) }
-    let(:arg_acc) { instance_double(LicenseAcceptance::ArgAcceptance) }
-    let(:prompt_acc) { instance_double(LicenseAcceptance::PromptAcceptance) }
-    let(:env_acc) { instance_double(LicenseAcceptance::EnvAcceptance) }
+    let(:file_acc) { instance_double(LicenseAcceptance::Strategy::File) }
+    let(:arg_acc) { instance_double(LicenseAcceptance::Strategy::Argument) }
+    let(:prompt_acc) { instance_double(LicenseAcceptance::Strategy::Prompt) }
+    let(:env_acc) { instance_double(LicenseAcceptance::Strategy::Environment) }
+    let(:provided_acc) { instance_double(LicenseAcceptance::Strategy::ProvidedValue) }
 
     before do
       expect(LicenseAcceptance::ProductReader).to receive(:new).and_return(reader)
-      expect(LicenseAcceptance::FileAcceptance).to receive(:new).and_return(file_acc)
-      expect(LicenseAcceptance::ArgAcceptance).to receive(:new).and_return(arg_acc)
-      expect(LicenseAcceptance::PromptAcceptance).to receive(:new).and_return(prompt_acc)
-      expect(LicenseAcceptance::EnvAcceptance).to receive(:new).and_return(env_acc)
+      expect(LicenseAcceptance::Strategy::File).to receive(:new).and_return(file_acc)
+      expect(LicenseAcceptance::Strategy::Argument).to receive(:new).and_return(arg_acc)
+      expect(LicenseAcceptance::Strategy::Prompt).to receive(:new).and_return(prompt_acc)
+      expect(LicenseAcceptance::Strategy::Environment).to receive(:new).and_return(env_acc)
+      expect(LicenseAcceptance::Strategy::ProvidedValue).to receive(:new).and_return(provided_acc)
+
+      allow(provided_acc).to receive(:no_persist?).and_return(false)
+      allow(env_acc).to receive(:no_persist?).and_return(false)
+      allow(arg_acc).to receive(:no_persist?).and_return(false)
+      allow(provided_acc).to receive(:accepted?).and_return(false)
+      allow(env_acc).to receive(:accepted?).and_return(false)
+      allow(arg_acc).to receive(:accepted?).and_return(false)
+      allow(provided_acc).to receive(:silent?).and_return(false)
+      allow(env_acc).to receive(:silent?).and_return(false)
+      allow(arg_acc).to receive(:silent?).and_return(false)
     end
 
-    describe "when check-no-persist environment variable is set" do
+    describe "when accept-no-persist is provided from the caller" do
+      it "returns true" do
+        expect(provided_acc).to receive(:no_persist?).and_return(true)
+        expect(acc.check_and_persist(product, version)).to eq(true)
+      end
+    end
+
+    describe "when accept-no-persist environment variable is set" do
       it "returns true" do
         expect(env_acc).to receive(:no_persist?).and_return(true)
         expect(acc.check_and_persist(product, version)).to eq(true)
       end
     end
 
-    describe "when check-no-persist command line argument is set" do
+    describe "when accept-no-persist command line argument is set" do
       it "returns true" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
         expect(arg_acc).to receive(:no_persist?).and_return(true)
         expect(acc.check_and_persist(product, version)).to eq(true)
       end
@@ -60,8 +78,6 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
     describe "when there are no missing licenses" do
       it "returns true" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
-        expect(arg_acc).to receive(:no_persist?).and_return(false)
         expect(reader).to receive(:read)
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:accepted?).with(relationship).and_return([])
@@ -71,14 +87,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
     describe "when the user accepts as an environment variable" do
       it "returns true" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
-        expect(arg_acc).to receive(:no_persist?).and_return(false)
         expect(reader).to receive(:read)
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-        expect(env_acc).to receive(:accepted?).with(ENV).and_return(true)
-        expect(env_acc).to receive(:silent?).with(ENV).and_return(false)
-        expect(arg_acc).to receive(:silent?).with(ARGV).and_return(false)
+        expect(env_acc).to receive(:accepted?).and_return(true)
         expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
         expect(acc.check_and_persist(product, version)).to eq(true)
         expect(output.string).to match(/1 product license accepted./)
@@ -88,12 +100,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
         let(:opts) { { output: output, persist: false } }
 
         it "returns true" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).with(ENV).and_return(true)
+          expect(env_acc).to receive(:accepted?).and_return(true)
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to_not match(/accepted./)
         end
@@ -103,14 +113,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
         let(:opts) { { output: output } }
 
         it "returns true and silently persists the file" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).with(ENV).and_return(false)
-          expect(arg_acc).to receive(:accepted?).with(ARGV).and_return(false)
-          expect(env_acc).to receive(:silent?).with(ENV).twice.and_return(true)
+          expect(env_acc).to receive(:silent?).twice.and_return(true)
           expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to be_empty
@@ -119,12 +125,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
       describe "when file persistance fails" do
         it "returns true" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).with(ENV).and_return(true)
+          expect(env_acc).to receive(:accepted?).and_return(true)
           expect(file_acc).to receive(:persist).with(relationship, missing).and_return([StandardError.new("foo")])
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to match(/Could not persist acceptance:/)
@@ -134,15 +138,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
     describe "when the user accepts as an arg" do
       it "returns true" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
-        expect(arg_acc).to receive(:no_persist?).and_return(false)
         expect(reader).to receive(:read)
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-        expect(env_acc).to receive(:accepted?).and_return(false)
-        expect(arg_acc).to receive(:accepted?).with(ARGV).and_return(true)
-        expect(env_acc).to receive(:silent?).with(ENV).and_return(false)
-        expect(arg_acc).to receive(:silent?).with(ARGV).and_return(false)
+        expect(arg_acc).to receive(:accepted?).and_return(true)
         expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
         expect(acc.check_and_persist(product, version)).to eq(true)
         expect(output.string).to match(/1 product license accepted./)
@@ -152,15 +151,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
         let(:opts) { { output: output } }
 
         it "returns true and silently persists the file" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).and_return(false)
-          expect(arg_acc).to receive(:accepted?).with(ARGV).and_return(false)
-          expect(env_acc).to receive(:silent?).with(ENV).twice.and_return(false)
-          expect(arg_acc).to receive(:silent?).with(ARGV).twice.and_return(true)
+          expect(arg_acc).to receive(:silent?).twice.and_return(true)
           expect(file_acc).to receive(:persist).with(relationship, missing).and_return([])
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to be_empty
@@ -172,13 +166,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
         let(:opts) { { output: output, persist: false } }
 
         it "returns true" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).and_return(false)
-          expect(arg_acc).to receive(:accepted?).with(ARGV).and_return(true)
+          expect(arg_acc).to receive(:accepted?).and_return(true)
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to_not match(/accepted./)
         end
@@ -186,13 +177,10 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
       describe "when file persistance fails" do
         it "returns true" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).and_return(false)
-          expect(arg_acc).to receive(:accepted?).with(ARGV).and_return(true)
+          expect(arg_acc).to receive(:accepted?).and_return(true)
           expect(file_acc).to receive(:persist).with(relationship, missing).and_return([StandardError.new("bar")])
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to match(/Could not persist acceptance:/)
@@ -203,15 +191,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
     describe "when the prompt is not a tty" do
       let(:opts) { { output: File.open(File::NULL, "w") } }
       it "raises a LicenseNotAcceptedError error" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
-        expect(arg_acc).to receive(:no_persist?).and_return(false)
         expect(reader).to receive(:read)
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-        expect(env_acc).to receive(:accepted?).and_return(false)
-        expect(arg_acc).to receive(:accepted?).and_return(false)
-        expect(env_acc).to receive(:silent?).and_return(false)
-        expect(arg_acc).to receive(:silent?).and_return(false)
         expect(prompt_acc).to_not receive(:request)
         expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
       end
@@ -219,15 +201,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
     describe "when the user accepts with the prompt" do
       it "returns true" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
-        expect(arg_acc).to receive(:no_persist?).and_return(false)
         expect(reader).to receive(:read)
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-        expect(env_acc).to receive(:accepted?).and_return(false)
-        expect(arg_acc).to receive(:accepted?).and_return(false)
-        expect(env_acc).to receive(:silent?).and_return(false)
-        expect(arg_acc).to receive(:silent?).and_return(false)
         expect(prompt_acc).to receive(:request).with(missing).and_yield.and_return(true)
         expect(file_acc).to receive(:persist).with(relationship, missing)
         expect(acc.check_and_persist(product, version)).to eq(true)
@@ -237,15 +213,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
         let(:opts) { { output: output, persist: false } }
 
         it "returns true" do
-          expect(env_acc).to receive(:no_persist?).and_return(false)
-          expect(arg_acc).to receive(:no_persist?).and_return(false)
           expect(reader).to receive(:read)
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-          expect(env_acc).to receive(:accepted?).and_return(false)
-          expect(arg_acc).to receive(:accepted?).and_return(false)
-          expect(env_acc).to receive(:silent?).and_return(false)
-          expect(arg_acc).to receive(:silent?).and_return(false)
           expect(prompt_acc).to receive(:request).with(missing).and_yield.and_return(true)
           expect(acc.check_and_persist(product, version)).to eq(true)
         end
@@ -254,15 +224,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
 
     describe "when the user declines with the prompt" do
       it "raises a LicenseNotAcceptedError error" do
-        expect(env_acc).to receive(:no_persist?).and_return(false)
-        expect(arg_acc).to receive(:no_persist?).and_return(false)
         expect(reader).to receive(:read)
         expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
         expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
-        expect(env_acc).to receive(:accepted?).and_return(false)
-        expect(arg_acc).to receive(:accepted?).and_return(false)
-        expect(env_acc).to receive(:silent?).and_return(false)
-        expect(arg_acc).to receive(:silent?).and_return(false)
         expect(prompt_acc).to receive(:request).with(missing).and_return(false)
         expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
       end
