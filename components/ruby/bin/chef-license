@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+#
+# Author:: Tyler Ball (<tball@chef.io>)
+# Copyright:: Copyright 2008-2019, Chef Software Inc.
+# License:: Apache License, Version 2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+$:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
+require "license_acceptance/config"
+require "license_acceptance/logger"
+require "license_acceptance/product_reader"
+require "license_acceptance/strategy/file"
+# require "chef"
+# require "chef/application/client"
+
+# Chef::Application::Client.new.run(true)
+
+acceptance = ARGV[0]
+product_name = ARGV[1]
+version = ARGV[2]
+
+if acceptance == "accept-no-persist"
+  exit 0
+elsif acceptance != "accept" && acceptance != "accept-silent"
+  puts "Must provide 'accept', 'accept-silent' or 'accept-no-persist'"
+  exit 172
+end
+
+if product_name.nil? || version.nil? || product_name.empty? || version.empty?
+  puts "Must provide a product name and version"
+  exit 172
+end
+
+config = LicenseAcceptance::Config.new
+LicenseAcceptance::Logger.initialize(config.logger)
+
+product_reader = LicenseAcceptance::ProductReader.new
+product_reader.read
+product_relationship = product_reader.lookup(product_name, version)
+
+file_strategy = LicenseAcceptance::Strategy::File.new(config)
+missing_licenses = file_strategy.accepted?(product_relationship)
+if missing_licenses.empty?
+  exit 0
+end
+
+file_strategy.persist(product_relationship, missing_licenses)
+exit 0

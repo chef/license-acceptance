@@ -14,7 +14,9 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/chef/license-acceptance/"
   spec.license       = "Apache-2.0"
 
-  spec.files         = %w{Gemfile Gemfile.lock Rakefile LICENSE} + Dir.glob("{lib,spec,config}/**/*")
+  spec.files         = %w{Gemfile Gemfile.lock Rakefile LICENSE} + Dir.glob("{bin,lib,spec,config}/**/*")
+  spec.bindir        = "bin"
+  spec.executables   = %w{ chef-license }
 
   spec.require_paths = ["lib"]
 
