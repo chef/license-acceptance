@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 0.2.14 -->
+## [v0.2.14](https://github.com/chef/license-acceptance/tree/v0.2.14) (2019-04-24)
+
+#### Merged Pull Requests
+- Simplifying the Golang/Habitat implementation of license acceptance [#35](https://github.com/chef/license-acceptance/pull/35) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=0.2.13 -->
+### Changes since 0.2.13 release
+
+#### Merged Pull Requests
+- Simplifying the Golang/Habitat implementation of license acceptance [#35](https://github.com/chef/license-acceptance/pull/35) ([tyler-ball](https://github.com/tyler-ball)) <!-- 0.2.14 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
