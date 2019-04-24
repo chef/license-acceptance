@@ -29,7 +29,7 @@ acceptance = "undefined"
 #!/bin/sh
 set -e
 # Call the script to fail the service if the user has not accepted the license
-{{pkgPathFor "chef/license-acceptance"}}/bin/chef-license {{cfg.chef_license.acceptance}} {{pkg.origin}}/{{pkg.name}} {{pkg.version}}
+{{pkgPathFor "chef/license-acceptance"}}/bin/chef-license {{cfg.chef_license.acceptance}}
 ```
 
 ### Your Configuration
@@ -37,21 +37,3 @@ set -e
 [chef_license]
 acceptance = "accept"
 ```
-
-`acceptance` is the only required configuration for the application to work, but there are other optional configurations:
-
-```toml
-[chef_license]
-acceptance = "accept"
-persist_path = "/root/"
-read_paths = ["/root/", "/home/ubuntu/"]
-persist = false
-```
-
-* `persist_path` - Location on filesystem where license marker files should be persisted. This path must be in the
-  `read_paths` for the marker files to be read later. Defaults to `"/etc/chef/accepted_licenses"` for root user or
-  `"$HOME/.chef/accepted_licenses"` for non root user. No path expansion is performed.
-* `read_paths` - List of locations to look for license acceptance files that were written at `persist_path`. Defaults to
-  `["/etc/chef/accepted_licenses"]` for root user or `["/etc/chef/accepted_licenses", "$HOME/.chef/accepted_licenses"]` for
-  non root user. No path expansion is performed.
-* `persist` - If set to `false`, do not attempt to persist license marker files. Defaults to `true`.

@@ -19,8 +19,3 @@ do_build() {
 do_install() {
   install -m 0755 "${SRC_PATH}/bin/chef-license" "${pkg_prefix}/bin"
 }
-
-do_setup_environment() {
-  set_runtime_env CHEF_LICENSE_CONFIG "${SRC_PATH}/config/config.toml"
-  set_runtime_env CHEF_LICENSE_PRODUCT_INFO "${SRC_PATH}/config/product_info.toml"
-}
