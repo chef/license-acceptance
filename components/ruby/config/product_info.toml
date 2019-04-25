@@ -6,6 +6,8 @@ name = "chef-client"
 pretty_name = "Chef Client"
 hab_pkg_id = "chef/chef-client"
 filename = "chef_client"
+mixlib_name = "chef"
+license_required_version = "15"
 
 [[products]]
 name = "inspec"
