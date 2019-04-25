@@ -12,7 +12,7 @@ RSpec.describe LicenseAcceptance::Strategy::File do
     instance_double(LicenseAcceptance::Config, license_locations: [dir1, dir2], persist_location: dir3)
   end
   let(:acc) { LicenseAcceptance::Strategy::File.new(config) }
-  let(:p1_name) { "chef_client" }
+  let(:p1_name) { "chef-infra" }
   let(:p1_filename) { "p1_filename" }
   let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name, filename: p1_filename) }
   let(:version) { "0.1.0" }

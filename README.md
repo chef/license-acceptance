@@ -71,7 +71,7 @@ https://www.tablesgenerator.com/markdown_tables#
 In addition the following products embed other products:
 
 * kitchen-inspec -> inspec
-* chef-client -> audit-cookbook -> inspec
+* chef-infra -> audit-cookbook -> inspec
 * A2 -> chef-client -> audit-cookbook -> inspec
 * > ...
 
