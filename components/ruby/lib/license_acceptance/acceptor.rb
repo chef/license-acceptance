@@ -10,6 +10,11 @@ require "license_acceptance/strategy/prompt"
 require "license_acceptance/strategy/provided_value"
 
 module LicenseAcceptance
+
+  ACCEPT = "accept"
+  ACCEPT_SILENT = "accept-silent"
+  ACCEPT_NO_PERSIST = "accept-no-persist"
+
   class Acceptor
     extend Forwardable
     include Logger
@@ -20,11 +25,13 @@ module LicenseAcceptance
       @config = Config.new(opts)
       Logger.initialize(config.logger)
       @product_reader = ProductReader.new
+      product_reader.read
       @env_strategy = Strategy::Environment.new(ENV)
       @file_strategy = Strategy::File.new(config)
       @arg_strategy = Strategy::Argument.new(ARGV)
       @prompt_strategy = Strategy::Prompt.new(config)
       @provided_strategy = Strategy::ProvidedValue.new(opts.fetch(:provided, nil))
+      @acceptance_value = nil
     end
 
     def_delegator :@config, :output
@@ -42,10 +49,10 @@ module LicenseAcceptance
     def check_and_persist(product_name, version)
       if accepted_no_persist?
         logger.debug("Chef License accepted with no persistence")
+        @acceptance_value = ACCEPT_NO_PERSIST
         return true
       end
 
-      product_reader.read
       product_relationship = product_reader.lookup(product_name, version)
 
       missing_licenses = file_strategy.accepted?(product_relationship)
@@ -53,6 +60,7 @@ module LicenseAcceptance
       # They have already accepted all licenses and stored their acceptance in the persistent files
       if missing_licenses.empty?
         logger.debug("All licenses present")
+        @acceptance_value = ACCEPT
         return true
       end
 
@@ -65,11 +73,15 @@ module LicenseAcceptance
             output_persist_failed(errs)
           end
         end
+        @acceptance_value = accepted_silent? ? ACCEPT_SILENT : ACCEPT
         return true
       elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
+          # We have to infer the acceptance value if they use the prompt to accept
           if config.persist
+            @acceptance_value = ACCEPT
             file_strategy.persist(product_relationship, missing_licenses)
           else
+            @acceptance_value = ACCEPT_NO_PERSIST
             []
           end
         end
@@ -85,6 +97,29 @@ module LicenseAcceptance
 
     def self.check_and_persist(product_name, version, opts={})
       new(opts).check_and_persist(product_name, version)
+    end
+
+    # Check whether the specified product requires license acceptance for the given version.
+    def license_required?(mixlib_name, version)
+      product = product_reader.lookup_by_mixlib(mixlib_name)
+      return false if product.nil?
+      return true if version == :latest
+      Gem::Version.new(version) >= Gem::Version.new(product.license_required_version)
+    end
+
+    # Some callers only know about mixlib names so we need a way for them to get the product
+    # name as this library knows it.
+    def name_from_mixlib(mixlib_name)
+      product = product_reader.lookup_by_mixlib(mixlib_name)
+      return nil if product.nil?
+      product.name
+    end
+
+    # Return the value that was matched ("accept", "accept-no-persist", etc.). Used by callers so they do not
+    # have to know the precedence order between provided/environment/argument. Can just get back the value
+    # that was used. Value is only guaranteed to be set after calling check_and_persist.
+    def acceptance_value
+      @acceptance_value
     end
 
     def accepted?
@@ -125,7 +160,7 @@ module LicenseAcceptance
 
   class LicenseNotAcceptedError < RuntimeError
     def initialize(missing_licenses)
-      msg = "Missing licenses for the following:\n* " + missing_licenses.join("\n* ")
+      msg = "Missing licenses for the following:\n* " + missing_licenses.map(&:name).join("\n* ")
       super(msg)
     end
   end
