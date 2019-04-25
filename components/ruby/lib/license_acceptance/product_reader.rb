@@ -19,7 +19,11 @@ module LicenseAcceptance
       raise InvalidProductInfo.new(location) if toml.empty? || toml["products"].nil? || toml["relationships"].nil?
 
       for product in toml["products"]
-        products[product["name"]] = Product.new(product["name"], product["pretty_name"], product["filename"])
+        products[product["name"]] = Product.new(
+          product["name"], product["pretty_name"],
+          product["filename"], product["mixlib_name"],
+          product["license_required_version"]
+        )
       end
 
       for parent_name, children in toml["relationships"]
@@ -60,6 +64,13 @@ module LicenseAcceptance
         raise ProductVersionTypeError.new(parent_version)
       end
       ProductRelationship.new(parent_product, children, parent_version)
+    end
+
+    def lookup_by_mixlib(mixlib_name)
+      found_product = products.values.find(nil) do |p|
+        p.mixlib_name == mixlib_name
+      end
+      found_product
     end
 
   end

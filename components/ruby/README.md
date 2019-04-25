@@ -62,7 +62,7 @@ LicenseAcceptance::Acceptor.check_and_persist('inspec', Inspec::VERSION,
 * `license_locations` - Array of locations to search for existing licenses, defaults described in top level README
 * `persist_location` - Location to persist license marker files, should be one of the locations from `license_locations`
   if future reads are supposed to work
-* `persist` - Whether to persist the license marker files, setting is overwritten by `accept-no-license` acceptance
+* `persist` - Whether to persist the license marker files, setting is overwritten by `accept-no-persist` acceptance
   value.
 * `provided` - Acceptance value provided by the consumer of this library. Expected to be one of the supported values
   (`accept`, `accept-silent`, `accept-no-persist`) or it is ignored. Defaults to nil.
