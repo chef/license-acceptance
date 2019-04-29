@@ -1,3 +1,3 @@
 module LicenseAcceptance
-  VERSION = "0.2.16"
+  VERSION = "1.0.0"
 end

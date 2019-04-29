@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.0 -->
+## [v1.0.0](https://github.com/chef/license-acceptance/tree/v1.0.0) (2019-04-29)
+
+#### Merged Pull Requests
+- Chef Infra is the new/correct name [#37](https://github.com/chef/license-acceptance/pull/37) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=0.2.16 -->
+### Changes since 0.2.16 release
+
+#### Merged Pull Requests
+- Chef Infra is the new/correct name [#37](https://github.com/chef/license-acceptance/pull/37) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
