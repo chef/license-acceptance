@@ -1,10 +1,10 @@
 title = "All known products that require license acceptance, and the mapping of parent to child relationships"
 
 [[products]]
-name = "chef-client"
-pretty_name = "Chef Client"
+name = "chef-infra"
+pretty_name = "Chef Infra"
 hab_pkg_id = "chef/chef-client"
-filename = "chef_client"
+filename = "chef_infra"
 mixlib_name = "chef"
 license_required_version = "15"
 
@@ -26,4 +26,4 @@ hab_pkg_id = "chef/oc_erchef"
 filename = "chef_server"
 
 [relationships]
-"chef-client" = ["inspec"]
+"chef-infra" = ["inspec"]

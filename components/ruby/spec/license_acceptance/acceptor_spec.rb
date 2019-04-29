@@ -13,7 +13,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
   end
   let(:opts) { { output: output } }
   let(:acc) { LicenseAcceptance::Acceptor.new(opts) }
-  let(:product) { instance_double(LicenseAcceptance::Product, name: "chef_client") }
+  let(:product) { instance_double(LicenseAcceptance::Product, name: "chef-infra") }
   let(:version) { "version" }
   let(:relationship) { instance_double(LicenseAcceptance::ProductRelationship) }
   let(:missing) { [product] }
