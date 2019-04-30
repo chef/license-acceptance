@@ -3,7 +3,7 @@ title = "All known products that require license acceptance, and the mapping of 
 
 [[products]]
 name = "chef-infra"
-pretty_name = "Chef Infra Client"
+pretty_name = "Chef Infra"
 hab_pkg_id = "chef/chef-client"
 filename = "chef_infra"
 mixlib_name = "chef"
@@ -11,7 +11,7 @@ license_required_version = "15"
 
 [[products]]
 name = "inspec"
-pretty_name = "Chef InSpec"
+pretty_name = "InSpec"
 hab_pkg_id = "chef/inspec"
 filename = "inspec"
 
@@ -22,7 +22,7 @@ filename = "supermarket"
 
 [[products]]
 name = "chef-server"
-pretty_name = "Chef Infra Server"
+pretty_name = "Chef Server"
 hab_pkg_id = "chef/oc_erchef"
 filename = "chef_server"
 
