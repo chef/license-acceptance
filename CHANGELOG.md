@@ -1,14 +1,15 @@
-<!-- latest_release 1.0.1 -->
-## [v1.0.1](https://github.com/chef/license-acceptance/tree/v1.0.1) (2019-04-30)
+<!-- latest_release 1.0.2 -->
+## [v1.0.2](https://github.com/chef/license-acceptance/tree/v1.0.2) (2019-04-30)
 
 #### Merged Pull Requests
-- Use the marketing names for the pretty names [#39](https://github.com/chef/license-acceptance/pull/39) ([tas50](https://github.com/tas50))
+- TK can provide nil version to license_required? [#40](https://github.com/chef/license-acceptance/pull/40) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.0.0 -->
 ### Changes since 1.0.0 release
 
 #### Merged Pull Requests
+- TK can provide nil version to license_required? [#40](https://github.com/chef/license-acceptance/pull/40) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.2 -->
 - Use the marketing names for the pretty names [#39](https://github.com/chef/license-acceptance/pull/39) ([tas50](https://github.com/tas50)) <!-- 1.0.1 -->
 <!-- release_rollup -->
 
