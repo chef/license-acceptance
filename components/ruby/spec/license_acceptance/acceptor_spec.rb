@@ -235,6 +235,54 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(acc.acceptance_value).to eq(nil)
       end
     end
+  end
 
+  describe "#license_required?" do
+    let(:reader) { instance_double(LicenseAcceptance::ProductReader) }
+    let(:mixlib_name) { "chef" }
+    let(:version) { "15.0.0" }
+    let(:product) { instance_double(LicenseAcceptance::Product, name: "chef-infra", license_required_version: "15.0.0") }
+
+    before do
+      expect(LicenseAcceptance::ProductReader).to receive(:new).and_return(reader)
+      expect(reader).to receive(:read)
+    end
+
+    it "returns false if no product can be found" do
+      expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return nil
+      expect(acc.license_required?(mixlib_name, version)).to eq(false)
+    end
+
+    describe "when version is :latest" do
+      let(:version) { :latest }
+      it "returns true" do
+        expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product
+        expect(acc.license_required?(mixlib_name, version)).to eq(true)
+      end
+    end
+
+    describe "when version is nil" do
+      let(:version) { nil }
+      it "returns true" do
+        expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product
+        expect(acc.license_required?(mixlib_name, version)).to eq(true)
+      end
+    end
+
+    describe "when version is >= than required version" do
+      let(:version) { "15.0.0" }
+      it "returns true" do
+        expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product
+        expect(acc.license_required?(mixlib_name, version)).to eq(true)
+      end
+    end
+
+    describe "when version is < required version" do
+      let(:version) { "14.99.99" }
+      it "returns false" do
+        expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product
+        expect(acc.license_required?(mixlib_name, version)).to eq(false)
+      end
+    end
   end
 end
