@@ -25,5 +25,12 @@ pretty_name = "Chef Server"
 hab_pkg_id = "chef/oc_erchef"
 filename = "chef_server"
 
+[[products]]
+name = "push-jobs-server"
+pretty_name = "Chef Push Jobs Server"
+filename = "chef_push_jobs_server"
+
 [relationships]
 "chef-infra" = ["inspec"]
+"chef-server" = ["chef-infra"]
+"push-jobs-server" = ["chef-infra", "chef-server"]
