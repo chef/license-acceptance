@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.3 -->
+## [v1.0.3](https://github.com/chef/license-acceptance/tree/v1.0.3) (2019-05-01)
+
+#### Merged Pull Requests
+- Add chef server transitive dependencies [#41](https://github.com/chef/license-acceptance/pull/41) ([markan](https://github.com/markan))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.2 -->
+### Changes since 1.0.2 release
+
+#### Merged Pull Requests
+- Add chef server transitive dependencies [#41](https://github.com/chef/license-acceptance/pull/41) ([markan](https://github.com/markan)) <!-- 1.0.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
