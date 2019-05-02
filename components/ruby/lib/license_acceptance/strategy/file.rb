@@ -80,6 +80,7 @@ module LicenseAcceptance
         logger.info("Persisting a license for #{product.pretty_name} at path #{path}")
         ::File.open(path, ::File::WRONLY | ::File::CREAT | ::File::EXCL) do |license_file|
           contents = {
+            id: product.id,
             name: product.pretty_name,
             date_accepted: INVOCATION_TIME.iso8601,
             accepting_product: parent.id,

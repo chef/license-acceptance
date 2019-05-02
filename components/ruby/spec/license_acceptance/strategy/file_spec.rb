@@ -44,6 +44,7 @@ RSpec.describe LicenseAcceptance::Strategy::File do
         expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
         expect(file).to receive(:<<) do |yaml|
           yaml = YAML.load(yaml)
+          expect(yaml["id"]).to eq(p1_id)
           expect(yaml["name"]).to eq(p1_pretty)
           expect(yaml["accepting_product"]).to eq(p1_id)
           expect(yaml["accepting_product_version"]).to eq(version)
@@ -70,6 +71,7 @@ RSpec.describe LicenseAcceptance::Strategy::File do
           expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
+            expect(yaml["id"]).to eq(p1_id)
             expect(yaml["name"]).to eq(p1_pretty)
             expect(yaml["accepting_product"]).to eq(p1_id)
             expect(yaml["accepting_product_version"]).to eq(version)
@@ -77,6 +79,7 @@ RSpec.describe LicenseAcceptance::Strategy::File do
           expect(File).to receive(:open).with(File.join(dir3, p2_filename), mode).and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
+            expect(yaml["id"]).to eq(p2_id)
             expect(yaml["name"]).to eq(p2_pretty)
             expect(yaml["accepting_product"]).to eq(p1_id)
             expect(yaml["accepting_product_version"]).to eq(version)
@@ -90,6 +93,7 @@ RSpec.describe LicenseAcceptance::Strategy::File do
             expect(File).to receive(:open).once.with(File.join(dir3, p2_filename), mode).and_yield(file)
             expect(file).to receive(:<<) do |yaml|
               yaml = YAML.load(yaml)
+              expect(yaml["id"]).to eq(p2_id)
               expect(yaml["name"]).to eq(p2_pretty)
               expect(yaml["accepting_product"]).to eq(p1_id)
               expect(yaml["accepting_product_version"]).to eq(version)
