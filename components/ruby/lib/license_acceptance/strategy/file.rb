@@ -25,7 +25,7 @@ module LicenseAcceptance
       def accepted?(product_relationship)
         searching = [product_relationship.parent] + product_relationship.children
         missing_licenses = searching.clone
-        logger.debug("Searching for the following licenses: #{missing_licenses.map(&:name)}")
+        logger.debug("Searching for the following licenses: #{missing_licenses.map(&:id)}")
 
         searching.each do |product|
           found = false
@@ -40,7 +40,7 @@ module LicenseAcceptance
           end
           break if missing_licenses.empty?
         end
-        logger.debug("Missing licenses remaining: #{missing_licenses.map(&:name)}")
+        logger.debug("Missing licenses remaining: #{missing_licenses.map(&:id)}")
         missing_licenses
       end
 
@@ -77,12 +77,12 @@ module LicenseAcceptance
 
       def persist_license(folder_path, product, parent, parent_version)
         path = ::File.join(folder_path, product.filename)
-        logger.info("Persisting a license for #{product.name} at path #{path}")
+        logger.info("Persisting a license for #{product.pretty_name} at path #{path}")
         ::File.open(path, ::File::WRONLY | ::File::CREAT | ::File::EXCL) do |license_file|
           contents = {
-            name: product.name,
+            name: product.pretty_name,
             date_accepted: INVOCATION_TIME.iso8601,
-            accepting_product: parent.name,
+            accepting_product: parent.id,
             accepting_product_version: parent_version,
             user: Etc.getlogin,
             file_format: 1,

@@ -39,21 +39,21 @@ module LicenseAcceptance
     # For applications that just need simple logic to handle a failed license acceptance flow we include this small
     # wrapper. Apps with more complex logic (like logging to a logging engine) should call the non-bang version and
     # handle the exception.
-    def check_and_persist!(product_name, version)
-      check_and_persist(product_name, version)
-    rescue LicenseNotAcceptedError
-      output.puts "#{product_name} cannot execute without accepting the license"
+    def check_and_persist!(product_id, version)
+      check_and_persist(product_id, version)
+    rescue LicenseNotAcceptedError => e
+      output.puts "#{e.product.pretty_name} cannot execute without accepting the license"
       exit 172
     end
 
-    def check_and_persist(product_name, version)
+    def check_and_persist(product_id, version)
       if accepted_no_persist?
         logger.debug("Chef License accepted with no persistence")
         @acceptance_value = ACCEPT_NO_PERSIST
         return true
       end
 
-      product_relationship = product_reader.lookup(product_name, version)
+      product_relationship = product_reader.lookup(product_id, version)
 
       missing_licenses = file_strategy.accepted?(product_relationship)
 
@@ -87,16 +87,16 @@ module LicenseAcceptance
         end
         return true
       else
-        raise LicenseNotAcceptedError.new(missing_licenses)
+        raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
       end
     end
 
-    def self.check_and_persist!(product_name, version, opts={})
-      new(opts).check_and_persist!(product_name, version)
+    def self.check_and_persist!(product_id, version, opts={})
+      new(opts).check_and_persist!(product_id, version)
     end
 
-    def self.check_and_persist(product_name, version, opts={})
-      new(opts).check_and_persist(product_name, version)
+    def self.check_and_persist(product_id, version, opts={})
+      new(opts).check_and_persist(product_id, version)
     end
 
     # Check whether the specified product requires license acceptance for the given version.
@@ -109,11 +109,11 @@ module LicenseAcceptance
     end
 
     # Some callers only know about mixlib names so we need a way for them to get the product
-    # name as this library knows it.
-    def name_from_mixlib(mixlib_name)
+    # id as this library knows it.
+    def id_from_mixlib(mixlib_name)
       product = product_reader.lookup_by_mixlib(mixlib_name)
       return nil if product.nil?
-      product.name
+      product.id
     end
 
     # Return the value that was matched ("accept", "accept-no-persist", etc.). Used by callers so they do not
@@ -160,8 +160,10 @@ module LicenseAcceptance
   end
 
   class LicenseNotAcceptedError < RuntimeError
-    def initialize(missing_licenses)
-      msg = "Missing licenses for the following:\n* " + missing_licenses.map(&:name).join("\n* ")
+    attr_reader :product
+    def initialize(product, missing_licenses)
+      @product = product
+      msg = "Missing licenses for the following:\n* " + missing_licenses.map(&:id).join("\n* ")
       super(msg)
     end
   end

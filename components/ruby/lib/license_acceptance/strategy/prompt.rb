@@ -24,7 +24,7 @@ module LicenseAcceptance
       CHECK  = PASTEL.green("✔")
 
       def request(missing_licenses, &persist_callback)
-        logger.debug("Requesting a license for #{missing_licenses.map(&:name)}")
+        logger.debug("Requesting a license for #{missing_licenses.map(&:id)}")
         c = missing_licenses.size
         s = c > 1 ? "s": ""
 

@@ -12,23 +12,28 @@ RSpec.describe LicenseAcceptance::Acceptor do
     d
   end
   let(:opts) { { output: output } }
+  let(:reader) { instance_double(LicenseAcceptance::ProductReader) }
   let(:acc) { LicenseAcceptance::Acceptor.new(opts) }
-  let(:product) { instance_double(LicenseAcceptance::Product, name: "chef-infra") }
+  let(:product) { instance_double(LicenseAcceptance::Product, id: "foo", pretty_name: "Foo") }
   let(:version) { "version" }
-  let(:relationship) { instance_double(LicenseAcceptance::ProductRelationship) }
+  let(:relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: product) }
   let(:missing) { [product] }
 
   describe "#check_and_persist!" do
-    let(:err) { LicenseAcceptance::LicenseNotAcceptedError.new([product]) }
+    before do
+      expect(LicenseAcceptance::ProductReader).to receive(:new).and_return(reader)
+      expect(reader).to receive(:read)
+    end
+
+    let(:err) { LicenseAcceptance::LicenseNotAcceptedError.new(product, [product]) }
     it "outputs an error message to stdout and exits when license acceptance is declined" do
       expect(acc).to receive(:check_and_persist).and_raise(err)
-      expect { acc.check_and_persist!(product.name, version) }.to raise_error(SystemExit)
-      expect(output.string).to match(/#{product.name}/)
+      expect { acc.check_and_persist!(product.id, version) }.to raise_error(SystemExit)
+      expect(output.string).to match(/#{product.pretty_name}/)
     end
   end
 
   describe "#check_and_persist" do
-    let(:reader) { instance_double(LicenseAcceptance::ProductReader) }
     let(:file_acc) { instance_double(LicenseAcceptance::Strategy::File) }
     let(:arg_acc) { instance_double(LicenseAcceptance::Strategy::Argument) }
     let(:prompt_acc) { instance_double(LicenseAcceptance::Strategy::Prompt) }
@@ -241,7 +246,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
     let(:reader) { instance_double(LicenseAcceptance::ProductReader) }
     let(:mixlib_name) { "chef" }
     let(:version) { "15.0.0" }
-    let(:product) { instance_double(LicenseAcceptance::Product, name: "chef-infra", license_required_version: "15.0.0") }
+    let(:product) { instance_double(LicenseAcceptance::Product, id: "foo", license_required_version: "15.0.0") }
 
     before do
       expect(LicenseAcceptance::ProductReader).to receive(:new).and_return(reader)
