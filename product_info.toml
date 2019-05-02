@@ -4,7 +4,7 @@ title = "All known products that require license acceptance, and the mapping of 
 id = "infra-client"
 pretty_name = "Chef Infra Client"
 hab_pkg_id = "chef/chef-client"
-filename = "infra_client"
+filename = "chef_infra_client"
 mixlib_name = "chef"
 license_required_version = "15"
 
@@ -23,7 +23,7 @@ filename = "supermarket"
 id = "infra-server"
 pretty_name = "Chef Infra Server"
 hab_pkg_id = "chef/oc_erchef"
-filename = "infra_server"
+filename = "chef_infra_server"
 
 [[products]]
 id = "push-jobs-server"
