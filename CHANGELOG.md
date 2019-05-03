@@ -1,14 +1,15 @@
-<!-- latest_release 1.0.4 -->
-## [v1.0.4](https://github.com/chef/license-acceptance/tree/v1.0.4) (2019-05-03)
+<!-- latest_release 1.0.5 -->
+## [v1.0.5](https://github.com/chef/license-acceptance/tree/v1.0.5) (2019-05-03)
 
 #### Merged Pull Requests
-- Bringing names in line with marketing [#43](https://github.com/chef/license-acceptance/pull/43) ([tyler-ball](https://github.com/tyler-ball))
+- Remove the PR template &amp; add badges / license info [#42](https://github.com/chef/license-acceptance/pull/42) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.0.3 -->
 ### Changes since 1.0.3 release
 
 #### Merged Pull Requests
+- Remove the PR template &amp; add badges / license info [#42](https://github.com/chef/license-acceptance/pull/42) ([tas50](https://github.com/tas50)) <!-- 1.0.5 -->
 - Bringing names in line with marketing [#43](https://github.com/chef/license-acceptance/pull/43) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.4 -->
 <!-- release_rollup -->
 
