@@ -47,3 +47,6 @@ steps:
   expeditor:
     executor:
       docker:
+    defaults:
+      buildkite:
+        timeout_in_minutes: 15
