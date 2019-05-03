@@ -10,7 +10,7 @@ RSpec.describe LicenseAcceptance::Strategy::Prompt do
   end
   let(:acc) { LicenseAcceptance::Strategy::Prompt.new(config) }
   let(:prompt) { instance_double(TTY::Prompt) }
-  let(:p1) { instance_double(LicenseAcceptance::Product, name: "name", pretty_name: "Pretty Name") }
+  let(:p1) { instance_double(LicenseAcceptance::Product, id: "foo", pretty_name: "Pretty Name") }
   let(:missing_licenses) { [p1] }
 
   before do
@@ -29,7 +29,7 @@ RSpec.describe LicenseAcceptance::Strategy::Prompt do
     end
 
     describe "when there are multiple products" do
-      let(:p2) { instance_double(LicenseAcceptance::Product, name: "other_name", pretty_name: "Other") }
+      let(:p2) { instance_double(LicenseAcceptance::Product, id: "bar", pretty_name: "Other") }
       let(:missing_licenses) { [p1, p2] }
       it "returns true" do
         expect(prompt).to receive(:ask).and_return("yes")

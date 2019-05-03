@@ -7,11 +7,11 @@ RSpec.describe LicenseAcceptance::ProductReader do
   let(:version) { "0.1.0" }
   let(:location) { "location" }
 
-  let(:p1) { {"name" => "p1", "pretty_name" => "P1", "filename" => "f1", "mixlib_name" => "p1m", "license_required_version" => "p1v"} }
-  let(:p2) { {"name" => "p2", "pretty_name" => "P2", "filename" => "f2", "mixlib_name" => "p2m", "license_required_version" => "p2v"} }
+  let(:p1) { {"id" => "p1", "pretty_name" => "P1", "filename" => "f1", "mixlib_name" => "p1m", "license_required_version" => "p1v"} }
+  let(:p2) { {"id" => "p2", "pretty_name" => "P2", "filename" => "f2", "mixlib_name" => "p2m", "license_required_version" => "p2v"} }
   # defined the `==` operator on Product for ease of comparison
-  let(:product1) { LicenseAcceptance::Product.new(p1["name"], p1["pretty_name"], p1["filename"], p1["mixlib_name"], p1["license_required_version"]) }
-  let(:product2) { LicenseAcceptance::Product.new(p2["name"], p2["pretty_name"], p2["filename"], p2["mixlib_name"], p2["license_required_version"]) }
+  let(:product1) { LicenseAcceptance::Product.new(p1["id"], p1["pretty_name"], p1["filename"], p1["mixlib_name"], p1["license_required_version"]) }
+  let(:product2) { LicenseAcceptance::Product.new(p2["id"], p2["pretty_name"], p2["filename"], p2["mixlib_name"], p2["license_required_version"]) }
   let(:r1) { {p1 => p2} }
   let(:toml) { {"products" => [p1, p2], "relationships" => {"p1" => ["p2"]}} }
 

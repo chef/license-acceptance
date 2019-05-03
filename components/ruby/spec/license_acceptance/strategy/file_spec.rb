@@ -12,9 +12,10 @@ RSpec.describe LicenseAcceptance::Strategy::File do
     instance_double(LicenseAcceptance::Config, license_locations: [dir1, dir2], persist_location: dir3)
   end
   let(:acc) { LicenseAcceptance::Strategy::File.new(config) }
-  let(:p1_name) { "chef-infra" }
+  let(:p1_id) { "foo" }
   let(:p1_filename) { "p1_filename" }
-  let(:p1) { instance_double(LicenseAcceptance::Product, name: p1_name, filename: p1_filename) }
+  let(:p1_pretty) { "Pretty Name" }
+  let(:p1) { instance_double(LicenseAcceptance::Product, id: p1_id, filename: p1_filename, pretty_name: p1_pretty) }
   let(:version) { "0.1.0" }
   let(:product_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: p1, children: [], parent_version: version) }
   let(:mode) { File::WRONLY | File::CREAT | File::EXCL }
@@ -43,17 +44,19 @@ RSpec.describe LicenseAcceptance::Strategy::File do
         expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
         expect(file).to receive(:<<) do |yaml|
           yaml = YAML.load(yaml)
-          expect(yaml["name"]).to eq(p1_name)
-          expect(yaml["accepting_product"]).to eq(p1_name)
+          expect(yaml["id"]).to eq(p1_id)
+          expect(yaml["name"]).to eq(p1_pretty)
+          expect(yaml["accepting_product"]).to eq(p1_id)
           expect(yaml["accepting_product_version"]).to eq(version)
         end
         expect(acc.persist(product_relationship, [p1])).to eq([])
       end
 
       describe "when license has children" do
-        let(:p2_name) { "inspec" }
+        let(:p2_id) { "bar" }
         let(:p2_filename) { "p2_filename" }
-        let(:p2) { instance_double(LicenseAcceptance::Product, name: p2_name, filename: p2_filename) }
+        let(:p2_pretty) { "Other Pretty Name" }
+        let(:p2) { instance_double(LicenseAcceptance::Product, id: p2_id, filename: p2_filename, pretty_name: p2_pretty) }
         let(:product_relationship) {
           instance_double(
             LicenseAcceptance::ProductRelationship,
@@ -68,15 +71,17 @@ RSpec.describe LicenseAcceptance::Strategy::File do
           expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
-            expect(yaml["name"]).to eq(p1_name)
-            expect(yaml["accepting_product"]).to eq(p1_name)
+            expect(yaml["id"]).to eq(p1_id)
+            expect(yaml["name"]).to eq(p1_pretty)
+            expect(yaml["accepting_product"]).to eq(p1_id)
             expect(yaml["accepting_product_version"]).to eq(version)
           end
           expect(File).to receive(:open).with(File.join(dir3, p2_filename), mode).and_yield(file)
           expect(file).to receive(:<<) do |yaml|
             yaml = YAML.load(yaml)
-            expect(yaml["name"]).to eq(p2_name)
-            expect(yaml["accepting_product"]).to eq(p1_name)
+            expect(yaml["id"]).to eq(p2_id)
+            expect(yaml["name"]).to eq(p2_pretty)
+            expect(yaml["accepting_product"]).to eq(p1_id)
             expect(yaml["accepting_product_version"]).to eq(version)
           end
           expect(acc.persist(product_relationship, [p1, p2])).to eq([])
@@ -88,8 +93,9 @@ RSpec.describe LicenseAcceptance::Strategy::File do
             expect(File).to receive(:open).once.with(File.join(dir3, p2_filename), mode).and_yield(file)
             expect(file).to receive(:<<) do |yaml|
               yaml = YAML.load(yaml)
-              expect(yaml["name"]).to eq(p2_name)
-              expect(yaml["accepting_product"]).to eq(p1_name)
+              expect(yaml["id"]).to eq(p2_id)
+              expect(yaml["name"]).to eq(p2_pretty)
+              expect(yaml["accepting_product"]).to eq(p1_id)
               expect(yaml["accepting_product_version"]).to eq(version)
             end
             expect(acc.persist(product_relationship, [p2])).to eq([])

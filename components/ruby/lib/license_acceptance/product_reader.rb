@@ -19,24 +19,24 @@ module LicenseAcceptance
       raise InvalidProductInfo.new(location) if toml.empty? || toml["products"].nil? || toml["relationships"].nil?
 
       for product in toml["products"]
-        products[product["name"]] = Product.new(
-          product["name"], product["pretty_name"],
+        products[product["id"]] = Product.new(
+          product["id"], product["pretty_name"],
           product["filename"], product["mixlib_name"],
           product["license_required_version"]
         )
       end
 
-      for parent_name, children in toml["relationships"]
-        parent = products[parent_name]
-        raise UnknownParent.new(parent_name) if parent.nil?
+      for parent_id, children in toml["relationships"]
+        parent = products[parent_id]
+        raise UnknownParent.new(parent_id) if parent.nil?
         # Its fine to not have a relationship entry, but not fine to have
         # a relationship where the children are nil or empty.
         if children.nil? || children.empty? || !children.is_a?(Array)
           raise NoChildRelationships.new(parent)
         end
-        children.map! do |child_name|
-          child = products[child_name]
-          raise UnknownChild.new(child_name) if child.nil?
+        children.map! do |child_id|
+          child = products[child_id]
+          raise UnknownChild.new(child_id) if child.nil?
           child
         end
         relationships[parent] = children
@@ -55,9 +55,9 @@ module LicenseAcceptance
       File.absolute_path(File.join(__FILE__, "../../../config/product_info.toml"))
     end
 
-    def lookup(parent_name, parent_version)
-      parent_product = products.fetch(parent_name) do
-        raise UnknownProduct.new(parent_name)
+    def lookup(parent_id, parent_version)
+      parent_product = products.fetch(parent_id) do
+        raise UnknownProduct.new(parent_id)
       end
       children = relationships.fetch(parent_product, [])
       if !parent_version.is_a? String
@@ -105,7 +105,7 @@ module LicenseAcceptance
 
   class NoChildRelationships < RuntimeError
     def initialize(product)
-      msg = "No child relationships for #{product.name}, should be removed from product info or fixed"
+      msg = "No child relationships for #{product.id}, should be removed from product info or fixed"
       super(msg)
     end
   end

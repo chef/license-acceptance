@@ -1,10 +1,11 @@
 module LicenseAcceptance
   class Product
 
-    attr_reader :name, :pretty_name, :filename, :mixlib_name, :license_required_version
+    attr_reader :id, :pretty_name, :filename, :mixlib_name, :license_required_version
 
-    def initialize(name, pretty_name, filename, mixlib_name, license_required_version)
-      @name = name
+    def initialize(id, pretty_name, filename, mixlib_name, license_required_version)
+      # id is the internal representation of this product as license-acceptance knows it
+      @id = id
       @pretty_name = pretty_name
       @filename = filename
       @mixlib_name = mixlib_name
@@ -13,7 +14,7 @@ module LicenseAcceptance
 
     def ==(other)
       return false if other.class != Product
-      if other.name == name &&
+      if other.id == id &&
          other.pretty_name == pretty_name &&
          other.filename == filename &&
          other.mixlib_name == mixlib_name
