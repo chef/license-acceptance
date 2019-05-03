@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.4 -->
+## [v1.0.4](https://github.com/chef/license-acceptance/tree/v1.0.4) (2019-05-03)
+
+#### Merged Pull Requests
+- Bringing names in line with marketing [#43](https://github.com/chef/license-acceptance/pull/43) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.3 -->
+### Changes since 1.0.3 release
+
+#### Merged Pull Requests
+- Bringing names in line with marketing [#43](https://github.com/chef/license-acceptance/pull/43) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.4 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -1,6 +1,6 @@
 pkg_name=license-acceptance
 pkg_origin=chef
-pkg_version=1.0.3
+pkg_version=1.0.4
 pkg_description="Chef End User License Agreement Acceptance"
 pkg_upstream_url="https://www.chef.io/end-user-license-agreement/"
 pkg_maintainer="Chef Software Inc."

@@ -2,36 +2,36 @@
 title = "All known products that require license acceptance, and the mapping of parent to child relationships"
 
 [[products]]
-name = "chef-infra"
-pretty_name = "Chef Infra"
+id = "infra-client"
+pretty_name = "Chef Infra Client"
 hab_pkg_id = "chef/chef-client"
-filename = "chef_infra"
+filename = "chef_infra_client"
 mixlib_name = "chef"
 license_required_version = "15"
 
 [[products]]
-name = "inspec"
-pretty_name = "InSpec"
+id = "inspec"
+pretty_name = "Chef InSpec"
 hab_pkg_id = "chef/inspec"
 filename = "inspec"
 
 [[products]]
-name = "supermarket"
+id = "supermarket"
 pretty_name = "Supermarket"
 filename = "supermarket"
 
 [[products]]
-name = "chef-server"
-pretty_name = "Chef Server"
+id = "infra-server"
+pretty_name = "Chef Infra Server"
 hab_pkg_id = "chef/oc_erchef"
-filename = "chef_server"
+filename = "chef_infra_server"
 
 [[products]]
-name = "push-jobs-server"
+id = "push-jobs-server"
 pretty_name = "Chef Push Jobs Server"
-filename = "chef_push_jobs_server"
+filename = "push_jobs_server"
 
 [relationships]
-"chef-infra" = ["inspec"]
-"chef-server" = ["chef-infra"]
-"push-jobs-server" = ["chef-infra", "chef-server"]
+"infra-client" = ["inspec"]
+"infra-server" = ["infra-client"]
+"push-jobs-server" = ["infra-client", "infra-server"]
