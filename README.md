@@ -109,9 +109,9 @@ The `no-persist` options means the license marker file will not attempt to be pe
 * `--chef-license accept`
 * `--chef-license accept-no-persist`
 * `--chef-license accept-silent`
-* `ENV[CHEF_LICENSE]=accept`
-* `ENV[CHEF_LICENSE]=accept-no-persist`
-* `ENV[CHEF_LICENSE]=accept-silent`
+* `ENV[CHEF_LICENSE]="accept"`
+* `ENV[CHEF_LICENSE]="accept-no-persist"`
+* `ENV[CHEF_LICENSE]="accept-silent"`
 
 Additionally consumers of this library can manually provide an acceptance value. See the [Ruby README](./components/ruby/README.md#configuration) for details on how to provide this value.
 
