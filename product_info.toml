@@ -30,7 +30,23 @@ id = "push-jobs-server"
 pretty_name = "Chef Push Jobs Server"
 filename = "push_jobs_server"
 
+[[products]]
+id = "chef-dk"
+pretty_name = "Chef Development Kit"
+filename = "chef_dk"
+mixlib_name = "chefdk"
+license_required_version = "4"
+
+[[products]]
+id = "chef-workstation"
+pretty_name = "Chef Workstation"
+filename = "chef_workstation"
+mixlib_name = "chef-workstation"
+license_required_version = "0.4"
+
 [relationships]
 "infra-client" = ["inspec"]
 "infra-server" = ["infra-client"]
 "push-jobs-server" = ["infra-client", "infra-server"]
+"chef-dk" = ["infra-client", "inspec"]
+"chef-workstation" = ["infra-client", "inspec"]
