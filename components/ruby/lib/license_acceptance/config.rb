@@ -21,7 +21,8 @@ module LicenseAcceptance
 
     def default_license_locations
       if windows?
-        l = [ File.join(ENV["HOMEDRIVE"], "chef/accepted_licenses/") ]
+        root = ENV["HOMEDRIVE"] || "C:"
+        l = [ File.join(root, "chef/accepted_licenses/") ]
         unless is_root?
           # Look through a list of possible user locations and pick the first one that exists
           # copied from path_helper.rb in chef-config gem
