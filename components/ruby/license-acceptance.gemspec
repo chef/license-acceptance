@@ -18,7 +18,9 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.4"
+  # We must support Ruby 2.3 because TK 1.x still uses that. When that is EOL
+  # we can move to Ruby 2.4
+  spec.required_ruby_version = ">= 2.3"
 
   spec.add_dependency "pastel", "~> 0.7"
   spec.add_dependency "tomlrb", "~> 1.2"
