@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.8 -->
+## [v1.0.8](https://github.com/chef/license-acceptance/tree/v1.0.8) (2019-05-14)
+
+#### Merged Pull Requests
+- Must support Ruby 2.3 for Test Kitchen 1.x [#49](https://github.com/chef/license-acceptance/pull/49) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.7 -->
+### Changes since 1.0.7 release
+
+#### Merged Pull Requests
+- Must support Ruby 2.3 for Test Kitchen 1.x [#49](https://github.com/chef/license-acceptance/pull/49) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.8 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
