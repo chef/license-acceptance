@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.6 -->
+## [v1.0.6](https://github.com/chef/license-acceptance/tree/v1.0.6) (2019-05-14)
+
+#### Merged Pull Requests
+- Adding product support for ChefDK and Chef Workstation [#47](https://github.com/chef/license-acceptance/pull/47) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.5 -->
+### Changes since 1.0.5 release
+
+#### Merged Pull Requests
+- Adding product support for ChefDK and Chef Workstation [#47](https://github.com/chef/license-acceptance/pull/47) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.6 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
