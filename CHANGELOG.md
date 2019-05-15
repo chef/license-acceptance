@@ -1,25 +1,22 @@
-<!-- latest_release 1.0.11 -->
-## [v1.0.11](https://github.com/chef/license-acceptance/tree/v1.0.11) (2019-05-15)
-
-#### Merged Pull Requests
-- TK can supply chef version as :latest or &#39;latest&#39; [#53](https://github.com/chef/license-acceptance/pull/53) ([tyler-ball](https://github.com/tyler-ball))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.0.8 -->
-### Changes since 1.0.8 release
-
-#### Merged Pull Requests
-- TK can supply chef version as :latest or &#39;latest&#39; [#53](https://github.com/chef/license-acceptance/pull/53) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.11 -->
-- Use more appropriate SYSTEMDRIVE for WinRM connections without a user [#52](https://github.com/chef/license-acceptance/pull/52) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.10 -->
-- Add Push Jobs Client to matrix [#51](https://github.com/chef/license-acceptance/pull/51) ([markan](https://github.com/markan)) <!-- 1.0.9 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v1.0.11](https://github.com/chef/license-acceptance/tree/v1.0.11) (2019-05-15)
+
+#### Merged Pull Requests
+- Add Push Jobs Client to matrix [#51](https://github.com/chef/license-acceptance/pull/51) ([markan](https://github.com/markan))
+- Use more appropriate SYSTEMDRIVE for WinRM connections without a user [#52](https://github.com/chef/license-acceptance/pull/52) ([tyler-ball](https://github.com/tyler-ball))
+- TK can supply chef version as :latest or &#39;latest&#39; [#53](https://github.com/chef/license-acceptance/pull/53) ([tyler-ball](https://github.com/tyler-ball))
+<!-- latest_stable_release -->
+
 ## [v1.0.8](https://github.com/chef/license-acceptance/tree/v1.0.8) (2019-05-14)
 
 #### Merged Pull Requests
 - Must support Ruby 2.3 for Test Kitchen 1.x [#49](https://github.com/chef/license-acceptance/pull/49) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_stable_release -->
 
 ## [v1.0.7](https://github.com/chef/license-acceptance/tree/v1.0.7) (2019-05-14)
 
