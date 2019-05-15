@@ -21,7 +21,7 @@ module LicenseAcceptance
 
     def default_license_locations
       if windows?
-        root = ENV["HOMEDRIVE"] || "C:"
+        root = ENV.fetch("SYSTEMDRIVE","C:")
         l = [ File.join(root, "chef/accepted_licenses/") ]
         unless is_root?
           # Look through a list of possible user locations and pick the first one that exists
