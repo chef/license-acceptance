@@ -104,7 +104,7 @@ module LicenseAcceptance
       product = product_reader.lookup_by_mixlib(mixlib_name)
       return false if product.nil?
       # If they don't pass a version we assume they want latest
-      return true if version == :latest || version.nil?
+      return true if version.to_s == "latest" || version.nil?
       Gem::Version.new(version) >= Gem::Version.new(product.license_required_version)
     end
 
