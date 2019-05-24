@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.12 -->
+## [v1.0.12](https://github.com/chef/license-acceptance/tree/v1.0.12) (2019-05-24)
+
+#### Merged Pull Requests
+- mixlib supplies channel names as versions to install [#54](https://github.com/chef/license-acceptance/pull/54) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.11 -->
+### Changes since 1.0.11 release
+
+#### Merged Pull Requests
+- mixlib supplies channel names as versions to install [#54](https://github.com/chef/license-acceptance/pull/54) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.12 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
