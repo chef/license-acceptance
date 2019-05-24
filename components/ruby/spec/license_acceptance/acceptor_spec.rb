@@ -266,11 +266,12 @@ RSpec.describe LicenseAcceptance::Acceptor do
       end
     end
 
-    describe "when version is 'latest'" do
-      let(:version) { "latest" }
-      it "returns true" do
-        expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product
-        expect(acc.license_required?(mixlib_name, version)).to eq(true)
+    ["latest", "unstable", "current", "stable"].each do |version|
+      describe "when version is '#{version}'" do
+        it "returns true" do
+          expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product
+          expect(acc.license_required?(mixlib_name, version)).to eq(true)
+        end
       end
     end
 
