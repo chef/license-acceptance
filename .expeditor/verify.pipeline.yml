@@ -12,28 +12,30 @@ steps:
 
 - label: rspec 2.6
   command:
-    - asdf local ruby 2.6.2
     - cd /workdir/components/ruby
     - bundle install
     - bundle exec rspec
   expeditor:
     executor:
       docker:
+        image: ruby:2.6-stretch
+
 - label: rspec 2.5
   command:
-    - asdf local ruby 2.5.5
     - cd /workdir/components/ruby
     - bundle install
     - bundle exec rspec
   expeditor:
     executor:
       docker:
+        image: ruby:2.5-stretch
+
 - label: rspec 2.4
   command:
-    - asdf local ruby 2.4.5
     - cd /workdir/components/ruby
     - bundle install
     - bundle exec rspec
   expeditor:
     executor:
       docker:
+        image: ruby:2.4-stretch
