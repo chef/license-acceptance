@@ -51,7 +51,7 @@ license_required_version = "0.4"
 
 [relationships]
 "infra-client" = ["inspec"]
-"infra-server" = ["infra-client"]
+"infra-server" = ["infra-client", "inspec"]
 "push-jobs-server" = ["infra-client", "infra-server"]
 "push-jobs-client" = ["infra-client"]
 "chef-dk" = ["infra-client", "inspec"]
