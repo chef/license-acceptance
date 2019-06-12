@@ -1,23 +1,20 @@
-<!-- latest_release 1.0.13 -->
-## [v1.0.13](https://github.com/chef/license-acceptance/tree/v1.0.13) (2019-06-12)
-
-#### Merged Pull Requests
-- Add inspec to chef-server deps [#56](https://github.com/chef/license-acceptance/pull/56) ([markan](https://github.com/markan))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.0.12 -->
-### Changes since 1.0.12 release
-
-#### Merged Pull Requests
-- Add inspec to chef-server deps [#56](https://github.com/chef/license-acceptance/pull/56) ([markan](https://github.com/markan)) <!-- 1.0.13 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.0.13](https://github.com/chef/license-acceptance/tree/1.0.13) (2019-06-12)
+
+#### Merged Pull Requests
+- Add inspec to chef-server deps [#56](https://github.com/chef/license-acceptance/pull/56) ([markan](https://github.com/markan))
+<!-- latest_stable_release -->
+
 ## [v1.0.12](https://github.com/chef/license-acceptance/tree/v1.0.12) (2019-05-24)
 
 #### Merged Pull Requests
 - mixlib supplies channel names as versions to install [#54](https://github.com/chef/license-acceptance/pull/54) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_stable_release -->
 
 ## [v1.0.11](https://github.com/chef/license-acceptance/tree/v1.0.11) (2019-05-15)
 
