@@ -7,9 +7,9 @@
 set -evx
 
 sed -i -r "s/^(\s*)VERSION = \".+\"/\1VERSION = \"$(cat VERSION)\"/" components/ruby/lib/license_acceptance/version.rb
-cd components/ruby
-bundle update
-cd ../..
+pushd components/ruby
+bundle update license-acceptance
+popd ../..
 sed -i -r "s/^pkg_version=.+\$/\pkg_version=$(cat VERSION)/" components/golang/habitat/plan.sh
 
 # Once Expeditor finshes executing this script, it will commit the changes and push
