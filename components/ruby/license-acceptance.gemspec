@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tty-box", "~> 0.3"
   spec.add_dependency "tty-prompt", "~> 0.18"
 
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "pry", "~> 0.12"
   spec.add_development_dependency "pry-byebug", "~> 3.6"
