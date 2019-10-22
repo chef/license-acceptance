@@ -159,8 +159,8 @@ different location than other software in the Chef Software ecosystem:
     * If the user is root: `/hab/accepted_licenses/`
     * If the user is non-root: `~/.hab/accepted_licenses/`
 * On Windows:
-    * If the user is Administrator: `C:\hab\accepted_licenses\`
-    * If the user is not Administrator: `C:\Users\<username>\.hab\accepted_licenses\`
+    * If the user is Administrator: `C:\hab\accepted-licenses\`
+    * If the user is not Administrator: `C:\Users\<username>\.hab\accepted-licenses\`
 
 Similar to the Chef license locations, non-`Administrator`/`root` users will look in the `Administrator`/`root` location
 if it is not found in their default location.
