@@ -1,14 +1,15 @@
-<!-- latest_release 1.0.14 -->
-## [1.0.14](https://github.com/chef/license-acceptance/tree/1.0.14) (2019-10-15)
+<!-- latest_release 1.0.15 -->
+## [1.0.15](https://github.com/chef/license-acceptance/tree/1.0.15) (2019-10-22)
 
 #### Merged Pull Requests
-- Update rake requirement from ~&gt; 10.0 to ~&gt; 13.0 in /components/ruby [#60](https://github.com/chef/license-acceptance/pull/60) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Use dependabot to update dependencies rather than blindly updating [#63](https://github.com/chef/license-acceptance/pull/63) ([tyler-ball](https://github.com/tyler-ball))
 <!-- latest_release -->
 
 <!-- release_rollup since=1.0.13 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use dependabot to update dependencies rather than blindly updating [#63](https://github.com/chef/license-acceptance/pull/63) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.15 -->
 - Update rake requirement from ~&gt; 10.0 to ~&gt; 13.0 in /components/ruby [#60](https://github.com/chef/license-acceptance/pull/60) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 1.0.14 -->
 <!-- release_rollup -->
 
