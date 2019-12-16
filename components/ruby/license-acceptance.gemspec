@@ -33,6 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-byebug", "~> 3.6"
   spec.add_development_dependency "pry-stack_explorer", "~> 0.4"
   spec.add_development_dependency "mixlib-cli", "~> 1.7"
-  spec.add_development_dependency "thor", "~> 0.20"
+  spec.add_development_dependency "thor", "~> 1.0"
   spec.add_development_dependency "climate_control", "~> 0.2"
 end
