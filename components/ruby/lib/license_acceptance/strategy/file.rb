@@ -1,7 +1,7 @@
-require 'date'
-require 'yaml'
-require 'fileutils'
-require 'etc'
+require "date"
+require "yaml"
+require "fileutils"
+require "etc"
 require "license_acceptance/logger"
 require "license_acceptance/strategy/base"
 
@@ -49,7 +49,7 @@ module LicenseAcceptance
         parent_version = product_relationship.parent_version
         root_dir = config.persist_location
 
-        if !Dir.exist?(root_dir)
+        unless Dir.exist?(root_dir)
           begin
             FileUtils.mkdir_p(root_dir)
           rescue StandardError => e
@@ -70,7 +70,7 @@ module LicenseAcceptance
             errs << err unless err.nil?
           end
         end
-        return errs
+        errs
       end
 
       private
@@ -91,11 +91,11 @@ module LicenseAcceptance
           contents = Hash[contents.map { |k, v| [k.to_s, v] }]
           license_file << YAML.dump(contents)
         end
-        return nil
+        nil
       rescue StandardError => e
         msg = "Could not persist license to #{path}"
         logger.info "#{msg}\n\t#{e.message}\n\t#{e.backtrace.join("\n\t")}"
-        return e
+        e
       end
 
     end

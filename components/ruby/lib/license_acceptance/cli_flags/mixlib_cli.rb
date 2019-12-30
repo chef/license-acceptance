@@ -1,5 +1,5 @@
 begin
-  require 'mixlib/cli'
+  require "mixlib/cli"
 rescue => exception
   raise "Must have mixlib-cli gem installed to use this mixin"
 end

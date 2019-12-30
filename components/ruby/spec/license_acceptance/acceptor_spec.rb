@@ -170,7 +170,6 @@ RSpec.describe LicenseAcceptance::Acceptor do
         end
       end
 
-
       describe "when persist is set to false" do
         let(:opts) { { output: output, persist: false } }
 
@@ -266,7 +265,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
       end
     end
 
-    ["latest", "unstable", "current", "stable"].each do |version|
+    %w{latest unstable current stable}.each do |version|
       describe "when version is '#{version}'" do
         it "returns true" do
           expect(reader).to receive(:lookup_by_mixlib).with(mixlib_name).and_return product

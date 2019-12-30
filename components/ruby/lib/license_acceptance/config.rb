@@ -1,10 +1,10 @@
-require 'logger'
+require "logger"
 
 module LicenseAcceptance
   class Config
     attr_accessor :output, :logger, :license_locations, :persist_location, :persist
 
-    def initialize(opts={})
+    def initialize(opts = {})
       @output = opts.fetch(:output, $stdout)
       @logger = opts.fetch(:logger, ::Logger.new(IO::NULL))
       @license_locations = opts.fetch(:license_locations, default_license_locations)
@@ -21,7 +21,7 @@ module LicenseAcceptance
 
     def default_license_locations
       if windows?
-        root = ENV.fetch("SYSTEMDRIVE","C:")
+        root = ENV.fetch("SYSTEMDRIVE", "C:")
         l = [ File.join(root, "chef/accepted_licenses/") ]
         unless is_root?
           # Look through a list of possible user locations and pick the first one that exists
@@ -32,6 +32,7 @@ module LicenseAcceptance
           possible_dirs << ENV["HOMESHARE"] + ENV["HOMEPATH"] if ENV["HOMESHARE"] && ENV["HOMEPATH"]
           possible_dirs << ENV["USERPROFILE"] if ENV["USERPROFILE"]
           raise NoValidEnvironmentVar if possible_dirs.empty?
+
           possible_dirs.each do |possible_dir|
             if Dir.exist?(possible_dir)
               full_possible_dir = File.join(possible_dir, ".chef/accepted_licenses/")
@@ -42,7 +43,7 @@ module LicenseAcceptance
         end
       else
         l = [ "/etc/chef/accepted_licenses/" ]
-        l << File.join(ENV['HOME'], ".chef/accepted_licenses/") unless is_root?
+        l << File.join(ENV["HOME"], ".chef/accepted_licenses/") unless is_root?
       end
       l
     end

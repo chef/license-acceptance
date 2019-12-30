@@ -27,10 +27,11 @@ module LicenseAcceptance
       private
 
       def look_for_value(sought)
-        if env['CHEF_LICENSE'] && env['CHEF_LICENSE'].downcase == sought
+        if env["CHEF_LICENSE"] && env["CHEF_LICENSE"].downcase == sought
           return true
         end
-        return false
+
+        false
       end
 
     end

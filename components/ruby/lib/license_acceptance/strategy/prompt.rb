@@ -1,5 +1,5 @@
-require 'tty-prompt'
-require 'pastel'
+require "tty-prompt"
+require "pastel"
 require "license_acceptance/logger"
 require "license_acceptance/strategy/base"
 require "timeout"
@@ -17,30 +17,30 @@ module LicenseAcceptance
         @output = config.output
       end
 
-      WIDTH = 50.freeze
+      WIDTH = 50
       PASTEL = Pastel.new
       BORDER = "+---------------------------------------------+".freeze
       YES = PASTEL.green.bold("yes")
-      CHECK  = PASTEL.green("✔")
+      CHECK = PASTEL.green("✔")
 
       def request(missing_licenses, &persist_callback)
         logger.debug("Requesting a license for #{missing_licenses.map(&:id)}")
         c = missing_licenses.size
-        s = c > 1 ? "s": ""
+        s = c > 1 ? "s" : ""
 
         acceptance_question = "Do you accept the #{c} product license#{s} (#{YES}/no)?"
         output.puts <<~EOM
-        #{BORDER}
-                    Chef License Acceptance
+          #{BORDER}
+                      Chef License Acceptance
 
-        Before you can continue, #{c} product license#{s}
-        must be accepted. View the license at
-        https://www.chef.io/end-user-license-agreement/
+          Before you can continue, #{c} product license#{s}
+          must be accepted. View the license at
+          https://www.chef.io/end-user-license-agreement/
 
-        License#{s} that need accepting:
-          * #{missing_licenses.map(&:pretty_name).join("\n  * ")}
+          License#{s} that need accepting:
+            * #{missing_licenses.map(&:pretty_name).join("\n  * ")}
 
-        #{acceptance_question}
+          #{acceptance_question}
 
         EOM
 
@@ -51,10 +51,10 @@ module LicenseAcceptance
 
         output.puts <<~EOM
 
-        If you do not accept this license you will
-        not be able to use Chef products.
+          If you do not accept this license you will
+          not be able to use Chef products.
 
-        #{acceptance_question}
+          #{acceptance_question}
 
         EOM
 
@@ -62,7 +62,7 @@ module LicenseAcceptance
         if answer != "yes"
           output.puts BORDER
         end
-        return answer
+        answer
       end
 
       private
@@ -73,7 +73,7 @@ module LicenseAcceptance
 
         answer = "no"
         begin
-          Timeout::timeout(60, PromptTimeout) do
+          Timeout.timeout(60, PromptTimeout) do
             answer = prompt.ask(">") do |q|
               q.modify :down, :trim
               q.required true
@@ -95,13 +95,13 @@ module LicenseAcceptance
             output.puts "#{CHECK} #{c} product license#{s} persisted.\n\n"
           else
             output.puts <<~EOM
-            #{CHECK} #{c} product license#{s} accepted.
-            Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
+              #{CHECK} #{c} product license#{s} accepted.
+              Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
             EOM
           end
           return true
         end
-        return false
+        false
       end
     end
 
