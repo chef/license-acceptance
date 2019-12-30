@@ -3,7 +3,7 @@ steps:
 - label: lint-chefstyle
   command:
     - cd /workdir/components/ruby
-    - .expeditor/run_linux_tests.sh "rake style"
+    - ../../../.expeditor/run_linux_tests.sh "rake style"
   expeditor:
     executor:
       docker:
@@ -12,7 +12,7 @@ steps:
 - label: run-specs-ruby-2.5
   command:
     - cd /workdir/components/ruby
-    - .expeditor/run_linux_tests.sh "rake spec"
+    - ../../../.expeditor/run_linux_tests.sh "rake spec"
   expeditor:
     executor:
       docker:
@@ -21,7 +21,7 @@ steps:
 - label: run-specs-ruby-2.6
   command:
     - cd /workdir/components/ruby
-    - .expeditor/run_linux_tests.sh "rake spec"
+    - ../../../.expeditor/run_linux_tests.sh "rake spec"
   expeditor:
     executor:
       docker:
@@ -30,7 +30,7 @@ steps:
 - label: run-specs-ruby-2.7
   command:
     - cd /workdir/components/ruby
-    - .expeditor/run_linux_tests.sh "rake spec"
+    - ../../../.expeditor/run_linux_tests.sh "rake spec"
   expeditor:
     executor:
       docker:
