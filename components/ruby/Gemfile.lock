@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    license-acceptance (1.0.16)
+    license-acceptance (1.0.17)
       pastel (~> 0.7)
       tomlrb (~> 1.2)
       tty-box (~> 0.3)
@@ -47,11 +47,11 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
-    strings (0.1.6)
+    strings (0.1.8)
       strings-ansi (~> 0.1)
       unicode-display_width (~> 1.5)
       unicode_utils (~> 1.4)
-    strings-ansi (0.1.0)
+    strings-ansi (0.2.0)
     thor (1.0.0)
     tomlrb (1.2.9)
     tty-box (0.5.0)
