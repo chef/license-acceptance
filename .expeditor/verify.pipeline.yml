@@ -1,41 +1,37 @@
----
-expeditor:
-  defaults:
-    buildkite:
-      timeout_in_minutes: 5
-
 steps:
 
-#########################################################################
-  # Ruby Tests
-#########################################################################
-
-- label: rspec 2.6
+- label: lint-chefstyle
   command:
     - cd /workdir/components/ruby
-    - bundle install
-    - bundle exec rspec
+    - .expeditor/run_linux_tests.sh "rake style"
   expeditor:
     executor:
       docker:
-        image: ruby:2.6-stretch
+        image: ruby:2.6-buster
 
-- label: rspec 2.5
+- label: run-specs-ruby-2.5
   command:
     - cd /workdir/components/ruby
-    - bundle install
-    - bundle exec rspec
+    - .expeditor/run_linux_tests.sh "rake spec"
   expeditor:
     executor:
       docker:
-        image: ruby:2.5-stretch
+        image: ruby:2.5-buster
 
-- label: rspec 2.4
+- label: run-specs-ruby-2.6
   command:
     - cd /workdir/components/ruby
-    - bundle install
-    - bundle exec rspec
+    - .expeditor/run_linux_tests.sh "rake spec"
   expeditor:
     executor:
       docker:
-        image: ruby:2.4-stretch
+        image: ruby:2.6-buster
+
+- label: run-specs-ruby-2.7
+  command:
+    - cd /workdir/components/ruby
+    - .expeditor/run_linux_tests.sh "rake spec"
+  expeditor:
+    executor:
+      docker:
+        image: ruby:2.7-buster
