@@ -1,26 +1,23 @@
-<!-- latest_release 1.0.17 -->
-## [1.0.17](https://github.com/chef/license-acceptance/tree/1.0.17) (2019-12-30)
-
-#### Merged Pull Requests
-- Update thor requirement from ~&gt; 0.20 to ~&gt; 1.0 in /components/ruby [#68](https://github.com/chef/license-acceptance/pull/68) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.0.13 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update thor requirement from ~&gt; 0.20 to ~&gt; 1.0 in /components/ruby [#68](https://github.com/chef/license-acceptance/pull/68) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 1.0.17 -->
-- Updating default license location for Habitat on Windows [#55](https://github.com/chef/license-acceptance/pull/55) ([stuartpreston](https://github.com/stuartpreston)) <!-- 1.0.16 -->
-- Use dependabot to update dependencies rather than blindly updating [#63](https://github.com/chef/license-acceptance/pull/63) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.15 -->
-- Update rake requirement from ~&gt; 10.0 to ~&gt; 13.0 in /components/ruby [#60](https://github.com/chef/license-acceptance/pull/60) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 1.0.14 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [1.0.17](https://github.com/chef/license-acceptance/tree/1.0.17) (2019-12-30)
+
+#### Merged Pull Requests
+- Update rake requirement from ~&gt; 10.0 to ~&gt; 13.0 in /components/ruby [#60](https://github.com/chef/license-acceptance/pull/60) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Use dependabot to update dependencies rather than blindly updating [#63](https://github.com/chef/license-acceptance/pull/63) ([tyler-ball](https://github.com/tyler-ball))
+- Updating default license location for Habitat on Windows [#55](https://github.com/chef/license-acceptance/pull/55) ([stuartpreston](https://github.com/stuartpreston))
+- Update thor requirement from ~&gt; 0.20 to ~&gt; 1.0 in /components/ruby [#68](https://github.com/chef/license-acceptance/pull/68) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+<!-- latest_stable_release -->
+
 ## [1.0.13](https://github.com/chef/license-acceptance/tree/1.0.13) (2019-06-12)
 
 #### Merged Pull Requests
 - Add inspec to chef-server deps [#56](https://github.com/chef/license-acceptance/pull/56) ([markan](https://github.com/markan))
-<!-- latest_stable_release -->
 
 ## [v1.0.12](https://github.com/chef/license-acceptance/tree/v1.0.12) (2019-05-24)
 
