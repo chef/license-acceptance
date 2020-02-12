@@ -1,18 +1,16 @@
-<!-- latest_release 1.0.18 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [1.0.18](https://github.com/chef/license-acceptance/tree/1.0.18) (2020-02-12)
 
 #### Merged Pull Requests
 - Allow for thor 0.20 still [#71](https://github.com/chef/license-acceptance/pull/71) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=1.0.13 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Allow for thor 0.20 still [#71](https://github.com/chef/license-acceptance/pull/71) ([tas50](https://github.com/tas50)) <!-- 1.0.18 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [1.0.17](https://github.com/chef/license-acceptance/tree/1.0.17) (2019-12-30)
 
 #### Merged Pull Requests
@@ -20,7 +18,6 @@
 - Use dependabot to update dependencies rather than blindly updating [#63](https://github.com/chef/license-acceptance/pull/63) ([tyler-ball](https://github.com/tyler-ball))
 - Updating default license location for Habitat on Windows [#55](https://github.com/chef/license-acceptance/pull/55) ([stuartpreston](https://github.com/stuartpreston))
 - Update thor requirement from ~&gt; 0.20 to ~&gt; 1.0 in /components/ruby [#68](https://github.com/chef/license-acceptance/pull/68) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
-<!-- latest_stable_release -->
 
 ## [1.0.13](https://github.com/chef/license-acceptance/tree/1.0.13) (2019-06-12)
 
