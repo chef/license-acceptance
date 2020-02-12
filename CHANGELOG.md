@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.18 -->
+## [1.0.18](https://github.com/chef/license-acceptance/tree/1.0.18) (2020-02-12)
+
+#### Merged Pull Requests
+- Allow for thor 0.20 still [#71](https://github.com/chef/license-acceptance/pull/71) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.13 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Allow for thor 0.20 still [#71](https://github.com/chef/license-acceptance/pull/71) ([tas50](https://github.com/tas50)) <!-- 1.0.18 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

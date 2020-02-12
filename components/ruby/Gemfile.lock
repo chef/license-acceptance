@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    license-acceptance (1.0.17)
+    license-acceptance (1.0.18)
       pastel (~> 0.7)
       tomlrb (~> 1.2)
       tty-box (~> 0.3)
