@@ -1,23 +1,20 @@
-<!-- latest_release 1.0.19 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [1.0.19](https://github.com/chef/license-acceptance/tree/1.0.19) (2020-04-14)
 
 #### Merged Pull Requests
 - Fixing error with Expeditor update_version.sh script [#76](https://github.com/chef/license-acceptance/pull/76) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_release -->
-
-<!-- release_rollup since=1.0.18 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Fixing error with Expeditor update_version.sh script [#76](https://github.com/chef/license-acceptance/pull/76) ([tyler-ball](https://github.com/tyler-ball)) <!-- 1.0.19 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [1.0.18](https://github.com/chef/license-acceptance/tree/1.0.18) (2020-02-12)
 
 #### Merged Pull Requests
 - Allow for thor 0.20 still [#71](https://github.com/chef/license-acceptance/pull/71) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [1.0.17](https://github.com/chef/license-acceptance/tree/1.0.17) (2019-12-30)
 
