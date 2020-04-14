@@ -6,21 +6,21 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
 
   describe "#accepted?" do
     describe "when the environment contains the correct key and value" do
-      let(:env) { {"CHEF_LICENSE" => "accept"} }
+      let(:env) { { "CHEF_LICENSE" => "accept" } }
       it "returns true" do
         expect(acc.accepted?).to eq(true)
       end
     end
 
     describe "when the env has a key but nil value" do
-      let(:env) { {"CHEF_LICENSE" => nil} }
+      let(:env) { { "CHEF_LICENSE" => nil } }
       it "returns false" do
         expect(acc.accepted?).to eq(false)
       end
     end
 
     describe "when the env has a key but incorrect value" do
-      let(:env) { {"CHEF_LICENSE" => "foo"} }
+      let(:env) { { "CHEF_LICENSE" => "foo" } }
       it "returns false" do
         expect(acc.accepted?).to eq(false)
       end
@@ -29,21 +29,21 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
 
   describe "#silent?" do
     describe "when the environment contains the correct key and value" do
-      let(:env) { {"CHEF_LICENSE" => "accept-silent"} }
+      let(:env) { { "CHEF_LICENSE" => "accept-silent" } }
       it "returns true" do
         expect(acc.silent?).to eq(true)
       end
     end
 
     describe "when the env has a key but nil value" do
-      let(:env) { {"CHEF_LICENSE" => nil} }
+      let(:env) { { "CHEF_LICENSE" => nil } }
       it "returns false" do
         expect(acc.silent?).to eq(false)
       end
     end
 
     describe "when the env has a key but incorrect value" do
-      let(:env) { {"CHEF_LICENSE" => "accept"} }
+      let(:env) { { "CHEF_LICENSE" => "accept" } }
       it "returns false" do
         expect(acc.silent?).to eq(false)
       end
@@ -52,21 +52,21 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
 
   describe "#no_persist?" do
     describe "when the environment contains the correct key and value" do
-      let(:env) { {"CHEF_LICENSE" => "accept-no-persist"} }
+      let(:env) { { "CHEF_LICENSE" => "accept-no-persist" } }
       it "returns true" do
         expect(acc.no_persist?).to eq(true)
       end
     end
 
     describe "when the env has a key but nil value" do
-      let(:env) { {"CHEF_LICENSE" => nil} }
+      let(:env) { { "CHEF_LICENSE" => nil } }
       it "returns false" do
         expect(acc.no_persist?).to eq(false)
       end
     end
 
     describe "when the env has a key but incorrect value" do
-      let(:env) { {"CHEF_LICENSE" => "accept-silent"} }
+      let(:env) { { "CHEF_LICENSE" => "accept-silent" } }
       it "returns false" do
         expect(acc.no_persist?).to eq(false)
       end

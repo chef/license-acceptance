@@ -1,0 +1,13 @@
+Lint/AmbiguousRegexpLiteral:
+  Exclude:
+    - 'components/ruby/lib/license_acceptance/strategy/prompt.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'components/ruby/lib/license_acceptance/cli_flags/mixlib_cli.rb'
+    - 'components/ruby/lib/license_acceptance/cli_flags/thor.rb'
+
+# Configuration parameters: CheckForMethodsWithNoSideEffects.
+Lint/Void:
+  Exclude:
+    - 'components/ruby/lib/license_acceptance/product.rb'

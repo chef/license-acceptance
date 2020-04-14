@@ -14,14 +14,15 @@ module LicenseAcceptance
 
     def ==(other)
       return false if other.class != Product
+
       if other.id == id &&
-         other.pretty_name == pretty_name &&
-         other.filename == filename &&
-         other.mixlib_name == mixlib_name
-         other.license_required_version == license_required_version
-         return true
+          other.pretty_name == pretty_name &&
+          other.filename == filename &&
+          other.mixlib_name == mixlib_name
+        other.license_required_version == license_required_version
+        return true
       end
-      return false
+      false
     end
 
   end

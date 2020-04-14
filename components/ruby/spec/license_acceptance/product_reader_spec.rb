@@ -7,13 +7,13 @@ RSpec.describe LicenseAcceptance::ProductReader do
   let(:version) { "0.1.0" }
   let(:location) { "location" }
 
-  let(:p1) { {"id" => "p1", "pretty_name" => "P1", "filename" => "f1", "mixlib_name" => "p1m", "license_required_version" => "p1v"} }
-  let(:p2) { {"id" => "p2", "pretty_name" => "P2", "filename" => "f2", "mixlib_name" => "p2m", "license_required_version" => "p2v"} }
+  let(:p1) { { "id" => "p1", "pretty_name" => "P1", "filename" => "f1", "mixlib_name" => "p1m", "license_required_version" => "p1v" } }
+  let(:p2) { { "id" => "p2", "pretty_name" => "P2", "filename" => "f2", "mixlib_name" => "p2m", "license_required_version" => "p2v" } }
   # defined the `==` operator on Product for ease of comparison
   let(:product1) { LicenseAcceptance::Product.new(p1["id"], p1["pretty_name"], p1["filename"], p1["mixlib_name"], p1["license_required_version"]) }
   let(:product2) { LicenseAcceptance::Product.new(p2["id"], p2["pretty_name"], p2["filename"], p2["mixlib_name"], p2["license_required_version"]) }
-  let(:r1) { {p1 => p2} }
-  let(:toml) { {"products" => [p1, p2], "relationships" => {"p1" => ["p2"]}} }
+  let(:r1) { { p1 => p2 } }
+  let(:toml) { { "products" => [p1, p2], "relationships" => { "p1" => ["p2"] } } }
 
   describe "#read" do
     it "reads products and relationships" do
@@ -22,7 +22,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
       reader.read
       expect(reader.products).to eq({
         "p1" => product1,
-        "p2" => product2
+        "p2" => product2,
       })
       expect(reader.relationships.size).to eq(1)
       expect(reader.relationships.first).to eq([product1, [product2]])
@@ -38,7 +38,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
     end
 
     describe "with an unknown parent" do
-      let(:toml) { {"products" => [p1, p2], "relationships" => {"p3" => ["p2"]}} }
+      let(:toml) { { "products" => [p1, p2], "relationships" => { "p3" => ["p2"] } } }
 
       it "raises a UnknownParent error" do
         expect(reader).to receive(:get_location).and_return(location)
@@ -49,7 +49,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
     end
 
     describe "with a relationship of nil children" do
-      let(:toml) { {"products" => [p1], "relationships" => {"p1" => nil}} }
+      let(:toml) { { "products" => [p1], "relationships" => { "p1" => nil } } }
 
       it "raises a NoChildRelationships error" do
         expect(reader).to receive(:get_location).and_return(location)
@@ -60,7 +60,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
     end
 
     describe "with a relationship of empty children" do
-      let(:toml) { {"products" => [p1], "relationships" => {"p1" => []}} }
+      let(:toml) { { "products" => [p1], "relationships" => { "p1" => [] } } }
 
       it "raises a NoChildRelationships error" do
         expect(reader).to receive(:get_location).and_return(location)
@@ -71,7 +71,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
     end
 
     describe "with a relationship of non-array children" do
-      let(:toml) { {"products" => [p1], "relationships" => {"p1" => "p2"}} }
+      let(:toml) { { "products" => [p1], "relationships" => { "p1" => "p2" } } }
 
       it "raises a NoChildRelationships error" do
         expect(reader).to receive(:get_location).and_return(location)
@@ -82,7 +82,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
     end
 
     describe "with an unknown child" do
-      let(:toml) { {"products" => [p1, p2], "relationships" => {"p1" => ["p2", "p3"]}} }
+      let(:toml) { { "products" => [p1, p2], "relationships" => { "p1" => %w{p2 p3} } } }
 
       it "raises a UnknownChild error" do
         expect(reader).to receive(:get_location).and_return(location)
@@ -121,7 +121,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
       end
 
       it "returns the product" do
-        expect(reader.lookup('nonya', version)).to be_an_instance_of(LicenseAcceptance::ProductRelationship) do |instance|
+        expect(reader.lookup("nonya", version)).to be_an_instance_of(LicenseAcceptance::ProductRelationship) do |instance|
           expect(instance.parent_product).to eq(nonya)
           expect(instance.children).to eq([])
           expect(instance.version).to eq(version)

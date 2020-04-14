@@ -30,14 +30,15 @@ module LicenseAcceptance
         if argv.include?("--chef-license=#{sought}")
           return true
         end
+
         i = argv.index("--chef-license")
         unless i.nil?
-          val = argv[i+1]
-          if val != nil && val.downcase == sought
+          val = argv[i + 1]
+          if !val.nil? && val.downcase == sought
             return true
           end
         end
-        return false
+        false
       end
     end
   end

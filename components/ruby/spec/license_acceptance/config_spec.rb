@@ -57,7 +57,7 @@ RSpec.describe LicenseAcceptance::Config do
             expect(Dir).to receive(:exist?).with("C:/Users/foo").and_return(true)
             expect(config.license_locations).to eq([
               "C:/chef/accepted_licenses/",
-              "C:/Users/foo/.chef/accepted_licenses/"
+              "C:/Users/foo/.chef/accepted_licenses/",
             ])
             expect(config.persist_location).to eq("C:/Users/foo/.chef/accepted_licenses/")
           end
@@ -68,7 +68,7 @@ RSpec.describe LicenseAcceptance::Config do
             expect(Dir).to receive(:exist?).with("C:/Users/bar").and_return(true)
             expect(config.license_locations).to eq([
               "C:/chef/accepted_licenses/",
-              "C:/Users/bar/.chef/accepted_licenses/"
+              "C:/Users/bar/.chef/accepted_licenses/",
             ])
             expect(config.persist_location).to eq("C:/Users/bar/.chef/accepted_licenses/")
           end
@@ -98,7 +98,7 @@ RSpec.describe LicenseAcceptance::Config do
           ClimateControl.modify HOME: "/Users/foo" do
             expect(config.license_locations).to eq([
               "/etc/chef/accepted_licenses/",
-              "/Users/foo/.chef/accepted_licenses/"
+              "/Users/foo/.chef/accepted_licenses/",
             ])
             expect(config.persist_location).to eq("/Users/foo/.chef/accepted_licenses/")
           end

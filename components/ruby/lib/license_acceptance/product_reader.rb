@@ -18,7 +18,7 @@ module LicenseAcceptance
       toml = Tomlrb.load_file(location, symbolize_keys: false)
       raise InvalidProductInfo.new(location) if toml.empty? || toml["products"].nil? || toml["relationships"].nil?
 
-      for product in toml["products"]
+      toml["products"].each do |product|
         products[product["id"]] = Product.new(
           product["id"], product["pretty_name"],
           product["filename"], product["mixlib_name"],
@@ -26,7 +26,7 @@ module LicenseAcceptance
         )
       end
 
-      for parent_id, children in toml["relationships"]
+      toml["relationships"].each do |parent_id, children|
         parent = products[parent_id]
         raise UnknownParent.new(parent_id) if parent.nil?
         # Its fine to not have a relationship entry, but not fine to have
@@ -34,9 +34,11 @@ module LicenseAcceptance
         if children.nil? || children.empty? || !children.is_a?(Array)
           raise NoChildRelationships.new(parent)
         end
+
         children.map! do |child_id|
           child = products[child_id]
           raise UnknownChild.new(child_id) if child.nil?
+
           child
         end
         relationships[parent] = children
@@ -52,6 +54,7 @@ module LicenseAcceptance
       if ENV["CHEF_LICENSE_PRODUCT_INFO"]
         return ENV["CHEF_LICENSE_PRODUCT_INFO"]
       end
+
       File.absolute_path(File.join(__FILE__, "../../../config/product_info.toml"))
     end
 
@@ -60,9 +63,10 @@ module LicenseAcceptance
         raise UnknownProduct.new(parent_id)
       end
       children = relationships.fetch(parent_product, [])
-      if !parent_version.is_a? String
+      unless parent_version.is_a? String
         raise ProductVersionTypeError.new(parent_version)
       end
+
       ProductRelationship.new(parent_product, children, parent_version)
     end
 

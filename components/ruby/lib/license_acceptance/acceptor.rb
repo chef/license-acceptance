@@ -11,9 +11,9 @@ require "license_acceptance/strategy/provided_value"
 
 module LicenseAcceptance
 
-  ACCEPT = "accept"
-  ACCEPT_SILENT = "accept-silent"
-  ACCEPT_NO_PERSIST = "accept-no-persist"
+  ACCEPT = "accept".freeze
+  ACCEPT_SILENT = "accept-silent".freeze
+  ACCEPT_NO_PERSIST = "accept-no-persist".freeze
 
   class Acceptor
     extend Forwardable
@@ -21,7 +21,7 @@ module LicenseAcceptance
 
     attr_reader :config, :product_reader, :env_strategy, :file_strategy, :arg_strategy, :prompt_strategy, :provided_strategy
 
-    def initialize(opts={})
+    def initialize(opts = {})
       @config = Config.new(opts)
       Logger.initialize(config.logger)
       @product_reader = ProductReader.new
@@ -77,25 +77,25 @@ module LicenseAcceptance
         return true
       elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
           # We have to infer the acceptance value if they use the prompt to accept
-          if config.persist
-            @acceptance_value = ACCEPT
-            file_strategy.persist(product_relationship, missing_licenses)
-          else
-            @acceptance_value = ACCEPT_NO_PERSIST
-            []
-          end
+        if config.persist
+          @acceptance_value = ACCEPT # rubocop: disable Lint/AssignmentInCondition
+          file_strategy.persist(product_relationship, missing_licenses)
+        else
+          @acceptance_value = ACCEPT_NO_PERSIST # rubocop: disable Lint/AssignmentInCondition
+          []
         end
+      end
         return true
       else
         raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
       end
     end
 
-    def self.check_and_persist!(product_id, version, opts={})
+    def self.check_and_persist!(product_id, version, opts = {})
       new(opts).check_and_persist!(product_id, version)
     end
 
-    def self.check_and_persist(product_id, version, opts={})
+    def self.check_and_persist(product_id, version, opts = {})
       new(opts).check_and_persist(product_id, version)
     end
 
@@ -105,7 +105,8 @@ module LicenseAcceptance
       return false if product.nil?
       # If they don't pass a version we assume they want latest
       # All versions in all channels require license acceptance
-      return true if ["latest", "unstable", "current", "stable"].include?(version.to_s) || version.nil?
+      return true if %w{latest unstable current stable}.include?(version.to_s) || version.nil?
+
       Gem::Version.new(version) >= Gem::Version.new(product.license_required_version)
     end
 
@@ -114,6 +115,7 @@ module LicenseAcceptance
     def id_from_mixlib(mixlib_name)
       product = product_reader.lookup_by_mixlib(mixlib_name)
       return nil if product.nil?
+
       product.id
     end
 
@@ -141,20 +143,20 @@ module LicenseAcceptance
     # In the case where users accept with a command line argument or environment variable
     # we still want to output the fact that the filesystem was changed.
     def output_num_persisted(count)
-      s = count > 1 ? "s": ""
+      s = count > 1 ? "s" : ""
       output.puts <<~EOM
-      #{Strategy::Prompt::BORDER}
-      #{Strategy::Prompt::CHECK} #{count} product license#{s} accepted.
-      #{Strategy::Prompt::BORDER}
+        #{Strategy::Prompt::BORDER}
+        #{Strategy::Prompt::CHECK} #{count} product license#{s} accepted.
+        #{Strategy::Prompt::BORDER}
       EOM
     end
 
     def output_persist_failed(errs)
       output.puts <<~EOM
-      #{Strategy::Prompt::BORDER}
-      #{Strategy::Prompt::CHECK} Product license accepted.
-      Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
-      #{Strategy::Prompt::BORDER}
+        #{Strategy::Prompt::BORDER}
+        #{Strategy::Prompt::CHECK} Product license accepted.
+        Could not persist acceptance:\n\t* #{errs.map(&:message).join("\n\t* ")}
+        #{Strategy::Prompt::BORDER}
       EOM
     end
 

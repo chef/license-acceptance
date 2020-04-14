@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "mixlib-cli", "~> 1.7"
   spec.add_development_dependency "thor", ">= 0.20", "< 2.0" # validate 2.0 when it ships
   spec.add_development_dependency "climate_control", "~> 0.2"
+  spec.add_development_dependency "chefstyle"
 end
