@@ -74,7 +74,7 @@ module LicenseAcceptance
           end
         end
         @acceptance_value = accepted_silent? ? ACCEPT_SILENT : ACCEPT
-        return true
+        true
       elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
           # We have to infer the acceptance value if they use the prompt to accept
         if config.persist
@@ -85,7 +85,7 @@ module LicenseAcceptance
           []
         end
       end
-        return true
+        true
       else
         raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
       end
