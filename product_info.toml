@@ -49,6 +49,21 @@ filename = "chef_workstation"
 mixlib_name = "chef-workstation"
 license_required_version = "0.4"
 
+[[products]]
+id = "cinc-client"
+pretty_name = "CINC Client"
+filename = "cinc"
+
+[[products]]
+id = "cinc-workstation"
+pretty_name = "CINC Workstation"
+filename = "cinc-workstation"
+
+[[products]]
+id = "cinc-auditor"
+pretty_name = "CINC Auditor"
+filename = "cinc-auditor"
+
 [relationships]
 "infra-client" = ["inspec"]
 "infra-server" = ["infra-client", "inspec"]
@@ -56,3 +71,5 @@ license_required_version = "0.4"
 "push-jobs-client" = ["infra-client"]
 "chef-dk" = ["infra-client", "inspec"]
 "chef-workstation" = ["infra-client", "inspec"]
+"cinc-client" = ["cinc-auditor"]
+"cinc-workstation" = ["cinc-client", "cinc-auditor"]
