@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 1.0.20 -->
+## [1.0.20](https://github.com/chef/license-acceptance/tree/1.0.20) (2020-07-28)
+
+#### Merged Pull Requests
+- Fix minor spelling mistakes [#78](https://github.com/chef/license-acceptance/pull/78) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=1.0.19 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Fix minor spelling mistakes [#78](https://github.com/chef/license-acceptance/pull/78) ([tas50](https://github.com/tas50)) <!-- 1.0.20 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
