@@ -25,7 +25,7 @@ This repo consists of a few parts:
 1. If the license is not accepted the product will exit with code `172`.
     * This is a randomly chosen number that enables CI tools to handle license failures with specific behavior.
 1. If a local product has accepted licenses and it installs a product onto a remote machine, the set of existing accepted
-   licenses should be transfered to the remote machine. If the remote machine needs to accept new product licenses it
+   licenses should be transferred to the remote machine. If the remote machine needs to accept new product licenses it
    should prompt for that acceptance on the local machine.
     * For example, users install the ChefDK and accept the license for ChefDK, Chef Client, InSpec, etc. If the user
       runs `knife bootstrap` against a remote machine then the licenses from the local machine will be copied to the
@@ -346,7 +346,7 @@ Knows how to install and manage omnibus packaged products.
 
 There are bound to be other paths users follow to package, deploy and configure chef products. We will update these
 tools to support the new license requirements. Our criteria should be that users can accept the license for product(s)
-with the least amount of resistence possible while still ensuring they have gone through a positive license acceptance
+with the least amount of resistance possible while still ensuring they have gone through a positive license acceptance
 flow.
 
 ## License

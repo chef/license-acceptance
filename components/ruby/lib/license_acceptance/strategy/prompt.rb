@@ -7,7 +7,7 @@ require "timeout"
 module LicenseAcceptance
   module Strategy
 
-    # Interactive prompt for accepting and persistnce license acceptance, or failing with custom exit code
+    # Interactive prompt for accepting and persistence license acceptance, or failing with custom exit code
     class Prompt < Base
       include Logger
 

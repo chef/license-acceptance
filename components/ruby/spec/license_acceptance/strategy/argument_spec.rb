@@ -5,14 +5,14 @@ RSpec.describe LicenseAcceptance::Strategy::Argument do
   let(:acc) { LicenseAcceptance::Strategy::Argument.new(argv) }
 
   describe "#accepted?" do
-    describe "when value is space seperated" do
+    describe "when value is space separated" do
       let(:argv) { ["--chef-license", "accept"] }
       it "returns true if the args contain the required flag with spaces" do
         expect(acc.accepted?).to eq(true)
       end
     end
 
-    describe "when the value is equal seperated" do
+    describe "when the value is equal separated" do
       let(:argv) { ["--chef-license=accept"] }
       it "returns true if the args contain the required flag with equal" do
         expect(acc.accepted?).to eq(true)
@@ -30,14 +30,14 @@ RSpec.describe LicenseAcceptance::Strategy::Argument do
   end
 
   describe "#silent?" do
-    describe "when value is space seperated" do
+    describe "when value is space separated" do
       let(:argv) { ["--chef-license", "accept-silent"] }
       it "returns true if the args contain the required flag with spaces" do
         expect(acc.silent?).to eq(true)
       end
     end
 
-    describe "when the value is equal seperated" do
+    describe "when the value is equal separated" do
       let(:argv) { ["--chef-license=accept-silent"] }
       it "returns true if the args contain the required flag with equal" do
         expect(acc.silent?).to eq(true)
@@ -55,14 +55,14 @@ RSpec.describe LicenseAcceptance::Strategy::Argument do
   end
 
   describe "#no_persist?" do
-    describe "when value is space seperated" do
+    describe "when value is space separated" do
       let(:argv) { ["--chef-license", "accept-no-persist"] }
       it "returns true if the args contain the required flag with spaces" do
         expect(acc.no_persist?).to eq(true)
       end
     end
 
-    describe "when the value is equal seperated" do
+    describe "when the value is equal separated" do
       let(:argv) { ["--chef-license=accept-no-persist"] }
       it "returns true if the args contain the required flag with equal" do
         expect(acc.no_persist?).to eq(true)
