@@ -76,7 +76,7 @@ module LicenseAcceptance
         @acceptance_value = accepted_silent? ? ACCEPT_SILENT : ACCEPT
         true
       elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
-          # We have to infer the acceptance value if they use the prompt to accept
+        # We have to infer the acceptance value if they use the prompt to accept
         if config.persist
           @acceptance_value = ACCEPT # rubocop: disable Lint/AssignmentInCondition
           file_strategy.persist(product_relationship, missing_licenses)
