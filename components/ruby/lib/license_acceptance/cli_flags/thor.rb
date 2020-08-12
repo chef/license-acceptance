@@ -1,6 +1,6 @@
 begin
   require "thor"
-rescue => exception
+rescue
   raise "Must have thor gem installed to use this mixin"
 end
 

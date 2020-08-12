@@ -78,7 +78,7 @@ module LicenseAcceptance
               q.modify :down, :trim
               q.required true
               q.messages[:required?] = "You must enter 'yes' or 'no'"
-              q.validate /^\s*(yes|no)\s*$/i
+              q.validate(/^\s*(yes|no)\s*$/i)
               q.messages[:valid?] = "You must enter 'yes' or 'no'"
             end
           end
