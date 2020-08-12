@@ -18,10 +18,11 @@ module LicenseAcceptance
       if other.id == id &&
           other.pretty_name == pretty_name &&
           other.filename == filename &&
-          other.mixlib_name == mixlib_name
-        other.license_required_version == license_required_version
+          other.mixlib_name == mixlib_name &&
+          other.license_required_version == license_required_version
         return true
       end
+
       false
     end
 
