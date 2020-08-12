@@ -1,24 +1,21 @@
-<!-- latest_release 2.0.0 -->
-## [2.0.0](https://github.com/chef/license-acceptance/tree/2.0.0) (2020-08-12)
-
-#### Merged Pull Requests
-- Remove support for Ruby 2.3 and bump tty deps [#79](https://github.com/chef/license-acceptance/pull/79) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=1.0.19 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Remove support for Ruby 2.3 and bump tty deps [#79](https://github.com/chef/license-acceptance/pull/79) ([tas50](https://github.com/tas50)) <!-- 2.0.0 -->
-- Fix minor spelling mistakes [#78](https://github.com/chef/license-acceptance/pull/78) ([tas50](https://github.com/tas50)) <!-- 1.0.20 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [2.0.0](https://github.com/chef/license-acceptance/tree/2.0.0) (2020-08-12)
+
+#### Merged Pull Requests
+- Fix minor spelling mistakes [#78](https://github.com/chef/license-acceptance/pull/78) ([tas50](https://github.com/tas50))
+- Remove support for Ruby 2.3 and bump tty deps [#79](https://github.com/chef/license-acceptance/pull/79) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [1.0.19](https://github.com/chef/license-acceptance/tree/1.0.19) (2020-04-14)
 
 #### Merged Pull Requests
 - Fixing error with Expeditor update_version.sh script [#76](https://github.com/chef/license-acceptance/pull/76) ([tyler-ball](https://github.com/tyler-ball))
-<!-- latest_stable_release -->
 
 ## [1.0.18](https://github.com/chef/license-acceptance/tree/1.0.18) (2020-02-12)
 
