@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 2.0.1 -->
+## [2.0.1](https://github.com/chef/license-acceptance/tree/2.0.1) (2020-08-13)
+
+#### Merged Pull Requests
+- Update mixlib-cli requirement from ~&gt; 1.7 to ~&gt; 2.1 in /components/ruby [#80](https://github.com/chef/license-acceptance/pull/80) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=2.0.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update mixlib-cli requirement from ~&gt; 1.7 to ~&gt; 2.1 in /components/ruby [#80](https://github.com/chef/license-acceptance/pull/80) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.0.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
