@@ -8,7 +8,7 @@ gemspec
 group :development do
   gem "chefstyle", "1.2.1"
   gem "climate_control", "~> 0.2"
-  gem "mixlib-cli", "~> 1.7"
+  gem "mixlib-cli", "~> 2.1"
   gem "rake", ">= 10.1.0"
   gem "rspec", "~> 3.0"
   gem "thor", ">= 0.20", "< 2.0" # validate 2.0 when it ships
