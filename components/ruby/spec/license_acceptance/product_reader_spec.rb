@@ -101,11 +101,11 @@ RSpec.describe LicenseAcceptance::ProductReader do
     end
 
     it "returns a ProductRelationship instance successfully" do
-      expect(reader.lookup("p1", version)).to be_an_instance_of(LicenseAcceptance::ProductRelationship) do |instance|
-        expect(instance.parent_product).to eq(product1)
-        expect(instance.children).to eq([prouct2])
-        expect(instance.version).to eq(version)
-      end
+      instance = reader.lookup("p1", version)
+      expect(instance).to be_an_instance_of(LicenseAcceptance::ProductRelationship)
+      expect(instance.parent).to eq(product1)
+      expect(instance.children).to eq([product2])
+      expect(instance.parent_version).to eq(version)
     end
 
     describe "when called on an unknown product" do
@@ -121,11 +121,11 @@ RSpec.describe LicenseAcceptance::ProductReader do
       end
 
       it "returns the product" do
-        expect(reader.lookup("nonya", version)).to be_an_instance_of(LicenseAcceptance::ProductRelationship) do |instance|
-          expect(instance.parent_product).to eq(nonya)
-          expect(instance.children).to eq([])
-          expect(instance.version).to eq(version)
-        end
+        instance = reader.lookup("nonya", version)
+        expect(instance).to be_an_instance_of(LicenseAcceptance::ProductRelationship)
+        expect(instance.parent).to eq(nonya)
+        expect(instance.children).to eq([])
+        expect(instance.parent_version).to eq(version)
       end
     end
 
