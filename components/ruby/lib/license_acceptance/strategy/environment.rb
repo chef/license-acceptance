@@ -6,6 +6,8 @@ module LicenseAcceptance
     # Look for acceptance values in the environment
     class Environment < Base
 
+      ENV_KEY = "CHEF_LICENSE".freeze
+
       attr_reader :env
 
       def initialize(env)
@@ -24,10 +26,14 @@ module LicenseAcceptance
         look_for_value(ACCEPT_NO_PERSIST)
       end
 
+      def value?
+        env.key?(ENV_KEY)
+      end
+
       private
 
       def look_for_value(sought)
-        if env["CHEF_LICENSE"] && env["CHEF_LICENSE"].downcase == sought
+        if env[ENV_KEY] && env[ENV_KEY].downcase == sought
           return true
         end
 

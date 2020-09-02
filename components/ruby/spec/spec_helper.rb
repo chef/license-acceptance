@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "license_acceptance/logger"
+require "license_acceptance/acceptor"
 require "logger"
 
 RSpec.configure do |config|

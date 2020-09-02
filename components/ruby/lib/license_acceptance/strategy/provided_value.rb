@@ -22,7 +22,10 @@ module LicenseAcceptance
       def no_persist?
         value == ACCEPT_NO_PERSIST
       end
-    end
 
+      def value?
+        !!value
+      end
+    end
   end
 end

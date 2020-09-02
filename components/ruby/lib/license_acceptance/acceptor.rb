@@ -74,8 +74,29 @@ module LicenseAcceptance
           end
         end
         @acceptance_value = accepted_silent? ? ACCEPT_SILENT : ACCEPT
-        true
-      elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
+        return true
+      end
+
+      if unrecognized_acceptance_value?
+        logger.error("License acceptance value is unrecognized, must be one of: '#{ACCEPT}', '#{ACCEPT_SILENT}', '#{ACCEPT_NO_PERSIST}'")
+        raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
+      end
+
+      return true if output.isatty && accepted_license_prompt?(product_relationship, missing_licenses)
+
+      raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
+    end
+
+    def self.check_and_persist!(product_id, version, opts = {})
+      new(opts).check_and_persist!(product_id, version)
+    end
+
+    def self.check_and_persist(product_id, version, opts = {})
+      new(opts).check_and_persist(product_id, version)
+    end
+
+    def accepted_license_prompt?(product_relationship, missing_licenses)
+      prompt_strategy.request(missing_licenses) do
         # We have to infer the acceptance value if they use the prompt to accept
         if config.persist
           @acceptance_value = ACCEPT # rubocop: disable Lint/AssignmentInCondition
@@ -85,18 +106,6 @@ module LicenseAcceptance
           []
         end
       end
-        true
-      else
-        raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
-      end
-    end
-
-    def self.check_and_persist!(product_id, version, opts = {})
-      new(opts).check_and_persist!(product_id, version)
-    end
-
-    def self.check_and_persist(product_id, version, opts = {})
-      new(opts).check_and_persist(product_id, version)
     end
 
     # Check whether the specified product requires license acceptance for the given version.
@@ -138,6 +147,10 @@ module LicenseAcceptance
     # persist but be silent like no-persist
     def accepted_silent?
       provided_strategy.silent? || env_strategy.silent? || arg_strategy.silent?
+    end
+
+    def unrecognized_acceptance_value?
+      provided_strategy.value? || env_strategy.value? || arg_strategy.value?
     end
 
     # In the case where users accept with a command line argument or environment variable
