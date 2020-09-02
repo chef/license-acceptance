@@ -1,5 +1,5 @@
 begin
-  require "thor"
+  require "thor" unless defined?(Thor)
 rescue
   raise "Must have thor gem installed to use this mixin"
 end

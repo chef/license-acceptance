@@ -1,4 +1,4 @@
-require "tomlrb"
+require "tomlrb" unless defined?(Tomlrb)
 require "license_acceptance/logger"
 require "license_acceptance/product"
 require "license_acceptance/product_relationship"

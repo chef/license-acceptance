@@ -1,7 +1,7 @@
 require "date"
-require "yaml"
-require "fileutils"
-require "etc"
+require "yaml" unless defined?(YAML)
+require "fileutils" unless defined?(FileUtils)
+require "etc" unless defined?(Etc)
 require "license_acceptance/logger"
 require "license_acceptance/strategy/base"
 
