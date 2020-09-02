@@ -77,7 +77,7 @@ module LicenseAcceptance
         return true
       end
 
-      if unrecognized_acceptance_value?
+      if acceptance_value_provided?
         logger.error("License acceptance value is unrecognized, must be one of: '#{ACCEPT}', '#{ACCEPT_SILENT}', '#{ACCEPT_NO_PERSIST}'")
         raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
       end
@@ -149,7 +149,7 @@ module LicenseAcceptance
       provided_strategy.silent? || env_strategy.silent? || arg_strategy.silent?
     end
 
-    def unrecognized_acceptance_value?
+    def acceptance_value_provided?
       provided_strategy.value? || env_strategy.value? || arg_strategy.value?
     end
 
