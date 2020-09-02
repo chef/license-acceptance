@@ -99,10 +99,10 @@ module LicenseAcceptance
       prompt_strategy.request(missing_licenses) do
         # We have to infer the acceptance value if they use the prompt to accept
         if config.persist
-          @acceptance_value = ACCEPT # rubocop: disable Lint/AssignmentInCondition
+          @acceptance_value = ACCEPT
           file_strategy.persist(product_relationship, missing_licenses)
         else
-          @acceptance_value = ACCEPT_NO_PERSIST # rubocop: disable Lint/AssignmentInCondition
+          @acceptance_value = ACCEPT_NO_PERSIST
           []
         end
       end
