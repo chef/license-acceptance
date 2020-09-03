@@ -15,36 +15,30 @@ module LicenseAcceptance
       end
 
       def accepted?
-        look_for_value(ACCEPT)
+        String(value).downcase == ACCEPT
       end
 
       def silent?
-        look_for_value(ACCEPT_SILENT)
+        String(value).downcase == ACCEPT_SILENT
       end
 
       def no_persist?
-        look_for_value(ACCEPT_NO_PERSIST)
+        String(value).downcase == ACCEPT_NO_PERSIST
       end
 
       def value?
         argv.any? { |s| s == FLAG || s.start_with?("#{FLAG}=") }
       end
 
-      private
+      def value
+        match = argv.detect { |s| s.start_with?("#{FLAG}=") }
+        return match.split("=").last if match
 
-      def look_for_value(sought)
-        if argv.include?("#{FLAG}=#{sought}")
-          return true
+        argv.each_cons(2) do |arg, value|
+          return value if arg == FLAG
         end
 
-        i = argv.index(FLAG)
-        unless i.nil?
-          val = argv[i + 1]
-          if !val.nil? && val.downcase == sought
-            return true
-          end
-        end
-        false
+        nil
       end
     end
   end

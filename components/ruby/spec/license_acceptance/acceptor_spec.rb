@@ -48,9 +48,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
       expect(LicenseAcceptance::Strategy::Environment).to receive(:new).and_return(env_acc)
       expect(LicenseAcceptance::Strategy::ProvidedValue).to receive(:new).and_return(provided_acc)
 
-      allow(arg_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value?: false)
-      allow(env_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value?: false)
-      allow(provided_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value?: false)
+      allow(arg_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value: nil, value?: false)
+      allow(env_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value: nil, value?: false)
+      allow(provided_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value: nil, value?: false)
 
       expect(reader).to receive(:read)
     end
@@ -94,7 +94,8 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
         expect(prompt_acc).to_not receive(:request)
         expect(provided_acc).to receive(:value?).and_return(true)
-        expect(acc.logger).to receive(:error).with("License acceptance value is unrecognized, must be one of: 'accept', 'accept-silent', 'accept-no-persist'")
+        expect(provided_acc).to receive(:value).and_return("some-string")
+        expect(acc.logger).to receive(:error).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
         expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
         expect(acc.acceptance_value).to eq(nil)
       end
@@ -156,7 +157,8 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
           expect(prompt_acc).to_not receive(:request)
           expect(env_acc).to receive(:value?).and_return(true)
-          expect(acc.logger).to receive(:error).with("License acceptance value is unrecognized, must be one of: 'accept', 'accept-silent', 'accept-no-persist'")
+          expect(env_acc).to receive(:value).and_return("some-string")
+          expect(acc.logger).to receive(:error).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
           expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
           expect(acc.acceptance_value).to eq(nil)
         end
@@ -218,8 +220,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
           expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
           expect(arg_acc).to receive(:value?).and_return(true)
+          expect(arg_acc).to receive(:value).and_return("some-string")
           expect(prompt_acc).to_not receive(:request)
-          expect(acc.logger).to receive(:error).with("License acceptance value is unrecognized, must be one of: 'accept', 'accept-silent', 'accept-no-persist'")
+          expect(acc.logger).to receive(:error).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
           expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
           expect(acc.acceptance_value).to eq(nil)
         end

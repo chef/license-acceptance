@@ -95,4 +95,27 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
       end
     end
   end
+
+  describe "#value" do
+    describe "when the environment contains the correct key" do
+      let(:env) { { "CHEF_LICENSE" => "any-value" } }
+      it "returns the value" do
+        expect(acc.value).to eq("any-value")
+      end
+    end
+
+    describe "when the environment contains the correct key but nil value" do
+      let(:env) { { "CHEF_LICENSE" => nil } }
+      it "returns nil" do
+        expect(acc.value).to eq(nil)
+      end
+    end
+
+    describe "when the environment does not contain the correct key" do
+      let(:env) { { "CHEF_LICENSE_ACCEPTANCE" => "any-value" } }
+      it "returns nil" do
+        expect(acc.value).to eq(nil)
+      end
+    end
+  end
 end
