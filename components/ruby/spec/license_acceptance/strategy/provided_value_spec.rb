@@ -52,4 +52,19 @@ RSpec.describe LicenseAcceptance::Strategy::ProvidedValue do
     end
   end
 
+  describe "#value?" do
+    describe "when the value is present" do
+      let(:value) { "any-value" }
+      it "returns true" do
+        expect(acc.value?).to eq(true)
+      end
+    end
+
+    describe "when the value is nil" do
+      let(:value) { nil }
+      it "returns false" do
+        expect(acc.value?).to eq(false)
+      end
+    end
+  end
 end
