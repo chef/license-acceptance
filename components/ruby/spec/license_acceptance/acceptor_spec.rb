@@ -95,7 +95,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(prompt_acc).to_not receive(:request)
         expect(provided_acc).to receive(:value?).and_return(true)
         expect(provided_acc).to receive(:value).and_return("some-string")
-        expect(acc.logger).to receive(:error).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
+        expect(output).to receive(:puts).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
         expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
         expect(acc.acceptance_value).to eq(nil)
       end
@@ -158,7 +158,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(prompt_acc).to_not receive(:request)
           expect(env_acc).to receive(:value?).and_return(true)
           expect(env_acc).to receive(:value).and_return("some-string")
-          expect(acc.logger).to receive(:error).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
+          expect(output).to receive(:puts).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
           expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
           expect(acc.acceptance_value).to eq(nil)
         end
@@ -222,7 +222,7 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(arg_acc).to receive(:value?).and_return(true)
           expect(arg_acc).to receive(:value).and_return("some-string")
           expect(prompt_acc).to_not receive(:request)
-          expect(acc.logger).to receive(:error).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
+          expect(output).to receive(:puts).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
           expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
           expect(acc.acceptance_value).to eq(nil)
         end
