@@ -1,5 +1,5 @@
 require "date"
-require "yaml"
+autoload :YAML, "yaml"
 require "fileutils"
 require "etc"
 require "license_acceptance/logger"
