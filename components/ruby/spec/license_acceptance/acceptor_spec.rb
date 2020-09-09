@@ -48,15 +48,9 @@ RSpec.describe LicenseAcceptance::Acceptor do
       expect(LicenseAcceptance::Strategy::Environment).to receive(:new).and_return(env_acc)
       expect(LicenseAcceptance::Strategy::ProvidedValue).to receive(:new).and_return(provided_acc)
 
-      allow(provided_acc).to receive(:no_persist?).and_return(false)
-      allow(env_acc).to receive(:no_persist?).and_return(false)
-      allow(arg_acc).to receive(:no_persist?).and_return(false)
-      allow(provided_acc).to receive(:accepted?).and_return(false)
-      allow(env_acc).to receive(:accepted?).and_return(false)
-      allow(arg_acc).to receive(:accepted?).and_return(false)
-      allow(provided_acc).to receive(:silent?).and_return(false)
-      allow(env_acc).to receive(:silent?).and_return(false)
-      allow(arg_acc).to receive(:silent?).and_return(false)
+      allow(arg_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value: nil, value?: false)
+      allow(env_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value: nil, value?: false)
+      allow(provided_acc).to receive_messages(accepted?: false, no_persist?: false, silent?: false, value: nil, value?: false)
 
       expect(reader).to receive(:read)
     end
@@ -91,6 +85,19 @@ RSpec.describe LicenseAcceptance::Acceptor do
         expect(file_acc).to receive(:accepted?).with(relationship).and_return([])
         expect(acc.check_and_persist(product, version)).to eq(true)
         expect(acc.acceptance_value).to eq(LicenseAcceptance::ACCEPT)
+      end
+    end
+
+    describe "when an unrecognized value is provided from the caller" do
+      it "raises a LicenseNotAcceptedError error" do
+        expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+        expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
+        expect(prompt_acc).to_not receive(:request)
+        expect(provided_acc).to receive(:value?).and_return(true)
+        expect(provided_acc).to receive(:value).and_return("some-string")
+        expect(output).to receive(:puts).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
+        expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
+        expect(acc.acceptance_value).to eq(nil)
       end
     end
 
@@ -143,6 +150,19 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(acc.acceptance_value).to eq(LicenseAcceptance::ACCEPT)
         end
       end
+
+      describe "when an unrecognized value is provided" do
+        it "raises a LicenseNotAcceptedError error" do
+          expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+          expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
+          expect(prompt_acc).to_not receive(:request)
+          expect(env_acc).to receive(:value?).and_return(true)
+          expect(env_acc).to receive(:value).and_return("some-string")
+          expect(output).to receive(:puts).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
+          expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
+          expect(acc.acceptance_value).to eq(nil)
+        end
+      end
     end
 
     describe "when the user accepts as an arg" do
@@ -192,6 +212,19 @@ RSpec.describe LicenseAcceptance::Acceptor do
           expect(acc.check_and_persist(product, version)).to eq(true)
           expect(output.string).to match(/Could not persist acceptance:/)
           expect(acc.acceptance_value).to eq(LicenseAcceptance::ACCEPT)
+        end
+      end
+
+      describe "when an unrecognized value is provided" do
+        it "raises a LicenseNotAcceptedError error" do
+          expect(reader).to receive(:lookup).with(product, version).and_return(relationship)
+          expect(file_acc).to receive(:accepted?).with(relationship).and_return(missing)
+          expect(arg_acc).to receive(:value?).and_return(true)
+          expect(arg_acc).to receive(:value).and_return("some-string")
+          expect(prompt_acc).to_not receive(:request)
+          expect(output).to receive(:puts).with("Unrecognized license acceptance value 'some-string', expected one of: 'accept', 'accept-silent', 'accept-no-persist'")
+          expect { acc.check_and_persist(product, version) }.to raise_error(LicenseAcceptance::LicenseNotAcceptedError)
+          expect(acc.acceptance_value).to eq(nil)
         end
       end
     end

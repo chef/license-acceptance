@@ -6,6 +6,8 @@ module LicenseAcceptance
     # Look for acceptance values in the ARGV
     class Argument < Base
 
+      FLAG = "--chef-license".freeze
+
       attr_reader :argv
 
       def initialize(argv)
@@ -13,32 +15,30 @@ module LicenseAcceptance
       end
 
       def accepted?
-        look_for_value(ACCEPT)
+        String(value).downcase == ACCEPT
       end
 
       def silent?
-        look_for_value(ACCEPT_SILENT)
+        String(value).downcase == ACCEPT_SILENT
       end
 
       def no_persist?
-        look_for_value(ACCEPT_NO_PERSIST)
+        String(value).downcase == ACCEPT_NO_PERSIST
       end
 
-      private
+      def value?
+        argv.any? { |s| s == FLAG || s.start_with?("#{FLAG}=") }
+      end
 
-      def look_for_value(sought)
-        if argv.include?("--chef-license=#{sought}")
-          return true
+      def value
+        match = argv.detect { |s| s.start_with?("#{FLAG}=") }
+        return match.split("=").last if match
+
+        argv.each_cons(2) do |arg, value|
+          return value if arg == FLAG
         end
 
-        i = argv.index("--chef-license")
-        unless i.nil?
-          val = argv[i + 1]
-          if !val.nil? && val.downcase == sought
-            return true
-          end
-        end
-        false
+        nil
       end
     end
   end

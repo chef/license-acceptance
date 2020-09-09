@@ -1,4 +1,4 @@
-require "tomlrb" unless defined?(Tomlrb)
+autoload :Tomlrb, "tomlrb"
 require "license_acceptance/logger"
 require "license_acceptance/product"
 require "license_acceptance/product_relationship"

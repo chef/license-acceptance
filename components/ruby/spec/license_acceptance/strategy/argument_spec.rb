@@ -79,4 +79,63 @@ RSpec.describe LicenseAcceptance::Strategy::Argument do
     end
   end
 
+  describe "#value?" do
+    describe "when value is space separated" do
+      let(:argv) { ["--chef-license", "any-value"] }
+      it "returns true if the required flag is present" do
+        expect(acc.value?).to eq(true)
+      end
+    end
+
+    describe "when the value is equal separated" do
+      let(:argv) { ["--chef-license=any-value"] }
+      it "returns true if the required flag is present" do
+        expect(acc.value?).to eq(true)
+      end
+    end
+
+    describe "when no value is present" do
+      let(:argv) { ["--chef-license"] }
+      it "returns true if the required flag is present" do
+        expect(acc.value?).to eq(true)
+      end
+    end
+
+    describe "when the required flag is not present" do
+      let(:argv) { ["--chef-license-acceptance=yes"] }
+      it "returns false" do
+        expect(acc.value?).to eq(false)
+      end
+    end
+  end
+
+  describe "#value" do
+    describe "when value is space separated" do
+      let(:argv) { ["--chef-license", "any-value"] }
+      it "returns the value" do
+        expect(acc.value).to eq("any-value")
+      end
+    end
+
+    describe "when the value is equal separated" do
+      let(:argv) { ["--chef-license=any-value"] }
+      it "returns the value" do
+        expect(acc.value).to eq("any-value")
+      end
+    end
+
+    describe "when no value is present" do
+      let(:argv) { ["--chef-license"] }
+      it "returns nil" do
+        expect(acc.value).to eq(nil)
+      end
+    end
+
+    describe "when the required flag is not present" do
+      let(:argv) { ["--chef-license-acceptance=yes"] }
+      it "returns nil" do
+        expect(acc.value).to eq(nil)
+      end
+    end
+  end
 end

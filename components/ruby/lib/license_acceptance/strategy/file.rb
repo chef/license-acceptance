@@ -1,5 +1,5 @@
 require "date"
-require "yaml" unless defined?(YAML)
+autoload :YAML, "yaml"
 require "fileutils" unless defined?(FileUtils)
 require "etc" unless defined?(Etc)
 require "license_acceptance/logger"

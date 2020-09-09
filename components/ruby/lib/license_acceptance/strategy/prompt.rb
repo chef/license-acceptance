@@ -1,4 +1,4 @@
-require "tty-prompt"
+autoload :TTY, "tty-prompt"
 require "pastel"
 require "license_acceptance/logger"
 require "license_acceptance/strategy/base"

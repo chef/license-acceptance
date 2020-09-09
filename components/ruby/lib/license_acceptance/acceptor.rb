@@ -74,21 +74,18 @@ module LicenseAcceptance
           end
         end
         @acceptance_value = accepted_silent? ? ACCEPT_SILENT : ACCEPT
-        true
-      elsif config.output.isatty && prompt_strategy.request(missing_licenses) do
-        # We have to infer the acceptance value if they use the prompt to accept
-        if config.persist
-          @acceptance_value = ACCEPT # rubocop: disable Lint/AssignmentInCondition
-          file_strategy.persist(product_relationship, missing_licenses)
-        else
-          @acceptance_value = ACCEPT_NO_PERSIST # rubocop: disable Lint/AssignmentInCondition
-          []
-        end
+        return true
       end
-        true
-      else
+
+      if acceptance_value_provided?
+        value = provided_strategy.value || env_strategy.value || arg_strategy.value
+        output.puts("Unrecognized license acceptance value '#{value}', expected one of: '#{ACCEPT}', '#{ACCEPT_SILENT}', '#{ACCEPT_NO_PERSIST}'")
         raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
       end
+
+      return true if output.isatty && accepted_license_prompt?(product_relationship, missing_licenses)
+
+      raise LicenseNotAcceptedError.new(product_relationship.parent, missing_licenses)
     end
 
     def self.check_and_persist!(product_id, version, opts = {})
@@ -97,6 +94,19 @@ module LicenseAcceptance
 
     def self.check_and_persist(product_id, version, opts = {})
       new(opts).check_and_persist(product_id, version)
+    end
+
+    def accepted_license_prompt?(product_relationship, missing_licenses)
+      prompt_strategy.request(missing_licenses) do
+        # We have to infer the acceptance value if they use the prompt to accept
+        if config.persist
+          @acceptance_value = ACCEPT
+          file_strategy.persist(product_relationship, missing_licenses)
+        else
+          @acceptance_value = ACCEPT_NO_PERSIST
+          []
+        end
+      end
     end
 
     # Check whether the specified product requires license acceptance for the given version.
@@ -138,6 +148,10 @@ module LicenseAcceptance
     # persist but be silent like no-persist
     def accepted_silent?
       provided_strategy.silent? || env_strategy.silent? || arg_strategy.silent?
+    end
+
+    def acceptance_value_provided?
+      provided_strategy.value? || env_strategy.value? || arg_strategy.value?
     end
 
     # In the case where users accept with a command line argument or environment variable
