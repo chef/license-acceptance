@@ -1,14 +1,15 @@
-<!-- latest_release 2.0.3 -->
-## [2.0.3](https://github.com/chef/license-acceptance/tree/2.0.3) (2020-09-04)
+<!-- latest_release 2.1.0 -->
+## [2.1.0](https://github.com/chef/license-acceptance/tree/2.1.0) (2020-09-09)
 
 #### Merged Pull Requests
-- Fail license acceptance if the user provides an unrecognized value [#86](https://github.com/chef/license-acceptance/pull/86) ([phiggins](https://github.com/phiggins))
+- improve initial load perf with autoloading expensive gems [#87](https://github.com/chef/license-acceptance/pull/87) ([mwrock](https://github.com/mwrock))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.0.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- improve initial load perf with autoloading expensive gems [#87](https://github.com/chef/license-acceptance/pull/87) ([mwrock](https://github.com/mwrock)) <!-- 2.1.0 -->
 - Fail license acceptance if the user provides an unrecognized value [#86](https://github.com/chef/license-acceptance/pull/86) ([phiggins](https://github.com/phiggins)) <!-- 2.0.3 -->
 - Fix product reader tests. [#81](https://github.com/chef/license-acceptance/pull/81) ([phiggins](https://github.com/phiggins)) <!-- 2.0.2 -->
 - Update mixlib-cli requirement from ~&gt; 1.7 to ~&gt; 2.1 in /components/ruby [#80](https://github.com/chef/license-acceptance/pull/80) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.0.1 -->
