@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 2.1.2 -->
+## [2.1.2](https://github.com/chef/license-acceptance/tree/2.1.2) (2020-09-09)
+
+#### Merged Pull Requests
+- Case insensitively check acceptance [#88](https://github.com/chef/license-acceptance/pull/88) ([phiggins](https://github.com/phiggins))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=2.1.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Case insensitively check acceptance [#88](https://github.com/chef/license-acceptance/pull/88) ([phiggins](https://github.com/phiggins)) <!-- 2.1.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
