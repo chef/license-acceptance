@@ -12,15 +12,15 @@ module LicenseAcceptance
       end
 
       def accepted?
-        value == ACCEPT
+        String(value).downcase == ACCEPT
       end
 
       def silent?
-        value == ACCEPT_SILENT
+        String(value).downcase == ACCEPT_SILENT
       end
 
       def no_persist?
-        value == ACCEPT_NO_PERSIST
+        String(value).downcase == ACCEPT_NO_PERSIST
       end
 
       def value?

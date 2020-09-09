@@ -12,6 +12,13 @@ RSpec.describe LicenseAcceptance::Strategy::ProvidedValue do
       end
     end
 
+    describe "when the value is correct with a different case" do
+      let(:value) { "ACCEPT" }
+      it "returns true" do
+        expect(acc.accepted?).to eq(true)
+      end
+    end
+
     describe "when the value is incorrect" do
       let(:value) { nil }
       it "returns false" do
@@ -28,6 +35,13 @@ RSpec.describe LicenseAcceptance::Strategy::ProvidedValue do
       end
     end
 
+    describe "when the value is correct with a different case" do
+      let(:value) { "ACCEPT-SILENT" }
+      it "returns true" do
+        expect(acc.silent?).to eq(true)
+      end
+    end
+
     describe "when the value is incorrect" do
       let(:value) { "accept" }
       it "returns false" do
@@ -39,6 +53,13 @@ RSpec.describe LicenseAcceptance::Strategy::ProvidedValue do
   describe "#no_persist?" do
     describe "when the value is correct" do
       let(:value) { "accept-no-persist" }
+      it "returns true" do
+        expect(acc.no_persist?).to eq(true)
+      end
+    end
+
+    describe "when the value is correct with a different case" do
+      let(:value) { "ACCEPT-NO-PERSIST" }
       it "returns true" do
         expect(acc.no_persist?).to eq(true)
       end
