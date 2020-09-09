@@ -1,18 +1,16 @@
-<!-- latest_release 2.1.1 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [2.1.1](https://github.com/chef/license-acceptance/tree/2.1.1) (2020-09-09)
 
 #### Merged Pull Requests
 - Update chefstyle requirement from 1.2.1 to 1.3.2 in /components/ruby [#85](https://github.com/chef/license-acceptance/pull/85) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
-<!-- latest_release -->
-
-<!-- release_rollup since=2.0.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 1.2.1 to 1.3.2 in /components/ruby [#85](https://github.com/chef/license-acceptance/pull/85) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.1 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [2.1.0](https://github.com/chef/license-acceptance/tree/2.1.0) (2020-09-09)
 
 #### Merged Pull Requests
@@ -20,7 +18,6 @@
 - Fix product reader tests. [#81](https://github.com/chef/license-acceptance/pull/81) ([phiggins](https://github.com/phiggins))
 - Fail license acceptance if the user provides an unrecognized value [#86](https://github.com/chef/license-acceptance/pull/86) ([phiggins](https://github.com/phiggins))
 - improve initial load perf with autoloading expensive gems [#87](https://github.com/chef/license-acceptance/pull/87) ([mwrock](https://github.com/mwrock))
-<!-- latest_stable_release -->
 
 ## [2.0.0](https://github.com/chef/license-acceptance/tree/2.0.0) (2020-08-12)
 
