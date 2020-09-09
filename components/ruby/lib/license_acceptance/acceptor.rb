@@ -1,4 +1,4 @@
-require "forwardable"
+require "forwardable" unless defined?(Forwardable)
 require "license_acceptance/config"
 require "license_acceptance/logger"
 require "license_acceptance/product_reader"

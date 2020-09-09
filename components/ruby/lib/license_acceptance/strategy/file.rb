@@ -1,7 +1,7 @@
 require "date"
 autoload :YAML, "yaml"
-require "fileutils"
-require "etc"
+require "fileutils" unless defined?(FileUtils)
+require "etc" unless defined?(Etc)
 require "license_acceptance/logger"
 require "license_acceptance/strategy/base"
 
