@@ -12,6 +12,13 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
       end
     end
 
+    describe "when the environment contains the correct key and value with a different case" do
+      let(:env) { { "CHEF_LICENSE" => "ACCEPT" } }
+      it "returns true" do
+        expect(acc.accepted?).to eq(true)
+      end
+    end
+
     describe "when the env has a key but nil value" do
       let(:env) { { "CHEF_LICENSE" => nil } }
       it "returns false" do
@@ -35,6 +42,13 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
       end
     end
 
+    describe "when the environment contains the correct key and value with a different case" do
+      let(:env) { { "CHEF_LICENSE" => "ACCEPT-SILENT" } }
+      it "returns true" do
+        expect(acc.silent?).to eq(true)
+      end
+    end
+
     describe "when the env has a key but nil value" do
       let(:env) { { "CHEF_LICENSE" => nil } }
       it "returns false" do
@@ -53,6 +67,13 @@ RSpec.describe LicenseAcceptance::Strategy::Environment do
   describe "#no_persist?" do
     describe "when the environment contains the correct key and value" do
       let(:env) { { "CHEF_LICENSE" => "accept-no-persist" } }
+      it "returns true" do
+        expect(acc.no_persist?).to eq(true)
+      end
+    end
+
+    describe "when the environment contains the correct key and value with a different case" do
+      let(:env) { { "CHEF_LICENSE" => "ACCEPT-NO-PERSIST" } }
       it "returns true" do
         expect(acc.no_persist?).to eq(true)
       end
