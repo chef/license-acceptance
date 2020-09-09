@@ -1,27 +1,24 @@
-<!-- latest_release 2.1.0 -->
-## [2.1.0](https://github.com/chef/license-acceptance/tree/2.1.0) (2020-09-09)
-
-#### Merged Pull Requests
-- improve initial load perf with autoloading expensive gems [#87](https://github.com/chef/license-acceptance/pull/87) ([mwrock](https://github.com/mwrock))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=2.0.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- improve initial load perf with autoloading expensive gems [#87](https://github.com/chef/license-acceptance/pull/87) ([mwrock](https://github.com/mwrock)) <!-- 2.1.0 -->
-- Fail license acceptance if the user provides an unrecognized value [#86](https://github.com/chef/license-acceptance/pull/86) ([phiggins](https://github.com/phiggins)) <!-- 2.0.3 -->
-- Fix product reader tests. [#81](https://github.com/chef/license-acceptance/pull/81) ([phiggins](https://github.com/phiggins)) <!-- 2.0.2 -->
-- Update mixlib-cli requirement from ~&gt; 1.7 to ~&gt; 2.1 in /components/ruby [#80](https://github.com/chef/license-acceptance/pull/80) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.0.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [2.1.0](https://github.com/chef/license-acceptance/tree/2.1.0) (2020-09-09)
+
+#### Merged Pull Requests
+- Update mixlib-cli requirement from ~&gt; 1.7 to ~&gt; 2.1 in /components/ruby [#80](https://github.com/chef/license-acceptance/pull/80) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Fix product reader tests. [#81](https://github.com/chef/license-acceptance/pull/81) ([phiggins](https://github.com/phiggins))
+- Fail license acceptance if the user provides an unrecognized value [#86](https://github.com/chef/license-acceptance/pull/86) ([phiggins](https://github.com/phiggins))
+- improve initial load perf with autoloading expensive gems [#87](https://github.com/chef/license-acceptance/pull/87) ([mwrock](https://github.com/mwrock))
+<!-- latest_stable_release -->
+
 ## [2.0.0](https://github.com/chef/license-acceptance/tree/2.0.0) (2020-08-12)
 
 #### Merged Pull Requests
 - Fix minor spelling mistakes [#78](https://github.com/chef/license-acceptance/pull/78) ([tas50](https://github.com/tas50))
 - Remove support for Ruby 2.3 and bump tty deps [#79](https://github.com/chef/license-acceptance/pull/79) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [1.0.19](https://github.com/chef/license-acceptance/tree/1.0.19) (2020-04-14)
 
