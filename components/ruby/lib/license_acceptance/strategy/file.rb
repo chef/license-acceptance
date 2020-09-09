@@ -28,11 +28,9 @@ module LicenseAcceptance
         logger.debug("Searching for the following licenses: #{missing_licenses.map(&:id)}")
 
         searching.each do |product|
-          found = false
           config.license_locations.each do |loc|
             f = ::File.join(loc, product.filename)
             if ::File.exist?(f)
-              found = true
               logger.debug("Found license #{product.filename} at #{f}")
               missing_licenses.delete(product)
               break
