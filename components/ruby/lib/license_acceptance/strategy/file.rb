@@ -2,8 +2,8 @@ require "date"
 autoload :YAML, "yaml"
 require "fileutils" unless defined?(FileUtils)
 require "etc" unless defined?(Etc)
-require "license_acceptance/logger"
-require "license_acceptance/strategy/base"
+require_relative "../logger"
+require_relative "base"
 
 module LicenseAcceptance
   module Strategy

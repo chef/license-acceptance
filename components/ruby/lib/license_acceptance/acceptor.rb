@@ -1,13 +1,13 @@
 require "forwardable" unless defined?(Forwardable)
-require "license_acceptance/config"
-require "license_acceptance/logger"
-require "license_acceptance/product_reader"
-require "license_acceptance/product_relationship"
-require "license_acceptance/strategy/environment"
-require "license_acceptance/strategy/file"
-require "license_acceptance/strategy/argument"
-require "license_acceptance/strategy/prompt"
-require "license_acceptance/strategy/provided_value"
+require_relative "config"
+require_relative "logger"
+require_relative "product_reader"
+require_relative "product_relationship"
+require_relative "strategy/environment"
+require_relative "strategy/file"
+require_relative "strategy/argument"
+require_relative "strategy/prompt"
+require_relative "strategy/provided_value"
 
 module LicenseAcceptance
 
