@@ -1,7 +1,7 @@
 autoload :TTY, "tty-prompt"
-require "pastel"
-require "license_acceptance/logger"
-require "license_acceptance/strategy/base"
+require "pastel" unless defined?(Pastel)
+require_relative "../logger"
+require_relative "base"
 require "timeout" unless defined?(Timeout)
 
 module LicenseAcceptance

@@ -1,7 +1,7 @@
 autoload :Tomlrb, "tomlrb"
-require "license_acceptance/logger"
-require "license_acceptance/product"
-require "license_acceptance/product_relationship"
+require_relative "logger"
+require_relative "product"
+require_relative "product_relationship"
 
 module LicenseAcceptance
   class ProductReader

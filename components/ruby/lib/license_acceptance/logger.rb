@@ -1,4 +1,4 @@
-require "license_acceptance/config"
+require_relative "config"
 
 module LicenseAcceptance
   module Logger

@@ -1,4 +1,4 @@
-require "license_acceptance/strategy/base"
+require_relative "base"
 
 module LicenseAcceptance
   module Strategy
