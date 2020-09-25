@@ -1,7 +1,15 @@
-<!-- latest_release -->
+<!-- latest_release 2.1.3 -->
+## [2.1.3](https://github.com/chef/license-acceptance/tree/2.1.3) (2020-09-25)
+
+#### Merged Pull Requests
+- Convert to require_relative [#90](https://github.com/chef/license-acceptance/pull/90) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=2.1.2 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Convert to require_relative [#90](https://github.com/chef/license-acceptance/pull/90) ([tas50](https://github.com/tas50)) <!-- 2.1.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
