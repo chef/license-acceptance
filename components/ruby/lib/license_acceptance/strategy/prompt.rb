@@ -34,11 +34,10 @@ module LicenseAcceptance
                       Chef License Acceptance
 
           Before you can continue, #{c} product license#{s}
-          must be accepted. View the license at
-          https://www.chef.io/end-user-license-agreement/
+          must be accepted.
 
           License#{s} that need accepting:
-            * #{missing_licenses.map(&:pretty_name).join("\n  * ")}
+          #{product_and_license_pretty(missing_licenses)}
 
           #{acceptance_question}
 
@@ -102,6 +101,15 @@ module LicenseAcceptance
           return true
         end
         false
+      end
+
+      def product_and_license_pretty(missing_licenses)
+        msg = ""
+        missing_licenses.each do |ml|
+          msg += "  * #{ml.pretty_name}\n"
+          msg += "    #{ml.license.name} - #{ml.license.uri}\n"
+        end
+        msg
       end
     end
 

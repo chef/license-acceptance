@@ -1,29 +1,66 @@
 require "spec_helper"
 require "license_acceptance/product_reader"
 require "license_acceptance/product_relationship"
+require "license_acceptance/product_builder"
 
 RSpec.describe LicenseAcceptance::ProductReader do
   let(:reader) { LicenseAcceptance::ProductReader.new }
   let(:version) { "0.1.0" }
   let(:location) { "location" }
 
-  let(:p1) { { "id" => "p1", "pretty_name" => "P1", "filename" => "f1", "mixlib_name" => "p1m", "license_required_version" => "p1v" } }
-  let(:p2) { { "id" => "p2", "pretty_name" => "P2", "filename" => "f2", "mixlib_name" => "p2m", "license_required_version" => "p2v" } }
-  # defined the `==` operator on Product for ease of comparison
-  let(:product1) { LicenseAcceptance::Product.new(p1["id"], p1["pretty_name"], p1["filename"], p1["mixlib_name"], p1["license_required_version"]) }
-  let(:product2) { LicenseAcceptance::Product.new(p2["id"], p2["pretty_name"], p2["filename"], p2["mixlib_name"], p2["license_required_version"]) }
+  let(:p1) { { "id" => "p1", "pretty_name" => "P1", "filename" => "f1", "mixlib_name" => "p1m", "license_required_version" => "p1v", "license_name" => "FOO" } }
+  let(:p2) { { "id" => "p2", "pretty_name" => "P2", "filename" => "f2", "mixlib_name" => "p2m", "license_required_version" => "p2v", "license_name" => "BAR" } }
+  let(:product1) { instance_double(LicenseAcceptance::Product, id: p1["id"], mixlib_name: p1["mixlib_name"]) }
+  let(:product2) { instance_double(LicenseAcceptance::Product, id: p2["id"], mixlib_name: p2["mixlib_name"]) }
   let(:r1) { { p1 => p2 } }
   let(:toml) { { "products" => [p1, p2], "relationships" => { "p1" => ["p2"] } } }
 
   describe "#read" do
+    describe "uses the builder" do
+      let(:mock_builder) { double(LicenseAcceptance::ProductBuilder) }
+      it "builds" do
+        expect(reader).to receive(:get_location).and_return(location)
+        expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_yield(mock_builder).and_return(product1)
+        expect(mock_builder).to receive(:set_id).with(p1["id"])
+        expect(mock_builder).to receive(:set_pretty_name).with(p1["pretty_name"])
+        expect(mock_builder).to receive(:set_filename).with(p1["filename"])
+        expect(mock_builder).to receive(:set_mixlib_name).with(p1["mixlib_name"])
+        expect(mock_builder).to receive(:set_license_required_version).with(p1["license_required_version"])
+        expect(mock_builder).to receive(:set_license).with(p1["license_name"])
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_yield(mock_builder).and_return(product2)
+        expect(mock_builder).to receive(:set_id).with(p2["id"])
+        expect(mock_builder).to receive(:set_pretty_name).with(p2["pretty_name"])
+        expect(mock_builder).to receive(:set_filename).with(p2["filename"])
+        expect(mock_builder).to receive(:set_mixlib_name).with(p2["mixlib_name"])
+        expect(mock_builder).to receive(:set_license_required_version).with(p2["license_required_version"])
+        expect(mock_builder).to receive(:set_license).with(p2["license_name"])
+        reader.read
+      end
+    end
+
     it "reads products and relationships" do
       expect(reader).to receive(:get_location).and_return(location)
       expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product2)
       reader.read
-      expect(reader.products).to eq({
-        "p1" => product1,
-        "p2" => product2,
-      })
+      expect(reader.products.size).to eq(2)
+      expect(reader.products["p1"]).to eq(product1)
+      expect(reader.products["p2"]).to eq(product2)
+      expect(reader.relationships.size).to eq(1)
+      expect(reader.relationships.first).to eq([product1, [product2]])
+    end
+
+    it "reads products and relationships" do
+      expect(reader).to receive(:get_location).and_return(location)
+      expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product2)
+      reader.read
+      expect(reader.products.size).to eq(2)
+      expect(reader.products["p1"]).to eq(product1)
+      expect(reader.products["p2"]).to eq(product2)
       expect(reader.relationships.size).to eq(1)
       expect(reader.relationships.first).to eq([product1, [product2]])
     end
@@ -43,6 +80,8 @@ RSpec.describe LicenseAcceptance::ProductReader do
       it "raises a UnknownParent error" do
         expect(reader).to receive(:get_location).and_return(location)
         expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product2)
 
         expect { reader.read }.to raise_error(LicenseAcceptance::UnknownParent)
       end
@@ -54,6 +93,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
       it "raises a NoChildRelationships error" do
         expect(reader).to receive(:get_location).and_return(location)
         expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
 
         expect { reader.read }.to raise_error(LicenseAcceptance::NoChildRelationships)
       end
@@ -65,6 +105,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
       it "raises a NoChildRelationships error" do
         expect(reader).to receive(:get_location).and_return(location)
         expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
 
         expect { reader.read }.to raise_error(LicenseAcceptance::NoChildRelationships)
       end
@@ -76,6 +117,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
       it "raises a NoChildRelationships error" do
         expect(reader).to receive(:get_location).and_return(location)
         expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
 
         expect { reader.read }.to raise_error(LicenseAcceptance::NoChildRelationships)
       end
@@ -87,6 +129,8 @@ RSpec.describe LicenseAcceptance::ProductReader do
       it "raises a UnknownChild error" do
         expect(reader).to receive(:get_location).and_return(location)
         expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
+        expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product2)
 
         expect { reader.read }.to raise_error(LicenseAcceptance::UnknownChild)
       end
@@ -97,6 +141,8 @@ RSpec.describe LicenseAcceptance::ProductReader do
     before do
       expect(reader).to receive(:get_location).and_return(location)
       expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product2)
       reader.read
     end
 
@@ -114,7 +160,7 @@ RSpec.describe LicenseAcceptance::ProductReader do
       end
     end
 
-    let(:nonya) { LicenseAcceptance::Product.new("nonya", "NonYa", "nofile", "no_mixlib", "no_version") }
+    let(:nonya) { instance_double(LicenseAcceptance::Product, id: "nonya") }
     describe "when called on a product with no relationship" do
       before do
         reader.products = { "nonya" => nonya }
@@ -140,6 +186,8 @@ RSpec.describe LicenseAcceptance::ProductReader do
     before do
       expect(reader).to receive(:get_location).and_return(location)
       expect(Tomlrb).to receive(:load_file).with(location, symbolize_keys: false).and_return(toml)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product1)
+      expect(LicenseAcceptance::ProductBuilder).to receive(:build).and_return(product2)
       reader.read
     end
 

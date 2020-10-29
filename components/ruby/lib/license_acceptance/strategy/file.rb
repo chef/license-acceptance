@@ -29,11 +29,18 @@ module LicenseAcceptance
 
         searching.each do |product|
           config.license_locations.each do |loc|
-            f = ::File.join(loc, product.filename)
-            if ::File.exist?(f)
-              logger.debug("Found license #{product.filename} at #{f}")
-              missing_licenses.delete(product)
-              break
+            license_path = ::File.join(loc, product.filename)
+            if ::File.exist?(license_path)
+              ::File.open(license_path, ::File::RDONLY) do |license_file|
+                license = YAML.load(license_file.read)
+                if product.license.name == license['license_name']
+                  # It is possible to have previously accepted a product under the EULA license but that
+                  # product is actually covered under MLSA, so we need to check it.
+                  logger.debug("Found license #{product.filename} at #{license_path}")
+                  missing_licenses.delete(product)
+                  break
+                end
+              end
             end
           end
           break if missing_licenses.empty?
@@ -76,7 +83,7 @@ module LicenseAcceptance
       def persist_license(folder_path, product, parent, parent_version)
         path = ::File.join(folder_path, product.filename)
         logger.info("Persisting a license for #{product.pretty_name} at path #{path}")
-        ::File.open(path, ::File::WRONLY | ::File::CREAT | ::File::EXCL) do |license_file|
+        ::File.open(path, ::File::WRONLY | ::File::CREAT | ::File::TRUNC) do |license_file|
           contents = {
             id: product.id,
             name: product.pretty_name,
@@ -85,6 +92,7 @@ module LicenseAcceptance
             accepting_product_version: parent_version,
             user: Etc.getlogin,
             file_format: 1,
+            license_name: product.license.name,
           }
           contents = Hash[contents.map { |k, v| [k.to_s, v] }]
           license_file << YAML.dump(contents)

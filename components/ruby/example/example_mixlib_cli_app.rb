@@ -35,7 +35,7 @@ class ExampleMixlibCLIApp
         options[:provided] = ENV["DEBUG_LICENSE"]
       end
 
-      LicenseAcceptance::Acceptor.check_and_persist!("infra-client", "1337", options)
+      LicenseAcceptance::Acceptor.check_and_persist!("chef-workstation", "1337", options)
     end
 
     parse_options(argv)
