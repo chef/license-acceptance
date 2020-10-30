@@ -33,7 +33,7 @@ module LicenseAcceptance
             if ::File.exist?(license_path)
               ::File.open(license_path, ::File::RDONLY) do |license_file|
                 license = YAML.load(license_file.read)
-                if product.license.name == license['license_name']
+                if product.license.name == license["license_name"]
                   # It is possible to have previously accepted a product under the EULA license but that
                   # product is actually covered under MLSA, so we need to check it.
                   logger.debug("Found license #{product.filename} at #{license_path}")

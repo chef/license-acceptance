@@ -9,7 +9,7 @@ RSpec.describe LicenseAcceptance::ProductBuilder do
   let(:location) { "location" }
 
   let(:h1) { { id: "p1", pretty_name: "P1", filename: "f1", mixlib_name: "m1", license_required_version: "v1", license: { name: "FOO", uri: "http://foo" } } }
-  let(:l1){ LicenseAcceptance::License.new(h1[:license][:name], h1[:license][:uri]) }
+  let(:l1) { LicenseAcceptance::License.new(h1[:license][:name], h1[:license][:uri]) }
   let(:p1) {
     p = LicenseAcceptance::Product.new
     p.id = h1[:id]

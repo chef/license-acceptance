@@ -1,7 +1,7 @@
 # We were getting too many args in the Product initialize method so switching to the builder
 # pattern. We also need to now validate the license_name
-require_relative('product')
-require_relative('license_list')
+require_relative("product")
+require_relative("license_list")
 
 module LicenseAcceptance
   class ProductBuilder
