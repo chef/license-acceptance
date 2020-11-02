@@ -35,7 +35,11 @@ RSpec.describe LicenseAcceptance::ProductBuilder do
         b.set_license_required_version h1[:license_required_version]
         b.set_license h1[:license][:name]
       end
-      expect(p1).to eq(actual)
+      expect(p1.id).to eq(actual.id)
+      expect(p1.pretty_name).to eq(actual.pretty_name)
+      expect(p1.mixlib_name).to eq(actual.mixlib_name)
+      expect(p1.license_required_version).to eq(actual.license_required_version)
+      expect(p1.license).to eq(actual.license)
     end
   end
 

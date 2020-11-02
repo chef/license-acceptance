@@ -10,7 +10,8 @@ RSpec.describe LicenseAcceptance::Strategy::Prompt do
   end
   let(:acc) { LicenseAcceptance::Strategy::Prompt.new(config) }
   let(:prompt) { instance_double(TTY::Prompt) }
-  let(:p1) { instance_double(LicenseAcceptance::Product, id: "foo", pretty_name: "Pretty Name") }
+  let(:l1) { LicenseAcceptance::License.new("FOO", "http://foo") }
+  let(:p1) { instance_double(LicenseAcceptance::Product, id: "foo", pretty_name: "Pretty Name", license: l1) }
   let(:missing_licenses) { [p1] }
 
   before do
@@ -29,16 +30,21 @@ RSpec.describe LicenseAcceptance::Strategy::Prompt do
     end
 
     describe "when there are multiple products" do
-      let(:p2) { instance_double(LicenseAcceptance::Product, id: "bar", pretty_name: "Other") }
+      let(:l2) { LicenseAcceptance::License.new("BAR", "http://bar") }
+      let(:p2) { instance_double(LicenseAcceptance::Product, id: "bar", pretty_name: "Other", license: l2) }
       let(:missing_licenses) { [p1, p2] }
       it "returns true" do
         expect(prompt).to receive(:ask).and_return("yes")
-        msg1 = /Licenses that need accepting:\n  \* #{p1.pretty_name}\n  \* #{p2.pretty_name}/m
+        msg1 = /Licenses that need accepting:/
+        lic1 = /\* #{p1.pretty_name}/m
+        lic2 = /\* #{p2.pretty_name}/m
         msg2 = /product licenses persisted\./
         msg3 = /2 product licenses\nmust be accepted/m
         b = Proc.new { [] }
         expect(acc.request(missing_licenses, &b)).to eq(true)
         expect(output.string).to match(msg1)
+        expect(output.string).to match(lic1)
+        expect(output.string).to match(lic2)
         expect(output.string).to match(msg2)
         expect(output.string).to match(msg3)
       end

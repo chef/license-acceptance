@@ -15,15 +15,36 @@ RSpec.describe LicenseAcceptance::Strategy::File do
   let(:p1_id) { "foo" }
   let(:p1_filename) { "p1_filename" }
   let(:p1_pretty) { "Pretty Name" }
-  let(:p1) { instance_double(LicenseAcceptance::Product, id: p1_id, filename: p1_filename, pretty_name: p1_pretty) }
+  let(:l1) { LicenseAcceptance::License.new("FOO", "http://foo") }
+  let(:p1) { instance_double(LicenseAcceptance::Product, id: p1_id, filename: p1_filename, pretty_name: p1_pretty, license: l1) }
   let(:version) { "0.1.0" }
   let(:product_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: p1, children: [], parent_version: version) }
-  let(:mode) { File::WRONLY | File::CREAT | File::EXCL }
+  let(:mode) { File::WRONLY | File::CREAT | File::TRUNC }
 
   describe "#check" do
     describe "when there is an existing license file" do
+      let(:file) { double("file") }
+      let(:license_file_contents) do
+        <<~EOT
+---
+id: chef-workstation
+name: Chef Workstation
+date_accepted: '2020-10-29T16:59:07-04:00'
+accepting_product: chef-workstation
+accepting_product_version: '1337'
+user: chefuser
+file_format: 1
+license_name: FOO
+        EOT
+      end
+
       it "returns an empty missing product list" do
+
         expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(true)
+        expect(File).to receive(:open).with(File.join(dir1, p1_filename), ::File::RDONLY).and_yield(file)
+        expect(file).to receive(:read).and_return(license_file_contents)
+        expect(File).to receive(:exist?).with(File.join(dir2, p1_filename)).and_return(false)
+
         expect(acc.accepted?(product_relationship)).to eq([])
       end
     end
@@ -56,7 +77,7 @@ RSpec.describe LicenseAcceptance::Strategy::File do
         let(:p2_id) { "bar" }
         let(:p2_filename) { "p2_filename" }
         let(:p2_pretty) { "Other Pretty Name" }
-        let(:p2) { instance_double(LicenseAcceptance::Product, id: p2_id, filename: p2_filename, pretty_name: p2_pretty) }
+        let(:p2) { instance_double(LicenseAcceptance::Product, id: p2_id, filename: p2_filename, pretty_name: p2_pretty, license: l1) }
         let(:product_relationship) {
           instance_double(
             LicenseAcceptance::ProductRelationship,
