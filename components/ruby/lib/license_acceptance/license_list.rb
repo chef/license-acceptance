@@ -6,6 +6,9 @@ require_relative "license"
 module LicenseAcceptance
   class LicenseList
 
+    EULA = License.new("EULA", "https://www.chef.io/end-user-license-agreement/")
+    MLSA = License.new("MLSA", "https://www.chef.io/online-master-agreement/")
+
     def self.lookup(name)
       case name
       when "EULA"
@@ -16,9 +19,6 @@ module LicenseAcceptance
         raise UnknownLicense.new(name)
       end
     end
-
-    EULA = License.new("EULA", "https://www.chef.io/end-user-license-agreement/")
-    MLSA = License.new("MLSA", "https://www.chef.io/online-master-agreement/")
 
     class UnknownLicense < RuntimeError
       def initialize(name)
