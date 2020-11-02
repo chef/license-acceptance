@@ -20,12 +20,9 @@ RSpec.describe LicenseAcceptance::Strategy::File do
   let(:version) { "0.1.0" }
   let(:product_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: p1, children: [], parent_version: version) }
   let(:mode) { File::WRONLY | File::CREAT | File::TRUNC }
-
-  describe "#check" do
-    describe "when there is an existing license file" do
-      let(:file) { double("file") }
-      let(:license_file_contents) do
-        <<~EOT
+  let(:file) { double("file") }
+  let(:license_file_contents) do
+    <<~EOT
 ---
 id: chef-workstation
 name: Chef Workstation
@@ -34,18 +31,55 @@ accepting_product: chef-workstation
 accepting_product_version: '1337'
 user: chefuser
 file_format: 1
-license_name: FOO
-        EOT
-      end
+#{license_name_yaml}
+    EOT
+  end
 
-      it "returns an empty missing product list" do
+  describe "#check" do
+    describe "when there is an existing license file" do
 
+      before do
         expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(true)
         expect(File).to receive(:open).with(File.join(dir1, p1_filename), ::File::RDONLY).and_yield(file)
         expect(file).to receive(:read).and_return(license_file_contents)
         expect(File).to receive(:exist?).with(File.join(dir2, p1_filename)).and_return(false)
+      end
 
-        expect(acc.accepted?(product_relationship)).to eq([])
+      describe "with an explicit license" do
+        describe "when the named license matches the product" do
+          let(:license_name_yaml) { "license_name: FOO" }
+          it "returns an empty missing product list" do
+            expect(acc.accepted?(product_relationship)).to eq([])
+          end
+        end
+
+        describe "when the named license does not match the product" do
+          let(:license_name_yaml) { "license_name: BAR" }
+          it "returns the product in the missing product list" do
+            expect(acc.accepted?(product_relationship)).to eq([p1])
+          end
+        end
+      end
+
+      describe "with no named license" do
+        # This implies that the license is the EULA
+        let(:license_name_yaml) { "" }
+        describe "when the product requires the EULA" do
+          let(:eula_lic) { LicenseAcceptance::License.new("EULA", "http://eula") }
+          let(:eula_prod) { instance_double(LicenseAcceptance::Product, id: "eula_prod", filename: p1_filename, pretty_name: "EULA Product", license: eula_lic) }
+          let(:eula_relationship) { instance_double(LicenseAcceptance::ProductRelationship, parent: eula_prod, children: [], parent_version: version) }
+
+          it "returns an empty missing product list" do
+            expect(acc.accepted?(eula_relationship)).to eq([])
+          end
+        end
+
+        describe "when the product requires a different license" do
+          # p1 requires the FOO license
+          it "returns the product in the missing product list" do
+            expect(acc.accepted?(product_relationship)).to eq([p1])
+          end
+        end
       end
     end
 
@@ -58,8 +92,6 @@ license_name: FOO
     end
 
     describe "#persist" do
-      let(:file) { double("file") }
-
       it "stores a single license without children" do
         expect(Dir).to receive(:exist?).with(dir3).and_return(true)
         expect(File).to receive(:open).with(File.join(dir3, p1_filename), mode).and_yield(file)
