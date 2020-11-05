@@ -30,22 +30,19 @@ module LicenseAcceptance
         searching.each do |product|
           config.license_locations.each do |loc|
             license_path = ::File.join(loc, product.filename)
-            if ::File.exist?(license_path)
-              ::File.open(license_path, ::File::RDONLY) do |license_file|
-                license = YAML.load(license_file.read)
+            next unless ::File.exist?(license_path)
 
-                # If the license file is missing the license_name field,
-                # assume it represents the EULA
-                license["license_name"] ||= "EULA"
+            license = YAML.load_file(license_path)
 
-                if product.license.name == license["license_name"]
-                  # It is possible to have previously accepted a product under the EULA license but that
-                  # product is actually covered under MLSA, so we need to check it.
-                  logger.debug("Found license #{product.filename} at #{license_path}")
-                  missing_licenses.delete(product)
-                  break
-                end
-              end
+            # If the license file is missing the license_name field,
+            # assume it represents the EULA
+            license["license_name"] ||= "EULA"
+
+            if product.license.name == license["license_name"]
+              # It is possible to have previously accepted a product under the EULA license but that
+              # product is actually covered under MLSA, so we need to check it.
+              logger.debug("Found license #{product.filename} at #{license_path}")
+              missing_licenses.delete(product)
             end
           end
           break if missing_licenses.empty?

@@ -37,11 +37,11 @@ file_format: 1
 
   describe "#check" do
     describe "when there is an existing license file" do
+      let(:yaml) { YAML.load(license_file_contents) }
 
       before do
         expect(File).to receive(:exist?).with(File.join(dir1, p1_filename)).and_return(true)
-        expect(File).to receive(:open).with(File.join(dir1, p1_filename), ::File::RDONLY).and_yield(file)
-        expect(file).to receive(:read).and_return(license_file_contents)
+        expect(YAML).to receive(:load_file).with(File.join(dir1, p1_filename)).and_return(yaml)
         expect(File).to receive(:exist?).with(File.join(dir2, p1_filename)).and_return(false)
       end
 
