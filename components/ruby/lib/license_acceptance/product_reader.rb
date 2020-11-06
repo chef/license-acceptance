@@ -1,7 +1,6 @@
 autoload :Tomlrb, "tomlrb"
 require_relative "logger"
 require_relative "product"
-require_relative "product_builder"
 require_relative "product_relationship"
 
 module LicenseAcceptance
@@ -20,14 +19,14 @@ module LicenseAcceptance
       raise InvalidProductInfo.new(location) if toml.empty? || toml["products"].nil? || toml["relationships"].nil?
 
       toml["products"].each do |product|
-        products[product["id"]] = ProductBuilder.build do |builder|
-          builder.set_id product["id"]
-          builder.set_pretty_name product["pretty_name"]
-          builder.set_filename product["filename"]
-          builder.set_mixlib_name product["mixlib_name"]
-          builder.set_license_required_version product["license_required_version"]
-          builder.set_license product["license_name"]
-        end
+        products[product["id"]] = Product.new(
+          id: product["id"],
+          pretty_name: product["pretty_name"],
+          filename: product["filename"],
+          mixlib_name: product["mixlib_name"],
+          license_required_version: product["license_required_version"],
+          license: product["license_name"]
+        )
       end
 
       toml["relationships"].each do |parent_id, children|
