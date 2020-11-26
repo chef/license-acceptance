@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.4"
 
   spec.add_dependency "pastel", "~> 0.7"
-  spec.add_dependency "tomlrb", "~> 1.2"
+  spec.add_dependency "tomlrb", ">= 1.2", "< 3.0"
   spec.add_dependency "tty-box", "~> 0.6" # 0.6 resolves ruby 2.7 warnings
   spec.add_dependency "tty-prompt", "~> 0.20" # 0.20 resolves ruby 2.7 warnings
 end
