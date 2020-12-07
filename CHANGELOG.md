@@ -1,14 +1,15 @@
-<!-- latest_release 2.1.13 -->
-## [2.1.13](https://github.com/chef/license-acceptance/tree/2.1.13) (2020-12-07)
+<!-- latest_release 2.1.14 -->
+## [2.1.14](https://github.com/chef/license-acceptance/tree/2.1.14) (2020-12-07)
 
 #### Merged Pull Requests
-- Remove yard tasks / unpin parallel gem [#103](https://github.com/chef/license-acceptance/pull/103) ([tas50](https://github.com/tas50))
+- Use the build in gem caching in Expeditor [#104](https://github.com/chef/license-acceptance/pull/104) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.1.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use the build in gem caching in Expeditor [#104](https://github.com/chef/license-acceptance/pull/104) ([tas50](https://github.com/tas50)) <!-- 2.1.14 -->
 - Remove yard tasks / unpin parallel gem [#103](https://github.com/chef/license-acceptance/pull/103) ([tas50](https://github.com/tas50)) <!-- 2.1.13 -->
 - Update chefstyle requirement from 1.5.6 to 1.5.7 in /components/ruby [#102](https://github.com/chef/license-acceptance/pull/102) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.12 -->
 - Update chefstyle requirement from 1.5.2 to 1.5.6 in /components/ruby [#101](https://github.com/chef/license-acceptance/pull/101) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.11 -->
