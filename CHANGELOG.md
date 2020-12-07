@@ -1,14 +1,15 @@
-<!-- latest_release 2.1.11 -->
-## [2.1.11](https://github.com/chef/license-acceptance/tree/2.1.11) (2020-12-02)
+<!-- latest_release 2.1.12 -->
+## [2.1.12](https://github.com/chef/license-acceptance/tree/2.1.12) (2020-12-07)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 1.5.2 to 1.5.6 in /components/ruby [#101](https://github.com/chef/license-acceptance/pull/101) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.5.6 to 1.5.7 in /components/ruby [#102](https://github.com/chef/license-acceptance/pull/102) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.1.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 1.5.6 to 1.5.7 in /components/ruby [#102](https://github.com/chef/license-acceptance/pull/102) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.12 -->
 - Update chefstyle requirement from 1.5.2 to 1.5.6 in /components/ruby [#101](https://github.com/chef/license-acceptance/pull/101) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.11 -->
 - Update tomlrb requirement from ~&gt; 1.2 to &gt;= 1.2, &lt; 3.0 in /components/ruby [#100](https://github.com/chef/license-acceptance/pull/100) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.10 -->
 - Update chefstyle requirement from 1.5.0 to 1.5.2 in /components/ruby [#98](https://github.com/chef/license-acceptance/pull/98) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.9 -->
