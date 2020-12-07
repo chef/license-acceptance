@@ -5,30 +5,34 @@
 - Use the build in gem caching in Expeditor [#104](https://github.com/chef/license-acceptance/pull/104) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup since=2.1.2 -->
+<!-- release_rollup since=2.1.13 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
 - Use the build in gem caching in Expeditor [#104](https://github.com/chef/license-acceptance/pull/104) ([tas50](https://github.com/tas50)) <!-- 2.1.14 -->
-- Remove yard tasks / unpin parallel gem [#103](https://github.com/chef/license-acceptance/pull/103) ([tas50](https://github.com/tas50)) <!-- 2.1.13 -->
-- Update chefstyle requirement from 1.5.6 to 1.5.7 in /components/ruby [#102](https://github.com/chef/license-acceptance/pull/102) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.12 -->
-- Update chefstyle requirement from 1.5.2 to 1.5.6 in /components/ruby [#101](https://github.com/chef/license-acceptance/pull/101) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.11 -->
-- Update tomlrb requirement from ~&gt; 1.2 to &gt;= 1.2, &lt; 3.0 in /components/ruby [#100](https://github.com/chef/license-acceptance/pull/100) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.10 -->
-- Update chefstyle requirement from 1.5.0 to 1.5.2 in /components/ruby [#98](https://github.com/chef/license-acceptance/pull/98) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.9 -->
-- Update chefstyle requirement from 1.4.5 to 1.5.0 in /components/ruby [#96](https://github.com/chef/license-acceptance/pull/96) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.8 -->
-- Update chefstyle requirement from 1.4.4 to 1.4.5 in /components/ruby [#94](https://github.com/chef/license-acceptance/pull/94) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.7 -->
-- Update chefstyle requirement from 1.4.3 to 1.4.4 in /components/ruby [#93](https://github.com/chef/license-acceptance/pull/93) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.6 -->
-- Update chefstyle requirement from 1.4.2 to 1.4.3 in /components/ruby [#92](https://github.com/chef/license-acceptance/pull/92) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.5 -->
-- Update chefstyle requirement from 1.3.2 to 1.4.2 in /components/ruby [#91](https://github.com/chef/license-acceptance/pull/91) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.4 -->
-- Convert to require_relative [#90](https://github.com/chef/license-acceptance/pull/90) ([tas50](https://github.com/tas50)) <!-- 2.1.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [2.1.13](https://github.com/chef/license-acceptance/tree/2.1.13) (2020-12-07)
+
+#### Merged Pull Requests
+- Convert to require_relative [#90](https://github.com/chef/license-acceptance/pull/90) ([tas50](https://github.com/tas50))
+- Update chefstyle requirement from 1.3.2 to 1.4.2 in /components/ruby [#91](https://github.com/chef/license-acceptance/pull/91) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.4.2 to 1.4.3 in /components/ruby [#92](https://github.com/chef/license-acceptance/pull/92) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.4.3 to 1.4.4 in /components/ruby [#93](https://github.com/chef/license-acceptance/pull/93) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.4.4 to 1.4.5 in /components/ruby [#94](https://github.com/chef/license-acceptance/pull/94) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.4.5 to 1.5.0 in /components/ruby [#96](https://github.com/chef/license-acceptance/pull/96) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.5.0 to 1.5.2 in /components/ruby [#98](https://github.com/chef/license-acceptance/pull/98) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update tomlrb requirement from ~&gt; 1.2 to &gt;= 1.2, &lt; 3.0 in /components/ruby [#100](https://github.com/chef/license-acceptance/pull/100) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.5.2 to 1.5.6 in /components/ruby [#101](https://github.com/chef/license-acceptance/pull/101) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update chefstyle requirement from 1.5.6 to 1.5.7 in /components/ruby [#102](https://github.com/chef/license-acceptance/pull/102) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Remove yard tasks / unpin parallel gem [#103](https://github.com/chef/license-acceptance/pull/103) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [2.1.2](https://github.com/chef/license-acceptance/tree/2.1.2) (2020-09-09)
 
 #### Merged Pull Requests
 - Case insensitively check acceptance [#88](https://github.com/chef/license-acceptance/pull/88) ([phiggins](https://github.com/phiggins))
-<!-- latest_stable_release -->
 
 ## [2.1.1](https://github.com/chef/license-acceptance/tree/2.1.1) (2020-09-09)
 
