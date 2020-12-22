@@ -1,14 +1,15 @@
-<!-- latest_release 2.1.14 -->
-## [2.1.14](https://github.com/chef/license-acceptance/tree/2.1.14) (2020-12-07)
+<!-- latest_release 2.1.15 -->
+## [2.1.15](https://github.com/chef/license-acceptance/tree/2.1.15) (2020-12-22)
 
 #### Merged Pull Requests
-- Use the build in gem caching in Expeditor [#104](https://github.com/chef/license-acceptance/pull/104) ([tas50](https://github.com/tas50))
+- Update chefstyle requirement from 1.5.7 to 1.5.8 in /components/ruby [#105](https://github.com/chef/license-acceptance/pull/105) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.1.13 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 1.5.7 to 1.5.8 in /components/ruby [#105](https://github.com/chef/license-acceptance/pull/105) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.15 -->
 - Use the build in gem caching in Expeditor [#104](https://github.com/chef/license-acceptance/pull/104) ([tas50](https://github.com/tas50)) <!-- 2.1.14 -->
 <!-- release_rollup -->
 
