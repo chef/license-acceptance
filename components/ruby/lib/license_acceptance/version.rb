@@ -1,3 +1,3 @@
 module LicenseAcceptance
-  VERSION = "2.1.16".freeze
+  VERSION = "2.1.17".freeze
 end
