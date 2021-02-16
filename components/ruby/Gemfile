@@ -6,7 +6,7 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 gemspec
 
 group :development do
-  gem "chefstyle", "1.6.2"
+  gem "chefstyle", "1.7.1"
   gem "climate_control", "~> 0.2"
   gem "mixlib-cli", "~> 2.1"
   gem "rake", ">= 10.1.0"
