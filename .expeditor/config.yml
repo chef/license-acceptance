@@ -32,32 +32,34 @@ pipelines:
       public: true
   - habitat/build
 
-# These actions are taken, in order they are specified, anytime a Pull Request is merged.
-merge_actions:
-  - built_in:bump_version:
-      ignore_labels:
-        - "Expeditor: Skip Version Bump"
-        - "Expeditor: Skip All"
-  - bash:.expeditor/copy_product_info.sh:
-      only_if: built_in:bump_version
-  - bash:.expeditor/update_version.sh:
-      only_if: built_in:bump_version
-  - built_in:update_changelog:
-      ignore_labels:
-        - "Expeditor: Skip Changelog"
-        - "Expeditor: Skip All"
-  - built_in:build_gem:
-      only_if: built_in:bump_version
-  - trigger_pipeline:habitat/build:
-      post_commit: true
-      ignore_labels:
-        - "Expeditor: Skip All"
-        - "Expeditor: Skip Habitat"
-      only_if: built_in:bump_version
-  #https://github.com/golang/go/wiki/Modules#releasing-modules-all-versions
+subscriptions:
+  # These actions are taken, in order they are specified, anytime a Pull Request is merged.
+  - workload: pull_request_merged:{{github_repo}}:{{release_branch}}:*
+    actions:
+      - built_in:bump_version:
+          ignore_labels:
+            - "Expeditor: Skip Version Bump"
+            - "Expeditor: Skip All"
+      - bash:.expeditor/copy_product_info.sh:
+          only_if: built_in:bump_version
+      - bash:.expeditor/update_version.sh:
+          only_if: built_in:bump_version
+      - built_in:update_changelog:
+          ignore_labels:
+            - "Expeditor: Skip Changelog"
+            - "Expeditor: Skip All"
+      - built_in:build_gem:
+          only_if: built_in:bump_version
+      - trigger_pipeline:habitat/build:
+          post_commit: true
+          ignore_labels:
+            - "Expeditor: Skip All"
+            - "Expeditor: Skip Habitat"
+          only_if: built_in:bump_version
+      #https://github.com/golang/go/wiki/Modules#releasing-modules-all-versions
 
-promote:
-  actions:
-    - built_in:rollover_changelog
-    - built_in:promote_habitat_packages
-    - built_in:publish_rubygems
+  - workload: project_promoted:{{agent_id}}:*
+    actions:
+      - built_in:rollover_changelog
+      - built_in:promote_habitat_packages
+      - built_in:publish_rubygems
