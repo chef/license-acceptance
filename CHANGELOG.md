@@ -1,14 +1,15 @@
-<!-- latest_release 2.1.20 -->
-## [2.1.20](https://github.com/chef/license-acceptance/tree/2.1.20) (2021-04-19)
+<!-- latest_release 2.2.0 -->
+## [2.2.0](https://github.com/chef/license-acceptance/tree/2.2.0) (2022-03-28)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 1.7.2 to 1.7.5 in /components/ruby [#114](https://github.com/chef/license-acceptance/pull/114) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Update co-owners and Add ruby 3.1 in verify pipeline [#119](https://github.com/chef/license-acceptance/pull/119) ([skeshari12](https://github.com/skeshari12))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.1.13 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update co-owners and Add ruby 3.1 in verify pipeline [#119](https://github.com/chef/license-acceptance/pull/119) ([skeshari12](https://github.com/skeshari12)) <!-- 2.2.0 -->
 - Update chefstyle requirement from 1.7.2 to 1.7.5 in /components/ruby [#114](https://github.com/chef/license-acceptance/pull/114) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.20 -->
 - Update chefstyle requirement from 1.6.2 to 1.7.1 in /components/ruby [#110](https://github.com/chef/license-acceptance/pull/110) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.19 -->
 - Test on Ruby 3.0 [#108](https://github.com/chef/license-acceptance/pull/108) ([tas50](https://github.com/tas50)) <!-- 2.1.18 -->
