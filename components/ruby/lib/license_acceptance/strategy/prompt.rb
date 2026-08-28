@@ -1,4 +1,3 @@
-autoload :TTY, "tty-prompt"
 require "pastel" unless defined?(Pastel)
 require_relative "../logger"
 require_relative "base"
@@ -69,6 +68,8 @@ module LicenseAcceptance
 
       def ask(output, c, s, persist_callback)
         logger.debug("Attempting to request interactive prompt on TTY")
+        require "tty-prompt" unless defined?(TTY::Prompt)
+
         prompt = TTY::Prompt.new(track_history: false, active_color: :bold, interrupt: :exit, output: output)
 
         answer = "no"
