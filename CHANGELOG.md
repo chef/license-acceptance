@@ -1,14 +1,15 @@
-<!-- latest_release 2.2.1 -->
-## [2.2.1](https://github.com/chef/license-acceptance/tree/2.2.1) (2025-06-20)
+<!-- latest_release 2.2.2 -->
+## [2.2.2](https://github.com/chef/license-acceptance/tree/2.2.2) (2026-08-31)
 
 #### Merged Pull Requests
-- remove old ruby versions, add ruby 3.4 [#126](https://github.com/chef/license-acceptance/pull/126) ([rishichawda](https://github.com/rishichawda))
+- Fix Security/YAMLLoad cookstyle offense in file_spec [#136](https://github.com/chef/license-acceptance/pull/136) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.1.13 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix Security/YAMLLoad cookstyle offense in file_spec [#136](https://github.com/chef/license-acceptance/pull/136) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 2.2.2 -->
 - remove old ruby versions, add ruby 3.4 [#126](https://github.com/chef/license-acceptance/pull/126) ([rishichawda](https://github.com/rishichawda)) <!-- 2.2.1 -->
 - Update co-owners and Add ruby 3.1 in verify pipeline [#119](https://github.com/chef/license-acceptance/pull/119) ([skeshari12](https://github.com/skeshari12)) <!-- 2.2.0 -->
 - Update chefstyle requirement from 1.7.2 to 1.7.5 in /components/ruby [#114](https://github.com/chef/license-acceptance/pull/114) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 2.1.20 -->
