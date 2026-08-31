@@ -14,8 +14,7 @@ bundle install --jobs=7 --retry=3
 If ($lastexitcode -ne 0) { Exit $lastexitcode }
 
 Write-Output "--- Running Cookstyle"
-gem install cookstyle
-cookstyle --chefstyle -c ../../.rubocop.yml
+bundle exec cookstyle --chefstyle -c ../../.rubocop.yml
 If ($lastexitcode -ne 0) { Exit $lastexitcode }
 
 Write-Output "--- Bundle Execute"
