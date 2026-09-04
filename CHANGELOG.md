@@ -1,14 +1,15 @@
-<!-- latest_release 2.2.3 -->
-## [2.2.3](https://github.com/chef/license-acceptance/tree/2.2.3) (2026-08-31)
+<!-- latest_release 2.2.4 -->
+## [2.2.4](https://github.com/chef/license-acceptance/tree/2.2.4) (2026-09-04)
 
 #### Merged Pull Requests
-- Require tty-prompt where it is used instead of autoloading the TTY namespace [#132](https://github.com/chef/license-acceptance/pull/132) ([tas50](https://github.com/tas50))
+- Load fileutils and etc in persist rather than at require time [#133](https://github.com/chef/license-acceptance/pull/133) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=2.1.13 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Load fileutils and etc in persist rather than at require time [#133](https://github.com/chef/license-acceptance/pull/133) ([tas50](https://github.com/tas50)) <!-- 2.2.4 -->
 - Require tty-prompt where it is used instead of autoloading the TTY namespace [#132](https://github.com/chef/license-acceptance/pull/132) ([tas50](https://github.com/tas50)) <!-- 2.2.3 -->
 - Fix Security/YAMLLoad cookstyle offense in file_spec [#136](https://github.com/chef/license-acceptance/pull/136) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 2.2.2 -->
 - remove old ruby versions, add ruby 3.4 [#126](https://github.com/chef/license-acceptance/pull/126) ([rishichawda](https://github.com/rishichawda)) <!-- 2.2.1 -->
