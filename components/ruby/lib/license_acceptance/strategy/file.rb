@@ -1,7 +1,5 @@
 require "date"
 autoload :YAML, "yaml"
-require "fileutils" unless defined?(FileUtils)
-require "etc" unless defined?(Etc)
 require_relative "../logger"
 require_relative "base"
 
@@ -43,6 +41,9 @@ module LicenseAcceptance
       end
 
       def persist(product_relationship, missing_licenses)
+        require "fileutils" unless defined?(FileUtils)
+        require "etc" unless defined?(Etc)
+
         parent = product_relationship.parent
         parent_version = product_relationship.parent_version
         root_dir = config.persist_location
