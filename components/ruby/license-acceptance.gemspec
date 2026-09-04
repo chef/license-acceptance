@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.5"
 
+  spec.add_dependency "logger" # no longer a default gem as of Ruby 4.0
   spec.add_dependency "pastel", "~> 0.7"
   spec.add_dependency "tomlrb", ">= 1.2", "< 3.0"
   spec.add_dependency "tty-box", "~> 0.6" # 0.6 resolves ruby 2.7 warnings
